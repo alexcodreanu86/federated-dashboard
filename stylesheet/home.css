@@ -1,0 +1,9 @@
+.widget {
+  width: 300px;
+  display: inline-block;
+}
+
+div#flickr-images {
+  max-height: 600px;
+  overflow: scroll;
+}
