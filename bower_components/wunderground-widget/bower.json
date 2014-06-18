@@ -1,0 +1,20 @@
+{
+  "name": "federated-dashboard-wunderground-widget",
+  "version": "0.0.4",
+  "ignore": [
+    "node_modules",
+    "spec",
+    "package.json",
+    "testem.json",
+    "lib",
+    "scripts"
+  ],
+  "dependencies": {
+    "underscore": "~1.6.0",
+    "jquery": "~2.1.0"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "2.0.3",
+    "coffee-script": "~1.7.1"
+  }
+}

@@ -18,50 +18,43 @@
 }(window._));
 
 (function() {
-  namespace('Pictures');
+  namespace('Dashboard');
 
-  Pictures.API = (function() {
-    function API() {}
-
-    API.search = function(searchString, callback) {
-      var flickr;
-      flickr = new Flickr({
-        api_key: "a48194703ae0d0d1055d6ded6c4c9869"
-      });
-      return flickr.photos.search({
-        text: searchString,
-        per_page: 6,
-        extras: "url_n"
-      }, function(err, response) {
-        if (err) {
-          throw new Error(err);
-        }
-        return callback(response.photos.photo);
-      });
-    };
-
-    return API;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Pictures');
-
-  Pictures.Controller = (function() {
+  Dashboard.Controller = (function() {
     function Controller() {}
 
-    Controller.loadImages = function(searchStr) {
-      return Pictures.API.search(searchStr, Pictures.Display.addImages);
-    };
-
     Controller.bind = function() {
-      return $('[data-id=flickr-button]').click((function(_this) {
+      $('[data-id=pictures-widget]').click((function(_this) {
         return function() {
-          return _this.loadImages(Pictures.Display.getInput());
+          return _this.setupWidget(Pictures.Controller, 'a48194703ae0d0d1055d6ded6c4c9869');
         };
       })(this));
+      $('[data-id=weather-widget]').click((function(_this) {
+        return function() {
+          return _this.setupWidget(Weather.Controller, '12ba191e2fec98ad');
+        };
+      })(this));
+      $('[data-id=stock-widget]').click((function(_this) {
+        return function() {
+          return _this.loadForm('stock', Stock.Controller);
+        };
+      })(this));
+      return $('[data-id=twitter-widget]').click((function(_this) {
+        return function() {
+          return _this.loadForm('twitter', Twitter.Controller);
+        };
+      })(this));
+    };
+
+    Controller.loadForm = function(widget, controller) {
+      var form;
+      form = Dashboard.Display.generateForm(widget);
+      Dashboard.Display.populateWidget(form);
+      return controller.bind();
+    };
+
+    Controller.setupWidget = function(controller, apiKey) {
+      return controller.setupWidgetIn('[data-id=widget-display]', apiKey);
     };
 
     return Controller;
@@ -71,46 +64,27 @@
 }).call(this);
 
 (function() {
-  namespace('Pictures');
+  namespace('Dashboard');
 
-  Pictures.Display = (function() {
+  Dashboard.Display = (function() {
     function Display() {}
 
-    Display.getInput = function() {
-      return $('[name=flickr-search]').val();
+    Display.populateWidget = function(html) {
+      return $('[data-id=widget-display]').html(html);
     };
 
-    Display.addImages = function(images) {
-      var imagesHtml;
-      imagesHtml = new EJS({
-        url: 'scripts/pictures/template.ejs'
+    Display.generateForm = function(widget) {
+      var capitalized;
+      capitalized = widget[0].toUpperCase() + widget.slice(1);
+      return new EJS({
+        url: 'scripts/frontEnd/dashboard/formTemplate.ejs'
       }).render({
-        images: images
+        widget: widget,
+        capitalized: capitalized
       });
-      return $('[data-id=flickr-images]').html(imagesHtml);
     };
 
     return Display;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Flick');
-
-  Flick.Wrapper = (function() {
-    function Wrapper() {}
-
-    Wrapper.getParser = function() {
-      var flickr;
-      flickr = new Flickr({
-        api_key: "a48194703ae0d0d1055d6ded6c4c9869"
-      });
-      return flickr.photos;
-    };
-
-    return Wrapper;
 
   })();
 
@@ -150,15 +124,15 @@
     Controller.bind = function() {
       return $('[data-id=stock-button]').click((function(_this) {
         return function() {
-          return _this.getStockData(Stock.Display.getInput());
+          return _this.getStockData(Stock.View.getInput());
         };
       })(this));
     };
 
     Controller.getStockData = function(searchStr) {
-      Stock.Display.resetTable();
+      Stock.View.resetTable();
       return _.each(this.processInput(searchStr), function(symbol) {
-        return Stock.API.loadData(symbol, Stock.Display.outputData);
+        return Stock.API.loadData(symbol, Stock.View.outputData);
       });
     };
 
@@ -175,70 +149,80 @@
 (function() {
   namespace('Stock');
 
-  Stock.Display = (function() {
-    function Display() {}
+  Stock.View = (function() {
+    function View() {}
 
-    Display.getInput = function() {
+    View.getInput = function() {
       return $('[name=stock-search]').val();
     };
 
-    Display.outputData = function(stockObj) {
-      var stockHtml;
+    View.outputData = function(stockObj) {
+      var formatedObj, stockHtml;
+      formatedObj = Stock.View.formatResponse(stockObj);
       stockHtml = new EJS({
-        url: 'scripts/stock/tRowTemplate.ejs'
-      }).render(stockObj);
+        url: 'scripts/frontEnd/stock/tRowTemplate.ejs'
+      }).render(formatedObj);
       return $('[data-id=stock-body]').append(stockHtml);
     };
 
-    Display.resetTable = function() {
+    View.resetTable = function() {
       var table;
       table = new EJS({
-        url: 'scripts/stock/tableTemplate.ejs'
+        url: 'scripts/frontEnd/stock/tableTemplate.ejs'
       }).render({});
       return $('[data-id=stock-output]').html(table);
     };
 
-    return Display;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Weather');
-
-  Weather.API = (function() {
-    function API() {}
-
-    API.getCurrentConditions = function(zipcode, callback) {
-      return $.get("http://api.wunderground.com/api/12ba191e2fec98ad/conditions/q/" + zipcode + ".json", function(response) {
-        callback(response.current_observation);
-        return response;
-      }, "jsonp");
+    View.formatResponse = function(response) {
+      return {
+        name: response.Name,
+        symbol: response.Symbol,
+        change: response.Change.toFixed(2),
+        changePercent: response.ChangePercent.toFixed(2),
+        changePercentYTD: response.ChangePercentYTD.toFixed(2),
+        open: response.Open.toFixed(2),
+        changeYTD: response.ChangeYTD.toFixed(2),
+        high: response.High,
+        lastPrice: response.LastPrice,
+        low: response.Low,
+        msDate: response.MSDate.toFixed(2),
+        marketCap: response.MarketCap,
+        open: response.Open,
+        timestamp: response.Timestamp.substr(0, 18),
+        volume: response.Volume
+      };
     };
 
-    return API;
+    return View;
 
   })();
 
 }).call(this);
 
 (function() {
-  namespace('Weather');
+  namespace('Twitter');
 
-  Weather.Controller = (function() {
+  Twitter.Controller = (function() {
     function Controller() {}
 
     Controller.bind = function() {
-      return $('[data-id=weather-button]').click((function(_this) {
+      return $('[data-id=twitter-button]').click((function(_this) {
         return function() {
-          return _this.getCurrentWeather(Weather.Display.getInput());
+          return _this.getTweeterPosts(Twitter.View.getInput());
         };
       })(this));
     };
 
-    Controller.getCurrentWeather = function(zipcode) {
-      return Weather.Wrapper.getCurrentConditions(zipcode, Weather.Display.showWeather);
+    Controller.getTweeterPosts = function(searchInput) {
+      var url;
+      url = this.generateUrl(searchInput);
+      return $.get(url, function(response) {
+        return Twitter.View.displayTweets(response);
+      }, 'json');
+    };
+
+    Controller.generateUrl = function(input) {
+      return "/search_twitter/" + input;
     };
 
     return Controller;
@@ -248,47 +232,30 @@
 }).call(this);
 
 (function() {
-  namespace('Weather');
+  namespace('Twitter');
 
-  Weather.Display = (function() {
-    function Display() {}
+  Twitter.View = (function() {
+    function View() {}
 
-    Display.getInput = function() {
-      return $('[name=weather-search]').val();
+    View.getInput = function() {
+      return $('[name=twitter-search]').val();
     };
 
-    Display.showWeather = function(weatherObj) {
-      var weatherHTML;
-      weatherHTML = Weather.Display.generateHtml(weatherObj);
-      return $('[data-id=weather-output]').html(weatherHTML);
-    };
-
-    Display.generateHtml = function(weatherObj) {
+    View.generateHtml = function(twitterResponse) {
       return new EJS({
-        url: 'scripts/weather/template.ejs'
-      }).render(weatherObj);
+        url: 'scripts/frontEnd/twitter/template.ejs'
+      }).render({
+        statuses: twitterResponse
+      });
     };
 
-    return Display;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Weather');
-
-  Weather.Wrapper = (function() {
-    function Wrapper() {}
-
-    Wrapper.getCurrentConditions = function(zipcode, callback) {
-      return $.get("http://api.wunderground.com/api/12ba191e2fec98ad/conditions/q/" + zipcode + ".json", function(response) {
-        callback(response.current_observation);
-        return response;
-      }, "jsonp");
+    View.displayTweets = function(twitterResponse) {
+      var twitterHtml;
+      twitterHtml = this.generateHtml(twitterResponse);
+      return $('[data-id=twitter-output]').html(twitterHtml);
     };
 
-    return Wrapper;
+    return View;
 
   })();
 

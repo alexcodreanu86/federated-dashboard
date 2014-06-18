@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+  <title><%= title %></title>
+  <script src="/bower_components/underscore/underscore.js"></script>
+  <script src="/lib/namespace.js"></script>
+  <script src="/bower_components/jquery/dist/jquery.js"></script>
+  <script src="/bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js"></script>
+  <script src="/bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js"></script>
+  <script src="/node_modules/flickrapi/browser/flickrapi.dev.js"></script>
+  <script src="/dist/federated-dashboard.js"></script>
+  <script src="/lib/ejs.js"></script>
+  <link rel="stylesheet" type="text/css/" href="/stylesheet/home.css">
+  </head>
+
+  <body>
+    <div id="widgets-container">
+      <ul id="widgets-menu">
+        <li><button data-id="pictures-widget">Pictures</button></li>
+        <li><button data-id="weather-widget">Weather</button></li>
+        <li><button data-id="stock-widget">Stock</button></li>
+        <li><button data-id="twitter-widget">Twitter</button></li>
+      </ul>
+    </div>
+
+    <div data-id="widget-display"></div>
+    <script>
+      Dashboard.Controller.bind()
+    </script>
+  </body>
+</html>

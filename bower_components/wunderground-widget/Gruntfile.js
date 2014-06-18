@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         expand: true,
         flatten: false,
         cwd: 'scripts',
-        src: '**/**/*.coffee',
+        src: '*.coffee',
         dest: '.tmp/scripts/',
         ext: '.js'
       },
@@ -17,7 +17,7 @@ module.exports = function (grunt) {
         expand: true,
         flatten: false,
         cwd: 'spec',
-        src: '**/**/*.coffee',
+        src: '*.coffee',
         dest: '.tmp/spec/',
         ext: '.js'
       }
@@ -27,12 +27,8 @@ module.exports = function (grunt) {
         seperator: ';'
       },
       dist: {
-        src: ['lib/namespace.js', '.tmp/scripts/form.js', '.tmp/scripts/frontEnd/**/*.js'],
+        src: ['lib/namespace.js', '.tmp/scripts/form.js', '.tmp/scripts/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
-      },
-      server: {
-        src: ['.tmp/scripts/backEnd/**/*.js'],
-        dest: 'myServer.js'
       }
     },
     uglify: {

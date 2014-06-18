@@ -3,13 +3,21 @@
   "before_tests": "grunt", 
   "src_files": [
     "bower_components/underscore/underscore.js",
-    "namespace.js",
-    "ejs.js",
+    "lib/namespace.js",
+    "lib/ejs.js",
+    "lib/sinon.js",
+    "bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js",
+    "bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js",
     "bower_components/jquery/dist/jquery.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
-    ".tmp/scripts/**/*.js",
-    ".tmp/spec/**/*.js"
+    ".tmp/scripts/frontEnd/**/*.js",
+    ".tmp/spec/frontEnd/**/*.js"
   ],
+  "launchers":{ 
+    "Node": {
+      "command": "jasmine-node --coffee spec/backEnd/"
+    }
+  },
   "launch_in_ci": ["PhantomJS"],
-  "launch_in_dev": ["Chrome"]
+  "launch_in_dev": ["Chrome", "Node"]
 }

@@ -1,9 +1,9 @@
 {
-  "name": "federated-dashboard",
-  "version": "0.0.1",
+  "name": "federated-dashboard-flickr-widget",
+  "version": "0.0.3",
   "dependencies": {
     "bower": "~1.3.1",
-    "express": "4.x"
+    "flickrapi": "~0.3.23"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -13,8 +13,7 @@
     "grunt-contrib-concat": "~0.4.0",
     "grunt-contrib-uglify": "~0.4.0",
     "testem": "~0.6.11",
-    "phantomjs": "~1.9.7",
-    "twitter": "~0.2.9"
+    "phantomjs": "~1.9.7"
   },
   "engines": {
     "node": ">=0.8.0"

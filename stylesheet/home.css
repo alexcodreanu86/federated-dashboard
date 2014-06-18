@@ -7,3 +7,12 @@ div#flickr-images {
   max-height: 600px;
   overflow: scroll;
 }
+
+#widgets-menu li {
+  display: inline-block;
+  padding: 0 2em;
+}
+
+#widgets-menu {
+  list-style-type: none;
+}

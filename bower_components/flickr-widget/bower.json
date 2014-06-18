@@ -1,0 +1,23 @@
+{
+  "name": "federated-dashboard-flickr-widget",
+  "version": "0.0.3",
+  "authors": [
+    "Alex Codreanu <alexcodreanu86@gmail.com>"
+  ],
+  "main": "dist/federated-dashboard-flickr-widget.js",
+  "license": "8thLight",
+  "dependencies": {
+    "underscore": "~1.6.0",
+    "jquery": "~2.1.0"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "2.0.3",
+    "coffee-script": "~1.7.1"
+  },
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "spec",
+    "scripts"
+  ]
+}
