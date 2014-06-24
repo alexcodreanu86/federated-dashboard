@@ -39,11 +39,24 @@
           return _this.setupWidget(Stock.Controller, null);
         };
       })(this));
-      return $('[data-id=twitter-widget]').click((function(_this) {
+      $('[data-id=twitter-widget]').click((function(_this) {
         return function() {
           return _this.loadForm('twitter', Twitter.Controller);
         };
       })(this));
+      return $('[data-id=menu-button]').click((function(_this) {
+        return function() {
+          return _this.toggleSidenav();
+        };
+      })(this));
+    };
+
+    Controller.unbind = function() {
+      $('[data-id=pictures-widget]').unbind('click');
+      $('[data-id=weather-widget]').unbind('click');
+      $('[data-id=stock-widget]').unbind('click');
+      $('[data-id=twitter-widget]').unbind('click');
+      return $('[data-id=menu-button]').unbind('click');
     };
 
     Controller.loadForm = function(widget, controller) {
@@ -55,6 +68,16 @@
 
     Controller.setupWidget = function(controller, apiKey) {
       return controller.setupWidgetIn('[data-id=widget-display]', apiKey);
+    };
+
+    Controller.toggleSidenav = function() {
+      if (Dashboard.Display.isSidenavDisplayed()) {
+        Dashboard.Display.removeSidenav();
+      } else {
+        Dashboard.Display.showSidenav();
+      }
+      this.unbind();
+      return this.bind();
     };
 
     return Controller;
@@ -77,16 +100,37 @@
       var capitalized;
       capitalized = widget[0].toUpperCase() + widget.slice(1);
       return new EJS({
-        url: 'scripts/dashboard/formTemplate.ejs'
+        url: 'scripts/dashboard/templates/form.ejs'
       }).render({
         widget: widget,
         capitalized: capitalized
       });
     };
 
+    Display.showSidenav = function() {
+      var contentHtml;
+      contentHtml = new EJS({
+        url: 'scripts/dashboard/templates/sidenavContent.ejs'
+      }).render({});
+      return $('[data-id=side-nav]').html(contentHtml);
+    };
+
+    Display.removeSidenav = function() {
+      return $('[data-id=side-nav]').empty();
+    };
+
+    Display.isSidenavDisplayed = function() {
+      return $('[data-id=side-nav]').html().length > 0;
+    };
+
     return Display;
 
   })();
+
+}).call(this);
+
+(function() {
+
 
 }).call(this);
 
@@ -134,7 +178,7 @@
 
     View.generateHtml = function(twitterResponse) {
       return new EJS({
-        url: 'scripts/frontEnd/twitter/template.ejs'
+        url: 'scripts/twitter/template.ejs'
       }).render({
         statuses: twitterResponse
       });

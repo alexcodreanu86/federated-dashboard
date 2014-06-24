@@ -1,4 +1,4 @@
-Twitter = require('../../scripts/twitter/backEnd/api.coffee')
+Twitter = require('../../scripts/twitter/backend_module/api.coffee')
 
 describe 'Twitter', ->
   it "setupAuthenticationObject returns a twitter object", ->

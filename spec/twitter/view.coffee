@@ -3,13 +3,13 @@ setInputValue = (value)  ->
 
 twitterResponse = [
   {
-    text: "Some Text"
+    "text": "Some Text"
   },
   {
-    text: "Other text"
+    "text": "Other text"
   },
   {
-    text: "Third text"
+    "text": "Third text"
   }
 ]
 

@@ -6,6 +6,14 @@ class Dashboard.Controller
     $('[data-id=weather-widget]').click(=> @setupWidget(Weather.Controller, '12ba191e2fec98ad'))
     $('[data-id=stock-widget]').click( =>  @setupWidget(Stock.Controller, null))
     $('[data-id=twitter-widget]').click( => @loadForm('twitter', Twitter.Controller))
+    $('[data-id=menu-button]').click( => @toggleSidenav())
+
+  @unbind: ->
+    $('[data-id=pictures-widget]').unbind('click')
+    $('[data-id=weather-widget]').unbind('click')
+    $('[data-id=stock-widget]').unbind('click')
+    $('[data-id=twitter-widget]').unbind('click')
+    $('[data-id=menu-button]').unbind('click')
 
   @loadForm: (widget, controller) ->
     form = Dashboard.Display.generateForm(widget)
@@ -14,3 +22,12 @@ class Dashboard.Controller
 
   @setupWidget: (controller, apiKey)->
     controller.setupWidgetIn('[data-id=widget-display]', apiKey)
+
+  @toggleSidenav: ->
+    if Dashboard.Display.isSidenavDisplayed()
+      Dashboard.Display.removeSidenav()
+    else
+      Dashboard.Display.showSidenav()
+
+    @unbind()
+    @bind()

@@ -22,5 +22,5 @@
     }
   },
   "launch_in_ci": ["PhantomJS"],
-  "launch_in_dev": ["Chrome", "Node"]
+  "launch_in_dev": ["Node", "Chrome"]
 }
