@@ -2,7 +2,7 @@ express = require('express')
 fs = require('fs')
 path = require('path')
 util = require('util')
-Twitter = require('./.tmp/scripts/backEnd/twitter/api')
+Twitter = require('./.tmp/scripts/twitter/backend_module/api')
 app = express()
 
 twit = Twitter.setupAuthenticationObject()

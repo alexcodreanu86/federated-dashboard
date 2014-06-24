@@ -1,37 +1,47 @@
-var express = require('express'),
-    app = express(),
-    fs = require('fs'),
-    path = require('path'),
-    util = require('util'),
-    twitter = require('twitter');
+(function() {
+  var Twitter, app, express, fs, path, server, twit, util;
 
-var twit = new twitter({
-   consumer_key: process.env.TWITTER_API_KEY,
-   consumer_secret: process.env.TWITTER_API_SECRET,
-   access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-})
+  express = require('express');
 
-app.use(express.static(__dirname));
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+  fs = require('fs');
 
-app.get('/', function(request, response){
-  twit.search('8thLight OR #8thLight',{count: 5}, function(data){
-    console.log(data);
-  })
-  response.render('index', {title: 'hello mister'});
-});
+  path = require('path');
 
-app.get('/', function(request, response) {
-  response.send('Hello Stranger!');
-})
+  util = require('util');
 
-app.get('/:name', function(request, response){
-  response.send('Hello ' + request.params.name);
-})
+  Twitter = require('./.tmp/scripts/twitter/backend_module/api');
 
-var server = app.listen(8000, function(){
-  console.log('Listening on port %d', server.address().port);
-  console.log(server.address());
-})
+  app = express();
+
+  twit = Twitter.setupAuthenticationObject();
+
+  app.use(express["static"](__dirname));
+
+  app.set('views', path.join(__dirname, 'views'));
+
+  app.set('view engine', 'ejs');
+
+  app.get('/search_twitter/:search_for', function(request, response) {
+    var searchFor, searchKey;
+    searchFor = request.params.search_for;
+    searchKey = Twitter.getSearchFormat(searchFor);
+    return twit.search(searchKey, {
+      count: 5,
+      result_type: 'recent'
+    }, function(data) {
+      data.statuses;
+      return response.send(data.statuses);
+    });
+  });
+
+  app.get('/', function(request, response) {
+    return response.render('index', {
+      title: "Federated dashboard"
+    });
+  });
+
+  server = app.listen(5000, function() {
+    return console.log("listening on port " + (server.address().port));
+  });
+
+}).call(this);
