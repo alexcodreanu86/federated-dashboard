@@ -9,7 +9,7 @@
 
   util = require('util');
 
-  Twitter = require('./bower_components/twitter-widget/dist/backend_module');
+  Twitter = require('./dist/backend_module');
 
   app = express();
 
@@ -36,7 +36,7 @@
 
   app.get('/', function(request, response) {
     return response.render('index', {
-      title: "Federated dashboard"
+      title: "Twitter Widget"
     });
   });
 

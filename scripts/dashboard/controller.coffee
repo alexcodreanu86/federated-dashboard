@@ -15,6 +15,10 @@ class Dashboard.Controller
     $('[data-id=twitter-widget]').unbind('click')
     $('[data-id=menu-button]').unbind('click')
 
+  @rebind: ->
+    @unbind()
+    @bind()
+
   @loadForm: (widget, controller) ->
     form = Dashboard.Display.generateForm(widget)
     Dashboard.Display.populateWidget(form)
@@ -28,6 +32,4 @@ class Dashboard.Controller
       Dashboard.Display.removeSidenav()
     else
       Dashboard.Display.showSidenav()
-
-    @unbind()
-    @bind()
+    @rebind()

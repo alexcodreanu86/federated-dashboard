@@ -2,7 +2,7 @@ express = require('express')
 fs = require('fs')
 path = require('path')
 util = require('util')
-Twitter = require('./bower_components/twitter-widget/dist/backend_module')
+Twitter = require('./dist/backend_module')
 app = express()
 
 twit = Twitter.setupAuthenticationObject()
@@ -18,7 +18,7 @@ app.get '/search_twitter/:search_for', (request, response) ->
     response.send data.statuses
 
 app.get '/', (request, response) ->
-  response.render 'index', {title: "Federated dashboard"}
+  response.render 'index', {title: "Twitter Widget"}
 
 server = app.listen 5000, ->
   console.log "listening on port #{server.address().port}"

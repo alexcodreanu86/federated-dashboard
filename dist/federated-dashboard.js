@@ -59,6 +59,11 @@
       return $('[data-id=menu-button]').unbind('click');
     };
 
+    Controller.rebind = function() {
+      this.unbind();
+      return this.bind();
+    };
+
     Controller.loadForm = function(widget, controller) {
       var form;
       form = Dashboard.Display.generateForm(widget);
@@ -76,8 +81,7 @@
       } else {
         Dashboard.Display.showSidenav();
       }
-      this.unbind();
-      return this.bind();
+      return this.rebind();
     };
 
     return Controller;
@@ -131,67 +135,5 @@
 
 (function() {
 
-
-}).call(this);
-
-(function() {
-  namespace('Twitter');
-
-  Twitter.Controller = (function() {
-    function Controller() {}
-
-    Controller.bind = function() {
-      return $('[data-id=twitter-button]').click((function(_this) {
-        return function() {
-          return _this.getTweeterPosts(Twitter.View.getInput());
-        };
-      })(this));
-    };
-
-    Controller.getTweeterPosts = function(searchInput) {
-      var url;
-      url = this.generateUrl(searchInput);
-      return $.get(url, function(response) {
-        return Twitter.View.displayTweets(response);
-      }, 'json');
-    };
-
-    Controller.generateUrl = function(input) {
-      return "/search_twitter/" + input;
-    };
-
-    return Controller;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Twitter');
-
-  Twitter.View = (function() {
-    function View() {}
-
-    View.getInput = function() {
-      return $('[name=twitter-search]').val();
-    };
-
-    View.generateHtml = function(twitterResponse) {
-      return new EJS({
-        url: 'scripts/twitter/template.ejs'
-      }).render({
-        statuses: twitterResponse
-      });
-    };
-
-    View.displayTweets = function(twitterResponse) {
-      var twitterHtml;
-      twitterHtml = this.generateHtml(twitterResponse);
-      return $('[data-id=twitter-output]').html(twitterHtml);
-    };
-
-    return View;
-
-  })();
 
 }).call(this);

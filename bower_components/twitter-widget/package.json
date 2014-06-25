@@ -1,9 +1,11 @@
 {
-  "name": "federated-dashboard",
-  "version": "0.0.1",
+  "name": "federated-dashboard-twitter-widget",
+  "version": "0.0.3",
+  "description": "",
+  "main": "index.js",
   "dependencies": {
     "bower": "~1.3.1",
-    "express": "4.x",
+    "express": "4.x"
     "ejs": "~1.0.0"
   },
   "devDependencies": {
@@ -22,5 +24,11 @@
   },
   "scripts": {
     "test": "testem ci"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "TBA"
+  },
+  "author": "Alex Codreanu <alexcodreanu86@gmail.com> (http://alexcodreanu.com/)",
+  "license": "ISC"
 }

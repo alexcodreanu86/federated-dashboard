@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         seperator: ';'
       },
       dist: {
-        src: ['lib/namespace.js', '.tmp/scripts/dashboard/*.js', '.tmp/scripts/twitter/*.js'],
+        src: ['lib/namespace.js', '.tmp/scripts/dashboard/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       },
       server: {

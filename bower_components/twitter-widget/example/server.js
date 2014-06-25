@@ -36,7 +36,7 @@
 
   app.get('/', function(request, response) {
     return response.render('index', {
-      title: "Federated dashboard"
+      title: "Twitter Widget"
     });
   });
 
