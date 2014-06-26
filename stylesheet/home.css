@@ -3,9 +3,24 @@
   display: inline-block;
 }
 
-div#flickr-images {
+div.widget-col {
+  display: inline-block;
+  margin: 1em;
+  max-width: 350px;
   max-height: 600px;
   overflow: scroll;
+}
+
+div[data-id=side-nav] {
+  display: inline-block;
+}
+
+[data-id=widget-display] {
+  display:inline;
+}
+
+[data-id=menu-button] {
+  display: block;
 }
 
 #widgets-menu {

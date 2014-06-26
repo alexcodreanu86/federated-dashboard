@@ -23,25 +23,30 @@
   Dashboard.Controller = (function() {
     function Controller() {}
 
+    Controller.initialize = function() {
+      this.bind();
+      return this.generateWrappedWidgets();
+    };
+
     Controller.bind = function() {
       $('[data-id=pictures-widget]').click((function(_this) {
         return function() {
-          return _this.setupWidget(Pictures.Controller, 'a48194703ae0d0d1055d6ded6c4c9869');
+          return _this.checkWidget("pictures");
         };
       })(this));
       $('[data-id=weather-widget]').click((function(_this) {
         return function() {
-          return _this.setupWidget(Weather.Controller, '12ba191e2fec98ad');
+          return _this.checkWidget("weather");
         };
       })(this));
       $('[data-id=stock-widget]').click((function(_this) {
         return function() {
-          return _this.setupWidget(Stock.Controller, null);
+          return _this.checkWidget("stock");
         };
       })(this));
       $('[data-id=twitter-widget]').click((function(_this) {
         return function() {
-          return _this.setupWidget(Twitter.Controller, null);
+          return _this.checkWidget("twitter");
         };
       })(this));
       return $('[data-id=menu-button]').click((function(_this) {
@@ -64,15 +69,28 @@
       return this.bind();
     };
 
-    Controller.loadForm = function(widget, controller) {
-      var form;
-      form = Dashboard.Display.generateForm(widget);
-      Dashboard.Display.populateWidget(form);
-      return controller.bind();
+    Controller.wrapWidget = function(widget, name, apiKey) {
+      return new Dashboard.WidgetWrapper({
+        widget: widget,
+        name: name,
+        apiKey: apiKey
+      });
     };
 
-    Controller.setupWidget = function(controller, apiKey) {
-      return controller.setupWidgetIn('[data-id=widget-display]', apiKey);
+    Controller.checkWidget = function(name) {
+      var wrapper;
+      wrapper = this.wrappedWidgets[name];
+      if (!wrapper.isActive) {
+        return this.setupWidget(wrapper);
+      }
+    };
+
+    Controller.setupWidget = function(wrappedWidget) {
+      var container;
+      container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name);
+      wrappedWidget.container = container;
+      wrappedWidget.isActive = true;
+      return wrappedWidget.setupWidget();
     };
 
     Controller.toggleSidenav = function() {
@@ -87,18 +105,20 @@
     };
 
     Controller.getSidenavButtons = function() {
-      return [
-        Twitter.Display.generateLogo({
-          dataId: "twitter-widget",
-          width: "50"
-        }), Pictures.Display.generateLogo({
-          dataId: "pictures-widget",
-          width: "50"
-        }), Weather.Display.generateLogo({
-          dataId: "weather-widget",
-          width: "50"
-        })
-      ];
+      var widgets;
+      widgets = _.values(this.generateWrappedWidgets());
+      return _.map(widgets, function(wrapper) {
+        return wrapper.widgetLogo();
+      });
+    };
+
+    Controller.generateWrappedWidgets = function() {
+      return this.wrappedWidgets = {
+        pictures: this.wrapWidget(Pictures, "pictures", "a48194703ae0d0d1055d6ded6c4c9869"),
+        weather: this.wrapWidget(Weather, "weather", "12ba191e2fec98ad"),
+        twitter: this.wrapWidget(Twitter, "twitter", ""),
+        stock: this.wrapWidget(Stock, "stock", "")
+      };
     };
 
     return Controller;
@@ -108,7 +128,11 @@
 }).call(this);
 
 (function() {
+  var SPACES_PER_COLUMN;
+
   namespace('Dashboard');
+
+  SPACES_PER_COLUMN = 3;
 
   Dashboard.Display = (function() {
     function Display() {}
@@ -146,6 +170,39 @@
       return $('[data-id=side-nav]').html().length > 0;
     };
 
+    Display.generateAvailableSlotFor = function(size, widgetName) {
+      var col, dataId;
+      dataId = "" + widgetName + "-slot";
+      col = this.getAvailableColumn(size);
+      if (col) {
+        this.addWidgetContainerToColumn(dataId, col, size);
+        return "[data-id=" + dataId + "]";
+      }
+    };
+
+    Display.addWidgetContainerToColumn = function(dataId, col, size) {
+      $("[data-id=" + col + "]").append("<div data-id='" + dataId + "'></div>");
+      return this.slots[col] += size;
+    };
+
+    Display.getAvailableColumn = function(space) {
+      var colNames;
+      colNames = _.map(this.slots, function(currentSpaces, colName) {
+        if ((currentSpaces + space) <= SPACES_PER_COLUMN) {
+          return colName;
+        }
+      });
+      return _.find(colNames, function(colName) {
+        return colName;
+      });
+    };
+
+    Display.slots = {
+      col0: 0,
+      col1: 0,
+      col2: 0
+    };
+
     return Display;
 
   })();
@@ -154,5 +211,36 @@
 
 (function() {
 
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard');
+
+  Dashboard.WidgetWrapper = (function() {
+    function WidgetWrapper(config) {
+      this.widget = config.widget;
+      this.widgetApiKey = config.apiKey;
+      this.name = config.name;
+    }
+
+    WidgetWrapper.prototype.setupWidget = function() {
+      return this.widget.Controller.setupWidgetIn(this.container, this.widgetApiKey);
+    };
+
+    WidgetWrapper.prototype.isActive = false;
+
+    WidgetWrapper.prototype.widgetLogo = function() {
+      var dataId;
+      dataId = "" + this.name + "-widget";
+      return this.widget.Display.generateLogo({
+        dataId: dataId,
+        width: "50"
+      });
+    };
+
+    return WidgetWrapper;
+
+  })();
 
 }).call(this);

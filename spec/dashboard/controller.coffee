@@ -6,20 +6,27 @@ setupDashboardFixtures = ->
             <button data-id="pictures-widget">Pictures</button>
             <button data-id="weather-widget">Weather</button>
             <button data-id="stock-widget">Stock</button>
-            <div data-id="widget-display"></div>
+            <div data-id="widget-display">
+              <div data-id="col0"></div>
+              <div data-id="col1"></div>
+              <div data-id="col2"></div>
+            </div>
             """
 
 assertSidenavGetsLoaded = ->
   setFixtures "<image data-id='menu-button'/><div data-id='side-nav'></div>"
   Dashboard.Controller.bind()
   clickOn('[data-id=menu-button]')
-  expect($('[data-id=side-nav]')).not.toBeEmpty()
+  expect($('[data-id=side-nav]')).toContainElement('[data-id=pictures-widget]')
+  expect($('[data-id=side-nav]')).toContainElement('[data-id=weather-widget]')
+  expect($('[data-id=side-nav]')).toContainElement('[data-id=stock-widget]')
+  expect($('[data-id=side-nav]')).toContainElement('[data-id=twitter-widget]')
 
 
 describe "Dashboard.Controller", ->
   beforeEach ->
     setupDashboardFixtures()
-    Dashboard.Controller.bind()
+    Dashboard.Controller.initialize()
 
   afterEach ->
     $(document).unbind('click')
@@ -41,11 +48,6 @@ describe "Dashboard.Controller", ->
     clickOn('[data-id=pictures-widget]')
     expect($('[data-id=pictures-button]')).not.toBeInDOM()
 
-  it "loadForm binds the widget Controller to listen for clicks", ->
-    spy = spyOn(Weather.Controller, 'bind')
-    Dashboard.Controller.loadForm('weather', Weather.Controller)
-    expect(spy).toHaveBeenCalled()
-
   it "toggleSidenav displays the side-nav when the menu button is clicked", ->
     assertSidenavGetsLoaded()
 
@@ -54,7 +56,13 @@ describe "Dashboard.Controller", ->
     clickOn('[data-id=menu-button]')
     expect($('[data-id=side-nav]')).toBeEmpty()
 
-  it "getSidenavButtons returns an object containing the buttons for the desired widgets", ->
-    buttons = Dashboard.Controller.getSidenavButtons()
-    expect(buttons[0]).toBeMatchedBy("[data-id=twitter-widget]")
-    expect(buttons[1]).toBeMatchedBy("[data-id=pictures-widget]")
+  it "wrapWidget returns a new widgetWrapper", ->
+    wrapper = Dashboard.Controller.wrapWidget(Pictures, "pictures", "some-api-key")
+    expect(wrapper.name).toEqual("pictures")
+    expect(wrapper.widgetApiKey).toEqual("some-api-key")
+    expect(wrapper.widget).toEqual(Pictures)
+
+  it "wrappedWidgets has 4 widgets setup", ->
+    Dashboard.Controller.initialize()
+    widgets = _.keys(Dashboard.Controller.wrappedWidgets)
+    expect(widgets.length).toEqual(4)

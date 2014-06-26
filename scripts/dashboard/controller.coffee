@@ -1,11 +1,15 @@
 namespace('Dashboard')
 
 class Dashboard.Controller
+  @initialize: ->
+    @bind()
+    @generateWrappedWidgets()
+
   @bind: ->
-    $('[data-id=pictures-widget]').click(=> @setupWidget(Pictures.Controller, 'a48194703ae0d0d1055d6ded6c4c9869'))
-    $('[data-id=weather-widget]').click(=> @setupWidget(Weather.Controller, '12ba191e2fec98ad'))
-    $('[data-id=stock-widget]').click( =>  @setupWidget(Stock.Controller, null))
-    $('[data-id=twitter-widget]').click( => @setupWidget(Twitter.Controller, null))
+    $('[data-id=pictures-widget]').click(=> @checkWidget("pictures"))
+    $('[data-id=weather-widget]').click(=> @checkWidget("weather"))
+    $('[data-id=stock-widget]').click( =>  @checkWidget("stock"))
+    $('[data-id=twitter-widget]').click( => @checkWidget("twitter"))
     $('[data-id=menu-button]').click( => @toggleSidenav())
 
   @unbind: ->
@@ -19,13 +23,20 @@ class Dashboard.Controller
     @unbind()
     @bind()
 
-  @loadForm: (widget, controller) ->
-    form = Dashboard.Display.generateForm(widget)
-    Dashboard.Display.populateWidget(form)
-    controller.bind()
+  @wrapWidget: (widget, name, apiKey) ->
+    new Dashboard.WidgetWrapper({widget: widget, name: name, apiKey: apiKey})
 
-  @setupWidget: (controller, apiKey)->
-    controller.setupWidgetIn('[data-id=widget-display]', apiKey)
+  @checkWidget: (name) ->
+    wrapper = @wrappedWidgets[name]
+    if !wrapper.isActive
+      @setupWidget(wrapper)
+
+
+  @setupWidget: (wrappedWidget)->
+    container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name)
+    wrappedWidget.container = container
+    wrappedWidget.isActive = true
+    wrappedWidget.setupWidget()
 
   @toggleSidenav: ->
     if Dashboard.Display.isSidenavDisplayed()
@@ -36,8 +47,15 @@ class Dashboard.Controller
     @rebind()
 
   @getSidenavButtons: ->
-    [
-      Twitter.Display.generateLogo({dataId: "twitter-widget", width: "50"}),
-      Pictures.Display.generateLogo({dataId: "pictures-widget", width: "50"}),
-      Weather.Display.generateLogo({dataId: "weather-widget", width: "50"})
-    ]
+    widgets = _.values(@generateWrappedWidgets())
+    _.map(widgets, (wrapper) ->
+      wrapper.widgetLogo()
+    )
+
+  @generateWrappedWidgets: ->
+    @wrappedWidgets = {
+      pictures: @wrapWidget(Pictures, "pictures", "a48194703ae0d0d1055d6ded6c4c9869"),
+      weather: @wrapWidget(Weather, "weather", "12ba191e2fec98ad"),
+      twitter: @wrapWidget(Twitter, "twitter", ""),
+      stock: @wrapWidget(Stock, "stock", "")
+    }
