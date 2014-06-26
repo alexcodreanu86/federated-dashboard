@@ -8,8 +8,8 @@ class Dashboard.Display
     capitalized = widget[0].toUpperCase() + widget.slice(1)
     new EJS({url: 'scripts/dashboard/templates/form.ejs'}).render({widget: widget, capitalized: capitalized})
 
-  @showSidenav: ->
-    contentHtml = new EJS({url: 'scripts/dashboard/templates/sidenavContent.ejs'}).render({})
+  @showSidenav: (buttons) ->
+    contentHtml = new EJS({url: 'scripts/dashboard/templates/sidenavContent.ejs'}).render({buttons: buttons})
     $('[data-id=side-nav]').html(contentHtml)
 
   @removeSidenav: ->

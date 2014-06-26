@@ -9,12 +9,11 @@
     "bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js",
     "bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js",
     "bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js",
+    "bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js",
     "bower_components/jquery/dist/jquery.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
     ".tmp/scripts/dashboard/*.js",
-    ".tmp/scripts/twitter/*.js",
-    ".tmp/spec/dashboard/*.js",
-    ".tmp/spec/twitter/*.js"
+    ".tmp/spec/dashboard/*.js"
   ],
   "launchers":{
     "Node": {

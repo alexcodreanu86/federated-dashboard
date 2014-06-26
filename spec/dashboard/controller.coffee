@@ -53,3 +53,8 @@ describe "Dashboard.Controller", ->
     assertSidenavGetsLoaded()
     clickOn('[data-id=menu-button]')
     expect($('[data-id=side-nav]')).toBeEmpty()
+
+  it "getSidenavButtons returns an object containing the buttons for the desired widgets", ->
+    buttons = Dashboard.Controller.getSidenavButtons()
+    expect(buttons[0]).toBeMatchedBy("[data-id=twitter-widget]")
+    expect(buttons[1]).toBeMatchedBy("[data-id=pictures-widget]")

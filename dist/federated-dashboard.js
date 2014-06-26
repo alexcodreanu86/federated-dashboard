@@ -41,7 +41,7 @@
       })(this));
       $('[data-id=twitter-widget]').click((function(_this) {
         return function() {
-          return _this.loadForm('twitter', Twitter.Controller);
+          return _this.setupWidget(Twitter.Controller, null);
         };
       })(this));
       return $('[data-id=menu-button]').click((function(_this) {
@@ -76,12 +76,29 @@
     };
 
     Controller.toggleSidenav = function() {
+      var buttons;
       if (Dashboard.Display.isSidenavDisplayed()) {
         Dashboard.Display.removeSidenav();
       } else {
-        Dashboard.Display.showSidenav();
+        buttons = this.getSidenavButtons();
+        Dashboard.Display.showSidenav(buttons);
       }
       return this.rebind();
+    };
+
+    Controller.getSidenavButtons = function() {
+      return [
+        Twitter.Display.generateLogo({
+          dataId: "twitter-widget",
+          width: "50"
+        }), Pictures.Display.generateLogo({
+          dataId: "pictures-widget",
+          width: "50"
+        }), Weather.Display.generateLogo({
+          dataId: "weather-widget",
+          width: "50"
+        })
+      ];
     };
 
     return Controller;
@@ -111,11 +128,13 @@
       });
     };
 
-    Display.showSidenav = function() {
+    Display.showSidenav = function(buttons) {
       var contentHtml;
       contentHtml = new EJS({
         url: 'scripts/dashboard/templates/sidenavContent.ejs'
-      }).render({});
+      }).render({
+        buttons: buttons
+      });
       return $('[data-id=side-nav]').html(contentHtml);
     };
 

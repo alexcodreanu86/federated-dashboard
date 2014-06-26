@@ -9,10 +9,11 @@ assertFormElementAreInDOM = ->
   expect($('[name=my-widget-search]')).toBeInDOM()
   expect($('[data-id=my-widget-button]')).toBeInDOM()
 
+buttons = Dashboard.Controller.getSidenavButtons()
+
 displaySidenav = ->
   setFixtures "<div data-id='side-nav'></div>"
-  Dashboard.Display.showSidenav()
-
+  Dashboard.Display.showSidenav(buttons)
 
 clickOn = (element) ->
   $(element).click()
