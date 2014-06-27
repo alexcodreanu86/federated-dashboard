@@ -34,9 +34,10 @@ class Dashboard.Controller
 
   @setupWidget: (wrappedWidget)->
     container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name)
-    wrappedWidget.container = container
-    wrappedWidget.isActive = true
-    wrappedWidget.setupWidget()
+    if container
+      wrappedWidget.container = container
+      wrappedWidget.isActive = true
+      wrappedWidget.setupWidget()
 
   @toggleSidenav: ->
     if Dashboard.Display.isSidenavDisplayed()

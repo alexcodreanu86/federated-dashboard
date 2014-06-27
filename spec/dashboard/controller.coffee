@@ -22,6 +22,20 @@ assertSidenavGetsLoaded = ->
   expect($('[data-id=side-nav]')).toContainElement('[data-id=stock-widget]')
   expect($('[data-id=side-nav]')).toContainElement('[data-id=twitter-widget]')
 
+getWidget = (name) ->
+  Dashboard.Controller.wrappedWidgets[name]
+
+setWidgetStatus = (name, status) ->
+  getWidget(name).isActive = status
+
+resetController = ->
+  Dashboard.Controller.initialize()
+  resetSlots()
+
+resetSlots = ->
+  Dashboard.Display.slots.col0 = 0
+  Dashboard.Display.slots.col1 = 0
+  Dashboard.Display.slots.col2 = 0
 
 describe "Dashboard.Controller", ->
   beforeEach ->
@@ -63,6 +77,32 @@ describe "Dashboard.Controller", ->
     expect(wrapper.widget).toEqual(Pictures)
 
   it "wrappedWidgets has 4 widgets setup", ->
-    Dashboard.Controller.initialize()
+    resetController()
     widgets = _.keys(Dashboard.Controller.wrappedWidgets)
     expect(widgets.length).toEqual(4)
+
+  it "checkWidget sets up the widget if it is not active", ->
+    resetController()
+    spy = spyOn(Dashboard.Controller, 'setupWidget')
+    Dashboard.Controller.checkWidget("pictures")
+    expect(spy).toHaveBeenCalled()
+
+  it "checkWidget does not set up the widget if it is active already", ->
+    resetController()
+    spy = spyOn(Dashboard.Controller, 'setupWidget')
+    setWidgetStatus("pictures", true)
+    Dashboard.Controller.checkWidget("pictures")
+    expect(spy).not.toHaveBeenCalled()
+
+  it "setupWidget is setting the widget if a container is available for it", ->
+    resetController()
+    picturesWidget = getWidget("pictures")
+    Dashboard.Controller.setupWidget(picturesWidget)
+    expect(picturesWidget.isActive).toBe(true)
+
+  it "setupWidget doesn't set the widget if a container is not available for it", ->
+    resetController()
+    spyOn(Dashboard.Display, "generateAvailableSlotFor").and.returnValue(undefined)
+    picturesWidget = getWidget("pictures")
+    Dashboard.Controller.setupWidget(picturesWidget)
+    expect(picturesWidget.isActive).toBe(false)

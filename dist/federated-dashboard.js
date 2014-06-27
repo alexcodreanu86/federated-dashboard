@@ -88,9 +88,12 @@
     Controller.setupWidget = function(wrappedWidget) {
       var container;
       container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name);
-      wrappedWidget.container = container;
-      wrappedWidget.isActive = true;
-      return wrappedWidget.setupWidget();
+      console.log(container === void 0);
+      if (container) {
+        wrappedWidget.container = container;
+        wrappedWidget.isActive = true;
+        return wrappedWidget.setupWidget();
+      }
     };
 
     Controller.toggleSidenav = function() {
