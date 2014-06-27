@@ -23,29 +23,29 @@ class Dashboard.Controller
     @unbind()
     @bind()
 
-  @wrapWidget: (widget, name, apiKey) ->
-    new Dashboard.WidgetWrapper({widget: widget, name: name, apiKey: apiKey})
-
   @checkWidget: (name) ->
     wrapper = @wrappedWidgets[name]
     if !wrapper.isActive
       @setupWidget(wrapper)
 
-
   @setupWidget: (wrappedWidget)->
-    container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name)
-    if container
-      wrappedWidget.container = container
-      wrappedWidget.isActive = true
-      wrappedWidget.setupWidget()
+    containerInfo = Dashboard.Display.generateAvailableSlotFor(wrappedWidget)
+    if containerInfo
+      wrappedWidget.setupWidgetIn(containerInfo)
 
   @toggleSidenav: ->
     if Dashboard.Display.isSidenavDisplayed()
-      Dashboard.Display.removeSidenav()
+      @removeSidenav()
     else
-      buttons = @getSidenavButtons()
-      Dashboard.Display.showSidenav(buttons)
+      @showSidenav()
     @rebind()
+
+  @removeSidenav: ->
+    Dashboard.Display.removeSidenav()
+
+  @showSidenav: ->
+    buttons = @getSidenavButtons()
+    Dashboard.Display.showSidenav(buttons)
 
   @getSidenavButtons: ->
     widgets = _.values(@generateWrappedWidgets())
@@ -55,8 +55,16 @@ class Dashboard.Controller
 
   @generateWrappedWidgets: ->
     @wrappedWidgets = {
-      pictures: @wrapWidget(Pictures, "pictures", "a48194703ae0d0d1055d6ded6c4c9869"),
-      weather: @wrapWidget(Weather, "weather", "12ba191e2fec98ad"),
-      twitter: @wrapWidget(Twitter, "twitter", ""),
-      stock: @wrapWidget(Stock, "stock", "")
+      pictures: @wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
+      weather: @wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
+      twitter: @wrapWidget(Twitter, "twitter", 2, ""),
+      stock: @wrapWidget(Stock, "stock", 2, "")
     }
+
+  @wrapWidget: (widget, name, numberOfSlots, apiKey) ->
+    new Dashboard.WidgetWrapper({widget: widget, name: name, numberOfSlots: numberOfSlots, apiKey: apiKey})
+
+  @closeWidget: (wrapperName) ->
+    wrappedWidget = @wrappedWidgets[wrapperName]
+    Dashboard.Display.emptySlotsInColumn(wrappedWidget.numberOfSlots, wrappedWidget.containerColumn)
+    wrappedWidget.closeWidget()

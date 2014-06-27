@@ -3,12 +3,18 @@ namespace('Dashboard')
 SPACES_PER_COLUMN = 3
 
 class Dashboard.Display
+
+  @takenSlots: {
+    col0: 0,
+    col1: 0,
+    col2: 0
+  }
+
+  @emptySlotsInColumn: (slotsCount, colName) ->
+    @takenSlots[colName] -= slotsCount
+
   @populateWidget: (html) ->
     $('[data-id=widget-display]').html(html)
-
-  @generateForm: (widget) ->
-    capitalized = widget[0].toUpperCase() + widget.slice(1)
-    new EJS({url: 'scripts/dashboard/templates/form.ejs'}).render({widget: widget, capitalized: capitalized})
 
   @showSidenav: (buttons) ->
     contentHtml = new EJS({url: 'scripts/dashboard/templates/sidenavContent.ejs'}).render({buttons: buttons})
@@ -20,12 +26,13 @@ class Dashboard.Display
   @isSidenavDisplayed: ->
     $('[data-id=side-nav]').html().length > 0
 
-  @generateAvailableSlotFor: (size, widgetName) ->
-    dataId = "#{widgetName}-slot"
+  @generateAvailableSlotFor: (widgetWrapper) ->
+    dataId = "#{widgetWrapper.name}-slot"
+    size = widgetWrapper.numberOfSlots
     col = @getAvailableColumn(size)
     if col
       @addWidgetContainerToColumn(dataId, col, size)
-      "[data-id=#{dataId}]"
+      ["[data-id=#{dataId}]", col]
 
   @addWidgetContainerToColumn: (dataId, col, size) ->
     $("[data-id=#{col}]").append("<div data-id='#{dataId}'></div>")
@@ -37,9 +44,3 @@ class Dashboard.Display
         return colName
     )
     _.find(colNames, (colName) -> colName)
-
-  @takenSlots: {
-    col0: 0,
-    col1: 0,
-    col2: 0
-  }

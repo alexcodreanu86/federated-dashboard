@@ -71,9 +71,10 @@ describe "Dashboard.Controller", ->
     expect($('[data-id=side-nav]')).toBeEmpty()
 
   it "wrapWidget returns a new widgetWrapper", ->
-    wrapper = Dashboard.Controller.wrapWidget(Pictures, "pictures", "some-api-key")
+    wrapper = Dashboard.Controller.wrapWidget(Pictures, "pictures", 3, "some-api-key")
     expect(wrapper.name).toEqual("pictures")
     expect(wrapper.widgetApiKey).toEqual("some-api-key")
+    expect(wrapper.numberOfSlots).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
   it "wrappedWidgets has 4 widgets setup", ->
@@ -106,3 +107,21 @@ describe "Dashboard.Controller", ->
     picturesWidget = getWidget("pictures")
     Dashboard.Controller.setupWidget(picturesWidget)
     expect(picturesWidget.isActive).toBe(false)
+
+  it "closeWidget is closing the widget that is given to it", ->
+    resetController()
+    setFixtures(sandbox())
+    picturesWrapped = Dashboard.Controller.wrappedWidgets.pictures
+    picturesWrapped.setupWidgetIn("#sandbox")
+    expect(picturesWrapped.isActive).toBe(true)
+    Dashboard.Controller.closeWidget("pictures")
+    expect(picturesWrapped.isActive).toBe(false)
+
+  it "closeWidget updates the view slots", ->
+    setupDashboardFixtures()
+    resetController()
+    clickOn("[data-id=pictures-widget]")
+    expect(Dashboard.Display.takenSlots.col0).toEqual(3)
+    Dashboard.Controller.closeWidget("pictures")
+    expect(Dashboard.Display.takenSlots.col0).toEqual(0)
+    resetSlots()
