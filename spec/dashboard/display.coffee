@@ -20,9 +20,9 @@ clickOn = (element) ->
   $(element).click()
 
 resetSlots = ->
-  Dashboard.Display.slots.col0 = 0
-  Dashboard.Display.slots.col1 = 0
-  Dashboard.Display.slots.col2 = 0
+  Dashboard.Display.takenSlots.col0 = 0
+  Dashboard.Display.takenSlots.col1 = 0
+  Dashboard.Display.takenSlots.col2 = 0
 
 describe 'Dashboard.Display', ->
 
@@ -60,9 +60,9 @@ describe 'Dashboard.Display', ->
 
   it "slots are empty on in the beggining", ->
     resetSlots()
-    expect(Dashboard.Display.slots.col0).toEqual(0)
-    expect(Dashboard.Display.slots.col1).toEqual(0)
-    expect(Dashboard.Display.slots.col2).toEqual(0)
+    expect(Dashboard.Display.takenSlots.col0).toEqual(0)
+    expect(Dashboard.Display.takenSlots.col1).toEqual(0)
+    expect(Dashboard.Display.takenSlots.col2).toEqual(0)
 
   it "generateAvailableSlotFor will append a new div in the first col when they are all emtpy",->
     setupDashboardFixtures()
@@ -71,28 +71,37 @@ describe 'Dashboard.Display', ->
 
   it "generateAvailableSlotFor will append a new div in the second col when the first one doesn't have enough space", ->
     setupDashboardFixtures()
-    Dashboard.Display.slots.col0 = 3
+    Dashboard.Display.takenSlots.col0 = 3
     Dashboard.Display.generateAvailableSlotFor(3, "pictures")
     expect($('[data-id=col1]')).toContainElement('[data-id=pictures-slot]')
-    expect(Dashboard.Display.slots.col1).toEqual(3)
+    expect(Dashboard.Display.takenSlots.col1).toEqual(3)
 
   it "generateAvailableSlotFor will append a new div in the third col when the first one doesn't have enough space", ->
     setupDashboardFixtures()
-    Dashboard.Display.slots.col0 = 3
-    Dashboard.Display.slots.col1 = 3
+    Dashboard.Display.takenSlots.col0 = 3
+    Dashboard.Display.takenSlots.col1 = 3
     Dashboard.Display.generateAvailableSlotFor(3, "pictures")
     expect($('[data-id=col2]')).toContainElement('[data-id=pictures-slot]')
-    expect(Dashboard.Display.slots.col1).toEqual(3)
+    expect(Dashboard.Display.takenSlots.col1).toEqual(3)
 
   it "generateAvailableSlotFor will update the slots inside the the col it appends a widget", ->
     setupDashboardFixtures()
     resetSlots()
     Dashboard.Display.generateAvailableSlotFor(3, "pictures")
-    expect(Dashboard.Display.slots.col0).toEqual(3)
+    expect(Dashboard.Display.takenSlots.col0).toEqual(3)
 
   it "generateAvailableSlotFor will append a new div in the first col when it has enough space", ->
     setupDashboardFixtures()
-    Dashboard.Display.slots.col0 = 1
+    Dashboard.Display.takenSlots.col0 = 1
     Dashboard.Display.generateAvailableSlotFor(2, "pictures")
     expect($('[data-id=col0]')).toContainElement('[data-id=pictures-slot]')
-    expect(Dashboard.Display.slots.col0).toEqual(3)
+    expect(Dashboard.Display.takenSlots.col0).toEqual(3)
+
+  it "generateAvailableSlotFor will not append any div if container can't fit anywhere", ->
+    setupDashboardFixtures()
+    Dashboard.Display.takenSlots.col0 = 1
+    Dashboard.Display.generateAvailableSlotFor(4, "pictures")
+    expect($('[data-id=col0]')).toBeEmpty()
+    expect($('[data-id=col1]')).toBeEmpty()
+    expect($('[data-id=col2]')).toBeEmpty()
+

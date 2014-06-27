@@ -88,7 +88,6 @@
     Controller.setupWidget = function(wrappedWidget) {
       var container;
       container = Dashboard.Display.generateAvailableSlotFor(2, wrappedWidget.name);
-      console.log(container === void 0);
       if (container) {
         wrappedWidget.container = container;
         wrappedWidget.isActive = true;
@@ -185,12 +184,12 @@
 
     Display.addWidgetContainerToColumn = function(dataId, col, size) {
       $("[data-id=" + col + "]").append("<div data-id='" + dataId + "'></div>");
-      return this.slots[col] += size;
+      return this.takenSlots[col] += size;
     };
 
     Display.getAvailableColumn = function(space) {
       var colNames;
-      colNames = _.map(this.slots, function(currentSpaces, colName) {
+      colNames = _.map(this.takenSlots, function(currentSpaces, colName) {
         if ((currentSpaces + space) <= SPACES_PER_COLUMN) {
           return colName;
         }
@@ -200,7 +199,7 @@
       });
     };
 
-    Display.slots = {
+    Display.takenSlots = {
       col0: 0,
       col1: 0,
       col2: 0

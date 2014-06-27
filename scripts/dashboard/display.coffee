@@ -23,22 +23,22 @@ class Dashboard.Display
   @generateAvailableSlotFor: (size, widgetName) ->
     dataId = "#{widgetName}-slot"
     col = @getAvailableColumn(size)
-    if col 
+    if col
       @addWidgetContainerToColumn(dataId, col, size)
       "[data-id=#{dataId}]"
 
   @addWidgetContainerToColumn: (dataId, col, size) ->
     $("[data-id=#{col}]").append("<div data-id='#{dataId}'></div>")
-    @slots[col] += size
+    @takenSlots[col] += size
 
   @getAvailableColumn: (space) ->
-    colNames = _.map(@slots, (currentSpaces, colName) ->
+    colNames = _.map(@takenSlots, (currentSpaces, colName) ->
       if ((currentSpaces + space) <= SPACES_PER_COLUMN)
         return colName
     )
     _.find(colNames, (colName) -> colName)
 
-  @slots: {
+  @takenSlots: {
     col0: 0,
     col1: 0,
     col2: 0

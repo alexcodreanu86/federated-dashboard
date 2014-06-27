@@ -33,9 +33,9 @@ resetController = ->
   resetSlots()
 
 resetSlots = ->
-  Dashboard.Display.slots.col0 = 0
-  Dashboard.Display.slots.col1 = 0
-  Dashboard.Display.slots.col2 = 0
+  Dashboard.Display.takenSlots.col0 = 0
+  Dashboard.Display.takenSlots.col1 = 0
+  Dashboard.Display.takenSlots.col2 = 0
 
 describe "Dashboard.Controller", ->
   beforeEach ->
