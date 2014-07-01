@@ -1,0 +1,14 @@
+<div id="widgets-container">
+  <ul id="widgets-menu">
+    <% for (var i = 0; i < buttons.length; i++) { %>
+
+      <% if (buttons[i].isActive) { %>
+      <li class='active'>
+      <% } else { %>
+      <li>
+      <% } %>
+        <%= buttons[i].html %>
+      </li>
+    <% } %>
+  </ul>
+</div>
