@@ -21,11 +21,13 @@ class Dashboard.Display
 
   @setSidenavButtonActive: (widgetWrapper) ->
     button = "[data-id=#{widgetWrapper.name}-widget]"
+    $(button).parent().removeClass('inactive')
     $(button).parent().addClass('active')
 
   @setSidenavButtonInactive: (widgetWrapper) ->
     button = "[data-id=#{widgetWrapper.name}-widget]"
     $(button).parent().removeClass('active')
+    $(button).parent().addClass('inactive')
 
   @removeSidenav: ->
     $('[data-id=side-nav]').empty()

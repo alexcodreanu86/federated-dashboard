@@ -9,6 +9,13 @@
   background: steelblue;
 }
 
+.inactive {
+  background: #1DB65A;
+  -webkit-box-shadow: -7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    -7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow:         -7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
 div.widget-col {
   display: inline-block;
   margin: 1em 0.5em;
@@ -20,10 +27,13 @@ div.widget-col {
 
 div[data-id=side-nav] {
   display: inline-block;
+  height: 600px;
+  overflow: scroll;
 }
 
 [data-id=widget-display] {
   display:inline;
+  margin: 3px;
 }
 
 [data-id=menu-button] {
@@ -32,4 +42,8 @@ div[data-id=side-nav] {
 
 #widgets-menu {
   list-style-type: none;
+}
+
+#widgets-menu li{
+  margin: 3px;
 }

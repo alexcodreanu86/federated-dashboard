@@ -184,13 +184,15 @@
     Display.setSidenavButtonActive = function(widgetWrapper) {
       var button;
       button = "[data-id=" + widgetWrapper.name + "-widget]";
+      $(button).parent().removeClass('inactive');
       return $(button).parent().addClass('active');
     };
 
     Display.setSidenavButtonInactive = function(widgetWrapper) {
       var button;
       button = "[data-id=" + widgetWrapper.name + "-widget]";
-      return $(button).parent().removeClass('active');
+      $(button).parent().removeClass('active');
+      return $(button).parent().addClass('inactive');
     };
 
     Display.removeSidenav = function() {
