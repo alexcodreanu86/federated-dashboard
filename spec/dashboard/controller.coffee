@@ -47,17 +47,17 @@ describe "Dashboard.Controller", ->
   afterEach ->
     $(document).unbind('click')
 
-  it "bind displays the form for pictures when the pictures button is clicked", ->
+  it "bindSidenavButtons displays the form for pictures when the pictures button is clicked", ->
     setupAndBindController()
     clickOn('[data-id=pictures-widget]')
     expect($('[data-id=pictures-button]')).toBeInDOM()
 
-  it "bind displays the form for weather when the weather button is clicked", ->
+  it "bindSidenavButtons displays the form for weather when the weather button is clicked", ->
     setupAndBindController()
     clickOn('[data-id=weather-widget]')
     expect($('[data-id=weather-button]')).toBeInDOM()
 
-  it "bind displays the form for stocks when the stock button is clicked", ->
+  it "bindSidenavButtons displays the form for stocks when the stock button is clicked", ->
     setupAndBindController()
     clickOn('[data-id=stock-widget]')
     expect($('[data-id=stock-button]')).toBeInDOM()
@@ -69,7 +69,6 @@ describe "Dashboard.Controller", ->
     expect('[data-name=pictures].close-widget').toBeInDOM()
     clickOn('[data-name=pictures].close-widget')
     expect($('[data-id=pictures-slot]')).not.toBeInDOM()
-
 
   it "unbind unbinds all click bindings", ->
     setupAndBindController()
