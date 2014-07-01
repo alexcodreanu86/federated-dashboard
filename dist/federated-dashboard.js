@@ -24,11 +24,21 @@
     function Controller() {}
 
     Controller.initialize = function() {
-      this.bind();
-      return this.generateWrappedWidgets();
+      this.bindMenuButton();
+      this.bindSidenavButtons();
+      Dashboard.WidgetManager.generateWrappers();
+      return this.bindClosingWidgets();
     };
 
-    Controller.bind = function() {
+    Controller.bindClosingWidgets = function() {
+      return $(document).on('click', '.close-widget', (function(_this) {
+        return function(event) {
+          return _this.getWidgetToBeClosed(event);
+        };
+      })(this));
+    };
+
+    Controller.bindSidenavButtons = function() {
       $('[data-id=pictures-widget]').click((function(_this) {
         return function() {
           return _this.checkWidget("pictures");
@@ -44,14 +54,9 @@
           return _this.checkWidget("stock");
         };
       })(this));
-      $('[data-id=twitter-widget]').click((function(_this) {
+      return $('[data-id=twitter-widget]').click((function(_this) {
         return function() {
           return _this.checkWidget("twitter");
-        };
-      })(this));
-      return $('[data-id=menu-button]').click((function(_this) {
-        return function() {
-          return _this.toggleSidenav();
         };
       })(this));
     };
@@ -60,18 +65,31 @@
       $('[data-id=pictures-widget]').unbind('click');
       $('[data-id=weather-widget]').unbind('click');
       $('[data-id=stock-widget]').unbind('click');
-      $('[data-id=twitter-widget]').unbind('click');
-      return $('[data-id=menu-button]').unbind('click');
+      return $('[data-id=twitter-widget]').unbind('click');
+    };
+
+    Controller.bindMenuButton = function() {
+      return $('[data-id=menu-button]').click((function(_this) {
+        return function() {
+          return _this.toggleSidenav();
+        };
+      })(this));
     };
 
     Controller.rebind = function() {
       this.unbind();
-      return this.bind();
+      return this.bindSidenavButtons();
+    };
+
+    Controller.getWidgetToBeClosed = function(event) {
+      var wrapperName;
+      wrapperName = $(event.currentTarget).attr('data-name');
+      return this.closeWidget(wrapperName);
     };
 
     Controller.checkWidget = function(name) {
       var wrapper;
-      wrapper = this.wrappedWidgets[name];
+      wrapper = Dashboard.WidgetManager.wrappers[name];
       if (!wrapper.isActive) {
         return this.setupWidget(wrapper);
       }
@@ -81,8 +99,19 @@
       var containerInfo;
       containerInfo = Dashboard.Display.generateAvailableSlotFor(wrappedWidget);
       if (containerInfo) {
-        return wrappedWidget.setupWidgetIn(containerInfo);
+        Dashboard.Display.setSidenavButtonActive(wrappedWidget);
+        wrappedWidget.setupWidgetIn(containerInfo);
+        containerInfo = Dashboard.WidgetManager.getContainerAndNameOf(wrappedWidget);
+        return Dashboard.Display.addButtonToContainer(containerInfo);
       }
+    };
+
+    Controller.closeWidget = function(wrapperName) {
+      var wrappedWidget;
+      wrappedWidget = Dashboard.WidgetManager.wrappers[wrapperName];
+      Dashboard.Display.emptySlotsInColumn(wrappedWidget.numberOfSlots, wrappedWidget.containerColumn);
+      Dashboard.Display.setSidenavButtonInactive(wrappedWidget);
+      return wrappedWidget.closeWidget();
     };
 
     Controller.toggleSidenav = function() {
@@ -95,46 +124,21 @@
     };
 
     Controller.removeSidenav = function() {
-      return Dashboard.Display.removeSidenav();
+      Dashboard.Display.removeSidenav();
+      return Dashboard.Display.removeClosingButtons();
     };
 
     Controller.showSidenav = function() {
       var buttons;
-      buttons = this.getSidenavButtons();
-      return Dashboard.Display.showSidenav(buttons);
+      buttons = Dashboard.WidgetManager.getSidenavButtons();
+      Dashboard.Display.showSidenav(buttons);
+      return this.enterEditMode();
     };
 
-    Controller.getSidenavButtons = function() {
-      var widgets;
-      widgets = _.values(this.generateWrappedWidgets());
-      return _.map(widgets, function(wrapper) {
-        return wrapper.widgetLogo();
-      });
-    };
-
-    Controller.generateWrappedWidgets = function() {
-      return this.wrappedWidgets = {
-        pictures: this.wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
-        weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
-        twitter: this.wrapWidget(Twitter, "twitter", 2, ""),
-        stock: this.wrapWidget(Stock, "stock", 2, "")
-      };
-    };
-
-    Controller.wrapWidget = function(widget, name, numberOfSlots, apiKey) {
-      return new Dashboard.WidgetWrapper({
-        widget: widget,
-        name: name,
-        numberOfSlots: numberOfSlots,
-        apiKey: apiKey
-      });
-    };
-
-    Controller.closeWidget = function(wrapperName) {
-      var wrappedWidget;
-      wrappedWidget = this.wrappedWidgets[wrapperName];
-      Dashboard.Display.emptySlotsInColumn(wrappedWidget.numberOfSlots, wrappedWidget.containerColumn);
-      return wrappedWidget.closeWidget();
+    Controller.enterEditMode = function() {
+      var activeWidgetsInfo;
+      activeWidgetsInfo = Dashboard.WidgetManager.getActiveWidgetsData();
+      return Dashboard.Display.addClosingButtonsFor(activeWidgetsInfo);
     };
 
     return Controller;
@@ -177,6 +181,18 @@
       return $('[data-id=side-nav]').html(contentHtml);
     };
 
+    Display.setSidenavButtonActive = function(widgetWrapper) {
+      var button;
+      button = "[data-id=" + widgetWrapper.name + "-widget]";
+      return $(button).parent().addClass('active');
+    };
+
+    Display.setSidenavButtonInactive = function(widgetWrapper) {
+      var button;
+      button = "[data-id=" + widgetWrapper.name + "-widget]";
+      return $(button).parent().removeClass('active');
+    };
+
     Display.removeSidenav = function() {
       return $('[data-id=side-nav]').empty();
     };
@@ -192,12 +208,15 @@
       col = this.getAvailableColumn(size);
       if (col) {
         this.addWidgetContainerToColumn(dataId, col, size);
-        return ["[data-id=" + dataId + "]", col];
+        return {
+          containerName: "[data-id=" + dataId + "]",
+          containerColumn: col
+        };
       }
     };
 
     Display.addWidgetContainerToColumn = function(dataId, col, size) {
-      $("[data-id=" + col + "]").append("<div data-id='" + dataId + "'></div>");
+      $("[data-id=" + col + "]").append("<div class='widget' data-id='" + dataId + "'></div>");
       return this.takenSlots[col] += size;
     };
 
@@ -213,6 +232,20 @@
       });
     };
 
+    Display.addClosingButtonsFor = function(activeWidgetsInfo) {
+      return _.each(activeWidgetsInfo, this.addButtonToContainer);
+    };
+
+    Display.addButtonToContainer = function(widgetInfo) {
+      var button;
+      button = "<button class='close-widget' data-name=" + widgetInfo.name + ">X</button>";
+      return $(widgetInfo.container).prepend(button);
+    };
+
+    Display.removeClosingButtons = function() {
+      return $('.close-widget').remove();
+    };
+
     return Display;
 
   })();
@@ -220,18 +253,66 @@
 }).call(this);
 
 (function() {
+  namespace("Dashboard");
 
+  Dashboard.WidgetManager = (function() {
+    function WidgetManager() {}
+
+    WidgetManager.wrapWidget = function(widget, name, numberOfSlots, apiKey) {
+      return new Dashboard.WidgetWrapper({
+        widget: widget,
+        name: name,
+        numberOfSlots: numberOfSlots,
+        apiKey: apiKey
+      });
+    };
+
+    WidgetManager.generateWrappers = function() {
+      return this.wrappers = {
+        pictures: this.wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
+        weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
+        twitter: this.wrapWidget(Twitter, "twitter", 2, ""),
+        stock: this.wrapWidget(Stock, "stock", 2, "")
+      };
+    };
+
+    WidgetManager.getActiveWidgets = function() {
+      return _.filter(Dashboard.WidgetManager.wrappers, function(widget) {
+        return widget.isActive;
+      });
+    };
+
+    WidgetManager.getSidenavButtons = function() {
+      var widgets;
+      widgets = _.values(Dashboard.WidgetManager.wrappers);
+      return _.map(widgets, function(wrapper) {
+        return wrapper.widgetLogo();
+      });
+    };
+
+    WidgetManager.getActiveWidgetsData = function() {
+      var activeWidgets;
+      activeWidgets = this.getActiveWidgets();
+      return _.map(activeWidgets, this.getContainerAndNameOf);
+    };
+
+    WidgetManager.getContainerAndNameOf = function(wrapper) {
+      return {
+        container: wrapper.containerName,
+        name: wrapper.name
+      };
+    };
+
+    return WidgetManager;
+
+  })();
 
 }).call(this);
 
 (function() {
-  var INDEX_OF_CONTAINER_COLUMN, INDEX_OF_CONTAINER_NAME, WIDGET_LOGO_WIDTH;
+  var WIDGET_LOGO_WIDTH;
 
   namespace('Dashboard');
-
-  INDEX_OF_CONTAINER_NAME = 0;
-
-  INDEX_OF_CONTAINER_COLUMN = 1;
 
   WIDGET_LOGO_WIDTH = "50";
 
@@ -246,24 +327,35 @@
     }
 
     WidgetWrapper.prototype.setupWidgetIn = function(containerInfo) {
-      this.containerName = containerInfo[INDEX_OF_CONTAINER_NAME];
-      this.containerColumn = containerInfo[INDEX_OF_CONTAINER_COLUMN];
+      this.containerName = containerInfo.containerName;
+      this.containerColumn = containerInfo.containerColumn;
       this.isActive = true;
       return this.widget.Controller.setupWidgetIn(this.containerName, this.widgetApiKey);
     };
 
     WidgetWrapper.prototype.widgetLogo = function() {
-      var dataId;
+      var button, dataId;
       dataId = "" + this.name + "-widget";
-      return this.widget.Display.generateLogo({
+      button = this.widget.Display.generateLogo({
         dataId: dataId,
         width: WIDGET_LOGO_WIDTH
       });
+      return {
+        html: button,
+        isActive: this.isActive
+      };
     };
 
     WidgetWrapper.prototype.closeWidget = function() {
       $(this.containerName).remove();
       return this.isActive = false;
+    };
+
+    WidgetWrapper.prototype.addClosingButtonToContainer = function() {
+      var dataId;
+      dataId = "" + this.name + "-closing-button";
+      $(this.containerName).prepend("<button data-id='" + dataId + "'>X</button>");
+      return dataId;
     };
 
     return WidgetWrapper;
