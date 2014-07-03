@@ -257,6 +257,55 @@
 (function() {
   namespace("Dashboard");
 
+  Dashboard.Draggable = (function() {
+    function Draggable() {}
+
+    Draggable.initialize = function() {
+      return $('[data-id=widgets-menu] li').draggable({
+        helper: 'clone',
+        start: (function(_this) {
+          return function() {
+            return _this.startedDragging(event);
+          };
+        })(this),
+        stop: (function(_this) {
+          return function() {
+            return _this.stoppedDragging();
+          };
+        })(this)
+      });
+    };
+
+    Draggable.startedDragging = function(event) {
+      console.log(event);
+      return console.log('started dragging');
+    };
+
+    Draggable.stoppedDragging = function() {
+      return console.log('stopped dragging');
+    };
+
+    Draggable.dropProcessor = function() {
+      return $('.widget-col').droppable({
+        accept: '[data-id=widgets-menu] li',
+        activeClass: 'active-droppable',
+        hoverClass: 'hover-droppable',
+        drop: function(event) {
+          console.log($($(event.toElement.outerHTML)[0]).attr('data-id'));
+          return $(this).append("<h1>Hello</h1>");
+        }
+      });
+    };
+
+    return Draggable;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace("Dashboard");
+
   Dashboard.WidgetManager = (function() {
     function WidgetManager() {}
 
