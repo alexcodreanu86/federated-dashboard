@@ -1,8 +1,8 @@
-namespace("Dashboard")
+namespace("Dashboard.Widgets")
 
-class Dashboard.WidgetManager
+class Dashboard.Widgets.Manager
   @wrapWidget: (widget, name, numberOfSlots, apiKey) ->
-    new Dashboard.WidgetWrapper({widget: widget, name: name, numberOfSlots: numberOfSlots, apiKey: apiKey})
+    new Dashboard.Widgets.Wrapper({widget: widget, name: name, numberOfSlots: numberOfSlots, apiKey: apiKey})
 
   @generateWrappers: ->
     @wrappers = {
@@ -13,12 +13,12 @@ class Dashboard.WidgetManager
     }
 
   @getActiveWidgets: ->
-    _.filter(Dashboard.WidgetManager.wrappers, (widget) ->
+    _.filter(Dashboard.Widgets.Manager.wrappers, (widget) ->
       widget.isActive
     )
 
   @getSidenavButtons: ->
-    widgets = _.values(Dashboard.WidgetManager.wrappers)
+    widgets = _.values(Dashboard.Widgets.Manager.wrappers)
     _.map(widgets, (wrapper) ->
       wrapper.widgetLogo()
     )

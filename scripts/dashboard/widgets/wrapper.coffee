@@ -1,8 +1,8 @@
-namespace('Dashboard')
+namespace('Dashboard.Widgets')
 
-WIDGET_LOGO_WIDTH = "50"
+class Dashboard.Widgets.Wrapper
+  WIDGET_LOGO_WIDTH = "50"
 
-class Dashboard.WidgetWrapper
   isActive: false
 
   constructor: (config) ->
@@ -22,11 +22,10 @@ class Dashboard.WidgetWrapper
     button = @widget.Display.generateLogo({dataId: dataId, width: WIDGET_LOGO_WIDTH})
     {html: button, isActive: @isActive}
 
-  closeWidget: ->
+  deactivateWidget: ->
     $(@containerName).remove()
     @isActive = false
 
   addClosingButtonToContainer: ->
     dataId = "#{@name}-closing-button"
     $(@containerName).prepend("<button data-id='#{dataId}'>X</button>")
-    dataId

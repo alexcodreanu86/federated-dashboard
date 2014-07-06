@@ -12,8 +12,8 @@
     "bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js",
     "bower_components/jquery/dist/jquery.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
-    ".tmp/scripts/dashboard/*.js",
-    ".tmp/spec/dashboard/*.js"
+    ".tmp/scripts/dashboard/**/*.js",
+    ".tmp/spec/dashboard/**/*.js"
   ],
   "launchers":{
     "Node": {

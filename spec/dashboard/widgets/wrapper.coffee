@@ -17,9 +17,9 @@ containerInfo = {
   containerColumn: "col0"
 }
 
-describe "Dashboard.WidgetWrapper", ->
+describe "Dashboard.Widgets.Wrapper", ->
   beforeEach ->
-    wrapper = new Dashboard.WidgetWrapper(widgetConfig)
+    wrapper = new Dashboard.Widgets.Wrapper(widgetConfig)
 
   it "widget returns the widget it is initialized with", ->
     expect(wrapper.widget).toEqual(Pictures)
@@ -58,14 +58,14 @@ describe "Dashboard.WidgetWrapper", ->
     picturesLogo = wrapper.widgetLogo()
     expect(picturesLogo.html).toBeMatchedBy('[data-id=pictures-widget]')
 
-  it "closeWidget is removing the widget off the screen", ->
+  it "deactivateWidget is removing the widget off the screen", ->
     setWrapperInContainer()
     expect($("[data-id=widget-container]")).toContainElement("[data-id=pictures-button]")
-    wrapper.closeWidget()
+    wrapper.deactivateWidget()
     expect($('#sandbox')).not.toContainElement('[data-id=widget-container]')
 
-  it "closeWidget is removing the widget off the screen", ->
+  it "deactivateWidget is removing the widget off the screen", ->
     setWrapperInContainer()
     expect(wrapper.isActive).toBe(true)
-    wrapper.closeWidget()
+    wrapper.deactivateWidget()
     expect(wrapper.isActive).toBe(false)

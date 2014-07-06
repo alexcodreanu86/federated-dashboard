@@ -25,38 +25,109 @@
 
     Controller.initialize = function() {
       this.bindMenuButton();
-      this.bindSidenavButtons();
-      Dashboard.WidgetManager.generateWrappers();
-      return this.bindClosingWidgets();
+      Dashboard.Sidenav.Controller.bindButtons();
+      return Dashboard.Widgets.Controller.initialize();
     };
 
-    Controller.bindClosingWidgets = function() {
-      return $(document).on('click', '.close-widget', (function(_this) {
-        return function(event) {
-          return _this.getWidgetToBeClosed(event);
+    Controller.bindMenuButton = function() {
+      return $('[data-id=menu-button]').click((function(_this) {
+        return function() {
+          return _this.toggleSidenav();
         };
       })(this));
     };
 
-    Controller.bindSidenavButtons = function() {
+    Controller.toggleSidenav = function() {
+      if (Dashboard.Display.isSidenavDisplayed()) {
+        return this.removeSidenav();
+      } else {
+        return this.showSidenav();
+      }
+    };
+
+    Controller.showSidenav = function() {
+      var buttons;
+      buttons = Dashboard.Widgets.Manager.getSidenavButtons();
+      Dashboard.Display.showSidenav(buttons);
+      return this.reinitializeSidenavController();
+    };
+
+    Controller.reinitializeSidenavController = function() {
+      Dashboard.Sidenav.Controller.unbind();
+      return Dashboard.Sidenav.Controller.initialize();
+    };
+
+    Controller.removeSidenav = function() {
+      Dashboard.Display.removeSidenav();
+      return Dashboard.Widgets.Display.removeClosingButtons();
+    };
+
+    return Controller;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard');
+
+  Dashboard.Display = (function() {
+    function Display() {}
+
+    Display.showSidenav = function(buttons) {
+      var contentHtml;
+      contentHtml = new EJS({
+        url: 'scripts/dashboard/sidenav/sidenavContent.ejs'
+      }).render({
+        buttons: buttons
+      });
+      return $('[data-id=side-nav]').html(contentHtml);
+    };
+
+    Display.removeSidenav = function() {
+      return $('[data-id=side-nav]').empty();
+    };
+
+    Display.isSidenavDisplayed = function() {
+      return $('[data-id=side-nav]').html().length > 0;
+    };
+
+    return Display;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard.Sidenav');
+
+  Dashboard.Sidenav.Controller = (function() {
+    function Controller() {}
+
+    Controller.initialize = function() {
+      this.bindButtons();
+      return Dashboard.Widgets.Controller.enterEditMode();
+    };
+
+    Controller.bindButtons = function() {
       $('[data-id=pictures-widget]').click((function(_this) {
         return function() {
-          return _this.checkWidget("pictures");
+          return Dashboard.Widgets.Controller.checkWidget("pictures");
         };
       })(this));
       $('[data-id=weather-widget]').click((function(_this) {
         return function() {
-          return _this.checkWidget("weather");
+          return Dashboard.Widgets.Controller.checkWidget("weather");
         };
       })(this));
       $('[data-id=stock-widget]').click((function(_this) {
         return function() {
-          return _this.checkWidget("stock");
+          return Dashboard.Widgets.Controller.checkWidget("stock");
         };
       })(this));
       return $('[data-id=twitter-widget]').click((function(_this) {
         return function() {
-          return _this.checkWidget("twitter");
+          return Dashboard.Widgets.Controller.checkWidget("twitter");
         };
       })(this));
     };
@@ -68,17 +139,80 @@
       return $('[data-id=twitter-widget]').unbind('click');
     };
 
-    Controller.bindMenuButton = function() {
-      return $('[data-id=menu-button]').click((function(_this) {
-        return function() {
-          return _this.toggleSidenav();
-        };
-      })(this));
+    return Controller;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard.Sidenav');
+
+  Dashboard.Sidenav.Display = (function() {
+    function Display() {}
+
+    Display.setButtonActive = function(widgetWrapper) {
+      var button;
+      button = "[data-id=" + widgetWrapper.name + "-widget]";
+      $(button).parent().removeClass('inactive');
+      return $(button).parent().addClass('active');
     };
 
-    Controller.rebind = function() {
-      this.unbind();
-      return this.bindSidenavButtons();
+    Display.setButtonInactive = function(widgetWrapper) {
+      var button;
+      button = "[data-id=" + widgetWrapper.name + "-widget]";
+      $(button).parent().removeClass('active');
+      return $(button).parent().addClass('inactive');
+    };
+
+    return Display;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard.Widgets');
+
+  Dashboard.Widgets.Controller = (function() {
+    function Controller() {}
+
+    Controller.initialize = function() {
+      Dashboard.Widgets.Manager.generateWrappers();
+      return this.bindClosingWidgets();
+    };
+
+    Controller.checkWidget = function(name) {
+      var wrapper;
+      wrapper = Dashboard.Widgets.Manager.wrappers[name];
+      if (!wrapper.isActive) {
+        return this.setupWidget(wrapper);
+      }
+    };
+
+    Controller.setupWidget = function(wrappedWidget) {
+      var containerInfo;
+      containerInfo = Dashboard.Widgets.Display.generateAvailableSlotFor(wrappedWidget);
+      if (containerInfo) {
+        Dashboard.Sidenav.Display.setButtonActive(wrappedWidget);
+        wrappedWidget.setupWidgetIn(containerInfo);
+        containerInfo = Dashboard.Widgets.Manager.getContainerAndNameOf(wrappedWidget);
+        return Dashboard.Widgets.Display.addButtonToContainer(containerInfo);
+      }
+    };
+
+    Controller.enterEditMode = function() {
+      var activeWidgetsInfo;
+      activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData();
+      return Dashboard.Widgets.Display.addClosingButtonsFor(activeWidgetsInfo);
+    };
+
+    Controller.bindClosingWidgets = function() {
+      return $(document).on('click', '.close-widget', (function(_this) {
+        return function(event) {
+          return _this.getWidgetToBeClosed(event);
+        };
+      })(this));
     };
 
     Controller.getWidgetToBeClosed = function(event) {
@@ -87,58 +221,12 @@
       return this.closeWidget(wrapperName);
     };
 
-    Controller.checkWidget = function(name) {
-      var wrapper;
-      wrapper = Dashboard.WidgetManager.wrappers[name];
-      if (!wrapper.isActive) {
-        return this.setupWidget(wrapper);
-      }
-    };
-
-    Controller.setupWidget = function(wrappedWidget) {
-      var containerInfo;
-      containerInfo = Dashboard.Display.generateAvailableSlotFor(wrappedWidget);
-      if (containerInfo) {
-        Dashboard.Display.setSidenavButtonActive(wrappedWidget);
-        wrappedWidget.setupWidgetIn(containerInfo);
-        containerInfo = Dashboard.WidgetManager.getContainerAndNameOf(wrappedWidget);
-        return Dashboard.Display.addButtonToContainer(containerInfo);
-      }
-    };
-
     Controller.closeWidget = function(wrapperName) {
       var wrappedWidget;
-      wrappedWidget = Dashboard.WidgetManager.wrappers[wrapperName];
-      Dashboard.Display.emptySlotsInColumn(wrappedWidget.numberOfSlots, wrappedWidget.containerColumn);
-      Dashboard.Display.setSidenavButtonInactive(wrappedWidget);
-      return wrappedWidget.closeWidget();
-    };
-
-    Controller.toggleSidenav = function() {
-      if (Dashboard.Display.isSidenavDisplayed()) {
-        this.removeSidenav();
-      } else {
-        this.showSidenav();
-      }
-      return this.rebind();
-    };
-
-    Controller.removeSidenav = function() {
-      Dashboard.Display.removeSidenav();
-      return Dashboard.Display.removeClosingButtons();
-    };
-
-    Controller.showSidenav = function() {
-      var buttons;
-      buttons = Dashboard.WidgetManager.getSidenavButtons();
-      Dashboard.Display.showSidenav(buttons);
-      return this.enterEditMode();
-    };
-
-    Controller.enterEditMode = function() {
-      var activeWidgetsInfo;
-      activeWidgetsInfo = Dashboard.WidgetManager.getActiveWidgetsData();
-      return Dashboard.Display.addClosingButtonsFor(activeWidgetsInfo);
+      wrappedWidget = Dashboard.Widgets.Manager.wrappers[wrapperName];
+      Dashboard.Widgets.Display.emptySlotsInColumn(wrappedWidget.numberOfSlots, wrappedWidget.containerColumn);
+      Dashboard.Sidenav.Display.setButtonInactive(wrappedWidget);
+      return wrappedWidget.deactivateWidget();
     };
 
     return Controller;
@@ -148,14 +236,14 @@
 }).call(this);
 
 (function() {
-  var SPACES_PER_COLUMN;
+  namespace('Dashboard.Widgets');
 
-  namespace('Dashboard');
+  Dashboard.Widgets.Display = (function() {
+    var SPACES_PER_COLUMN;
 
-  SPACES_PER_COLUMN = 3;
-
-  Dashboard.Display = (function() {
     function Display() {}
+
+    SPACES_PER_COLUMN = 3;
 
     Display.takenSlots = {
       col0: 0,
@@ -165,42 +253,6 @@
 
     Display.emptySlotsInColumn = function(slotsCount, colName) {
       return this.takenSlots[colName] -= slotsCount;
-    };
-
-    Display.populateWidget = function(html) {
-      return $('[data-id=widget-display]').html(html);
-    };
-
-    Display.showSidenav = function(buttons) {
-      var contentHtml;
-      contentHtml = new EJS({
-        url: 'scripts/dashboard/templates/sidenavContent.ejs'
-      }).render({
-        buttons: buttons
-      });
-      return $('[data-id=side-nav]').html(contentHtml);
-    };
-
-    Display.setSidenavButtonActive = function(widgetWrapper) {
-      var button;
-      button = "[data-id=" + widgetWrapper.name + "-widget]";
-      $(button).parent().removeClass('inactive');
-      return $(button).parent().addClass('active');
-    };
-
-    Display.setSidenavButtonInactive = function(widgetWrapper) {
-      var button;
-      button = "[data-id=" + widgetWrapper.name + "-widget]";
-      $(button).parent().removeClass('active');
-      return $(button).parent().addClass('inactive');
-    };
-
-    Display.removeSidenav = function() {
-      return $('[data-id=side-nav]').empty();
-    };
-
-    Display.isSidenavDisplayed = function() {
-      return $('[data-id=side-nav]').html().length > 0;
     };
 
     Display.generateAvailableSlotFor = function(widgetWrapper) {
@@ -255,62 +307,13 @@
 }).call(this);
 
 (function() {
-  namespace("Dashboard");
+  namespace("Dashboard.Widgets");
 
-  Dashboard.Draggable = (function() {
-    function Draggable() {}
+  Dashboard.Widgets.Manager = (function() {
+    function Manager() {}
 
-    Draggable.initialize = function() {
-      return $('[data-id=widgets-menu] li').draggable({
-        helper: 'clone',
-        start: (function(_this) {
-          return function() {
-            return _this.startedDragging(event);
-          };
-        })(this),
-        stop: (function(_this) {
-          return function() {
-            return _this.stoppedDragging();
-          };
-        })(this)
-      });
-    };
-
-    Draggable.startedDragging = function(event) {
-      console.log(event);
-      return console.log('started dragging');
-    };
-
-    Draggable.stoppedDragging = function() {
-      return console.log('stopped dragging');
-    };
-
-    Draggable.dropProcessor = function() {
-      return $('.widget-col').droppable({
-        accept: '[data-id=widgets-menu] li',
-        activeClass: 'active-droppable',
-        hoverClass: 'hover-droppable',
-        drop: function(event) {
-          console.log($($(event.toElement.outerHTML)[0]).attr('data-id'));
-          return $(this).append("<h1>Hello</h1>");
-        }
-      });
-    };
-
-    return Draggable;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace("Dashboard");
-
-  Dashboard.WidgetManager = (function() {
-    function WidgetManager() {}
-
-    WidgetManager.wrapWidget = function(widget, name, numberOfSlots, apiKey) {
-      return new Dashboard.WidgetWrapper({
+    Manager.wrapWidget = function(widget, name, numberOfSlots, apiKey) {
+      return new Dashboard.Widgets.Wrapper({
         widget: widget,
         name: name,
         numberOfSlots: numberOfSlots,
@@ -318,7 +321,7 @@
       });
     };
 
-    WidgetManager.generateWrappers = function() {
+    Manager.generateWrappers = function() {
       return this.wrappers = {
         pictures: this.wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
         weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
@@ -327,64 +330,64 @@
       };
     };
 
-    WidgetManager.getActiveWidgets = function() {
-      return _.filter(Dashboard.WidgetManager.wrappers, function(widget) {
+    Manager.getActiveWidgets = function() {
+      return _.filter(Dashboard.Widgets.Manager.wrappers, function(widget) {
         return widget.isActive;
       });
     };
 
-    WidgetManager.getSidenavButtons = function() {
+    Manager.getSidenavButtons = function() {
       var widgets;
-      widgets = _.values(Dashboard.WidgetManager.wrappers);
+      widgets = _.values(Dashboard.Widgets.Manager.wrappers);
       return _.map(widgets, function(wrapper) {
         return wrapper.widgetLogo();
       });
     };
 
-    WidgetManager.getActiveWidgetsData = function() {
+    Manager.getActiveWidgetsData = function() {
       var activeWidgets;
       activeWidgets = this.getActiveWidgets();
       return _.map(activeWidgets, this.getContainerAndNameOf);
     };
 
-    WidgetManager.getContainerAndNameOf = function(wrapper) {
+    Manager.getContainerAndNameOf = function(wrapper) {
       return {
         container: wrapper.containerName,
         name: wrapper.name
       };
     };
 
-    return WidgetManager;
+    return Manager;
 
   })();
 
 }).call(this);
 
 (function() {
-  var WIDGET_LOGO_WIDTH;
+  namespace('Dashboard.Widgets');
 
-  namespace('Dashboard');
+  Dashboard.Widgets.Wrapper = (function() {
+    var WIDGET_LOGO_WIDTH;
 
-  WIDGET_LOGO_WIDTH = "50";
+    WIDGET_LOGO_WIDTH = "50";
 
-  Dashboard.WidgetWrapper = (function() {
-    WidgetWrapper.prototype.isActive = false;
+    Wrapper.prototype.isActive = false;
 
-    function WidgetWrapper(config) {
+    function Wrapper(config) {
       this.widget = config.widget;
       this.widgetApiKey = config.apiKey;
       this.name = config.name;
       this.numberOfSlots = config.numberOfSlots;
     }
 
-    WidgetWrapper.prototype.setupWidgetIn = function(containerInfo) {
+    Wrapper.prototype.setupWidgetIn = function(containerInfo) {
       this.containerName = containerInfo.containerName;
       this.containerColumn = containerInfo.containerColumn;
       this.isActive = true;
       return this.widget.Controller.setupWidgetIn(this.containerName, this.widgetApiKey);
     };
 
-    WidgetWrapper.prototype.widgetLogo = function() {
+    Wrapper.prototype.widgetLogo = function() {
       var button, dataId;
       dataId = "" + this.name + "-widget";
       button = this.widget.Display.generateLogo({
@@ -397,19 +400,18 @@
       };
     };
 
-    WidgetWrapper.prototype.closeWidget = function() {
+    Wrapper.prototype.deactivateWidget = function() {
       $(this.containerName).remove();
       return this.isActive = false;
     };
 
-    WidgetWrapper.prototype.addClosingButtonToContainer = function() {
+    Wrapper.prototype.addClosingButtonToContainer = function() {
       var dataId;
       dataId = "" + this.name + "-closing-button";
-      $(this.containerName).prepend("<button data-id='" + dataId + "'>X</button>");
-      return dataId;
+      return $(this.containerName).prepend("<button data-id='" + dataId + "'>X</button>");
     };
 
-    return WidgetWrapper;
+    return Wrapper;
 
   })();
 
