@@ -29,3 +29,9 @@ class Dashboard.Widgets.Wrapper
   addClosingButtonToContainer: ->
     dataId = "#{@name}-closing-button"
     $(@containerName).prepend("<button data-id='#{dataId}'>X</button>")
+
+  hideWidgetForm: ->
+    @widget.Display.hideForm()
+
+  showWidgetForm: ->
+    @widget.Display.showForm()

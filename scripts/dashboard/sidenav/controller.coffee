@@ -1,9 +1,6 @@
 namespace('Dashboard.Sidenav')
 
 class Dashboard.Sidenav.Controller
-  @initialize: ->
-    @bindButtons()
-    Dashboard.Widgets.Controller.enterEditMode()
 
   @bindButtons: ->
     $('[data-id=pictures-widget]').click(=> Dashboard.Widgets.Controller.checkWidget("pictures"))
@@ -17,3 +14,6 @@ class Dashboard.Sidenav.Controller
     $('[data-id=stock-widget]').unbind('click')
     $('[data-id=twitter-widget]').unbind('click')
 
+  @rebindButtons: ->
+    @unbind()
+    @bindButtons()

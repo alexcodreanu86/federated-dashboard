@@ -20,7 +20,7 @@ setupAndBindController = ->
   resetSlots()
   Dashboard.Widgets.Manager.generateWrappers()
   setupDashboardFixtures()
-  Dashboard.Controller.showSidenav()
+  Dashboard.Controller.setupSidenav()
   Dashboard.Sidenav.Controller.bindButtons()
 
 resetSlots = ->

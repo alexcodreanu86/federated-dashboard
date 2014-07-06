@@ -20,7 +20,7 @@ setupAndBindController = ->
   resetController()
   Dashboard.Widgets.Manager.generateWrappers()
   setupDashboardFixtures()
-  Dashboard.Controller.showSidenav()
+  Dashboard.Controller.setupSidenav()
 
 assertSidenavGetsLoaded = ->
   setFixtures "<image data-id='menu-button'/><div data-id='side-nav'></div>"
@@ -45,11 +45,12 @@ describe "Dashboard.Controller", ->
     clickOn('[data-id=menu-button]')
     expect($('[data-id=side-nav]')).toBeEmpty()
 
-  it "showSidenav enables widget editing", ->
+  it "setupSidenav enables widget editing", ->
     setupAndBindController()
+    spy = spyOn(Dashboard.Widgets.Manager, 'showActiveForms')
     clickOn('[data-id=pictures-widget]')
     Dashboard.Controller.removeSidenav()
-    Dashboard.Controller.showSidenav()
+    Dashboard.Controller.setupSidenav()
     picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
     expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
 
@@ -57,7 +58,7 @@ describe "Dashboard.Controller", ->
     setupAndBindController()
     clickOn('[data-id=pictures-widget]')
     Dashboard.Controller.removeSidenav()
-    Dashboard.Controller.showSidenav()
+    Dashboard.Controller.setupSidenav()
     picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
     expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
     Dashboard.Controller.removeSidenav()

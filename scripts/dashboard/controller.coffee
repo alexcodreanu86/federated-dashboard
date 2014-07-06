@@ -13,17 +13,15 @@ class Dashboard.Controller
     if Dashboard.Display.isSidenavDisplayed()
       @removeSidenav()
     else
-      @showSidenav()
+      @setupSidenav()
 
-  @showSidenav: ->
+  @setupSidenav: ->
     buttons = Dashboard.Widgets.Manager.getSidenavButtons()
     Dashboard.Display.showSidenav(buttons)
-    @reinitializeSidenavController()
+    Dashboard.Sidenav.Controller.rebindButtons()
+    Dashboard.Widgets.Controller.enterEditMode()
 
-  @reinitializeSidenavController: ->
-    Dashboard.Sidenav.Controller.unbind()
-    Dashboard.Sidenav.Controller.initialize()
 
   @removeSidenav: ->
     Dashboard.Display.removeSidenav()
-    Dashboard.Widgets.Display.removeClosingButtons()
+    Dashboard.Widgets.Controller.exitEditMode()

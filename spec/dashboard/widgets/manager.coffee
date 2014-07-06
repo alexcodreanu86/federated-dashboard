@@ -57,3 +57,35 @@ describe "Dashboard.Widgets.Manager", ->
     expectedResponse = [{container: "pictures-container", name: "pictures"}, {container: "weather-container", name: "weather"}]
     activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData()
     expect(activeWidgetsInfo).toEqual(expectedResponse)
+
+  it "hideActiveForms is hiding the forms of active widgets", ->
+    Dashboard.Widgets.Manager.generateWrappers()
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
+    picturesWrapper.isActive = true
+    weatherWrapper.isActive = true
+    picturesSpy = spyOn(Pictures.Display, 'hideForm')
+    weatherSpy = spyOn(Weather.Display, 'hideForm')
+    twitterSpy = spyOn(Twitter.Display, 'hideForm')
+    stockSpy = spyOn(Stock.Display, 'hideForm')
+    Dashboard.Widgets.Manager.hideActiveForms()
+    expect(picturesSpy).toHaveBeenCalled()
+    expect(weatherSpy).toHaveBeenCalled()
+    expect(twitterSpy).not.toHaveBeenCalled()
+    expect(stockSpy).not.toHaveBeenCalled()
+
+  it "showActiveForms is showing the forms of active widgets", ->
+    Dashboard.Widgets.Manager.generateWrappers()
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
+    picturesWrapper.isActive = true
+    weatherWrapper.isActive = true
+    picturesSpy = spyOn(Pictures.Display, 'showForm')
+    weatherSpy = spyOn(Weather.Display, 'showForm')
+    twitterSpy = spyOn(Twitter.Display, 'showForm')
+    stockSpy = spyOn(Stock.Display, 'showForm')
+    Dashboard.Widgets.Manager.showActiveForms()
+    expect(picturesSpy).toHaveBeenCalled()
+    expect(weatherSpy).toHaveBeenCalled()
+    expect(twitterSpy).not.toHaveBeenCalled()
+    expect(stockSpy).not.toHaveBeenCalled()

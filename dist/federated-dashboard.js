@@ -41,25 +41,21 @@
       if (Dashboard.Display.isSidenavDisplayed()) {
         return this.removeSidenav();
       } else {
-        return this.showSidenav();
+        return this.setupSidenav();
       }
     };
 
-    Controller.showSidenav = function() {
+    Controller.setupSidenav = function() {
       var buttons;
       buttons = Dashboard.Widgets.Manager.getSidenavButtons();
       Dashboard.Display.showSidenav(buttons);
-      return this.reinitializeSidenavController();
-    };
-
-    Controller.reinitializeSidenavController = function() {
-      Dashboard.Sidenav.Controller.unbind();
-      return Dashboard.Sidenav.Controller.initialize();
+      Dashboard.Sidenav.Controller.rebindButtons();
+      return Dashboard.Widgets.Controller.enterEditMode();
     };
 
     Controller.removeSidenav = function() {
       Dashboard.Display.removeSidenav();
-      return Dashboard.Widgets.Display.removeClosingButtons();
+      return Dashboard.Widgets.Controller.exitEditMode();
     };
 
     return Controller;
@@ -104,11 +100,6 @@
   Dashboard.Sidenav.Controller = (function() {
     function Controller() {}
 
-    Controller.initialize = function() {
-      this.bindButtons();
-      return Dashboard.Widgets.Controller.enterEditMode();
-    };
-
     Controller.bindButtons = function() {
       $('[data-id=pictures-widget]').click((function(_this) {
         return function() {
@@ -137,6 +128,11 @@
       $('[data-id=weather-widget]').unbind('click');
       $('[data-id=stock-widget]').unbind('click');
       return $('[data-id=twitter-widget]').unbind('click');
+    };
+
+    Controller.rebindButtons = function() {
+      this.unbind();
+      return this.bindButtons();
     };
 
     return Controller;
@@ -204,7 +200,13 @@
     Controller.enterEditMode = function() {
       var activeWidgetsInfo;
       activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData();
-      return Dashboard.Widgets.Display.addClosingButtonsFor(activeWidgetsInfo);
+      Dashboard.Widgets.Display.addClosingButtonsFor(activeWidgetsInfo);
+      return Dashboard.Widgets.Manager.showActiveForms();
+    };
+
+    Controller.exitEditMode = function() {
+      Dashboard.Widgets.Display.removeClosingButtons();
+      return Dashboard.Widgets.Manager.hideActiveForms();
     };
 
     Controller.bindClosingWidgets = function() {
@@ -330,12 +332,6 @@
       };
     };
 
-    Manager.getActiveWidgets = function() {
-      return _.filter(Dashboard.Widgets.Manager.wrappers, function(widget) {
-        return widget.isActive;
-      });
-    };
-
     Manager.getSidenavButtons = function() {
       var widgets;
       widgets = _.values(Dashboard.Widgets.Manager.wrappers);
@@ -350,11 +346,33 @@
       return _.map(activeWidgets, this.getContainerAndNameOf);
     };
 
+    Manager.getActiveWidgets = function() {
+      return _.filter(Dashboard.Widgets.Manager.wrappers, function(widget) {
+        return widget.isActive;
+      });
+    };
+
     Manager.getContainerAndNameOf = function(wrapper) {
       return {
         container: wrapper.containerName,
         name: wrapper.name
       };
+    };
+
+    Manager.hideActiveForms = function() {
+      var wrappers;
+      wrappers = this.getActiveWidgets();
+      return _.each(wrappers, function(wrapper) {
+        return wrapper.hideWidgetForm();
+      });
+    };
+
+    Manager.showActiveForms = function() {
+      var wrappers;
+      wrappers = this.getActiveWidgets();
+      return _.each(wrappers, function(wrapper) {
+        return wrapper.showWidgetForm();
+      });
     };
 
     return Manager;
@@ -409,6 +427,14 @@
       var dataId;
       dataId = "" + this.name + "-closing-button";
       return $(this.containerName).prepend("<button data-id='" + dataId + "'>X</button>");
+    };
+
+    Wrapper.prototype.hideWidgetForm = function() {
+      return this.widget.Display.hideForm();
+    };
+
+    Wrapper.prototype.showWidgetForm = function() {
+      return this.widget.Display.showForm();
     };
 
     return Wrapper;

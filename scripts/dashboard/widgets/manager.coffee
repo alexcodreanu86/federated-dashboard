@@ -12,11 +12,6 @@ class Dashboard.Widgets.Manager
       stock: @wrapWidget(Stock, "stock", 2, "")
     }
 
-  @getActiveWidgets: ->
-    _.filter(Dashboard.Widgets.Manager.wrappers, (widget) ->
-      widget.isActive
-    )
-
   @getSidenavButtons: ->
     widgets = _.values(Dashboard.Widgets.Manager.wrappers)
     _.map(widgets, (wrapper) ->
@@ -27,8 +22,25 @@ class Dashboard.Widgets.Manager
     activeWidgets = @getActiveWidgets()
     _.map(activeWidgets, @getContainerAndNameOf)
 
+  @getActiveWidgets: ->
+    _.filter(Dashboard.Widgets.Manager.wrappers, (widget) ->
+      widget.isActive
+    )
+
   @getContainerAndNameOf: (wrapper) ->
     {
       container: wrapper.containerName,
       name: wrapper.name
     }
+
+  @hideActiveForms: ->
+    wrappers =  @getActiveWidgets()
+    _.each(wrappers, (wrapper) ->
+      wrapper.hideWidgetForm()
+    )
+
+  @showActiveForms: ->
+    wrappers =  @getActiveWidgets()
+    _.each(wrappers, (wrapper) ->
+      wrapper.showWidgetForm()
+    )

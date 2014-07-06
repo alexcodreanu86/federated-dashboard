@@ -27,8 +27,8 @@ setupAndBindController = ->
   resetSlots()
   Dashboard.Widgets.Manager.generateWrappers()
   setupDashboardFixtures()
-  Dashboard.Controller.showSidenav()
-  Dashboard.Sidenav.Controller.initialize()
+  Dashboard.Controller.setupSidenav()
+  Dashboard.Sidenav.Controller.rebindButtons()
 
 resetSlots = ->
   Dashboard.Widgets.Display.takenSlots.col0 = 0
@@ -105,4 +105,34 @@ describe "Dashboard.Widgets.Controller", ->
     expect('[data-name=pictures].close-widget').toBeInDOM()
     clickOn('[data-name=pictures].close-widget')
     expect($('[data-id=pictures-slot]')).not.toBeInDOM()
+
+  it "enterEditMode adds closing buttons to the widgets containers", ->
+    setupAndBindController()
+    clickOn('[data-id=pictures-widget]')
+    Dashboard.Controller.removeSidenav()
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+    Dashboard.Widgets.Controller.enterEditMode()
+    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+
+  it "enterEditMode shows the forms for the widgets", ->
+    spy = spyOn(Dashboard.Widgets.Manager, 'showActiveForms')
+    Dashboard.Widgets.Controller.initialize()
+    Dashboard.Widgets.Controller.enterEditMode()
+    expect(spy).toHaveBeenCalled()
+
+  it "exitEditMode removes closing buttons from the widgets containers", ->
+    setupAndBindController()
+    clickOn('[data-id=pictures-widget]')
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+    Dashboard.Widgets.Controller.exitEditMode()
+    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+
+  it "exitEditMode hides the forms for the widgets", ->
+    spy = spyOn(Dashboard.Widgets.Manager, 'hideActiveForms')
+    Dashboard.Widgets.Controller.initialize()
+    Dashboard.Widgets.Controller.exitEditMode()
+    expect(spy).toHaveBeenCalled()
+
 

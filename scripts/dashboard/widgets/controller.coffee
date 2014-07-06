@@ -21,6 +21,11 @@ class Dashboard.Widgets.Controller
   @enterEditMode: ->
     activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData()
     Dashboard.Widgets.Display.addClosingButtonsFor(activeWidgetsInfo)
+    Dashboard.Widgets.Manager.showActiveForms()
+
+  @exitEditMode: ->
+    Dashboard.Widgets.Display.removeClosingButtons()
+    Dashboard.Widgets.Manager.hideActiveForms()
 
   @bindClosingWidgets: ->
     $(document).on('click', '.close-widget', (event) => @getWidgetToBeClosed(event))

@@ -69,3 +69,14 @@ describe "Dashboard.Widgets.Wrapper", ->
     expect(wrapper.isActive).toBe(true)
     wrapper.deactivateWidget()
     expect(wrapper.isActive).toBe(false)
+
+  it "hideWidgetForm is hiding the widgets form", ->
+    setWrapperInContainer()
+    wrapper.hideWidgetForm()
+    expect($('[data-id=pictures-form]').attr('style')).toEqual('display: none;')
+
+  it "showWidgetForm displays the widget form", ->
+    setWrapperInContainer()
+    wrapper.hideWidgetForm()
+    wrapper.showWidgetForm()
+    expect($('[data-id=pictures-form]').attr('style')).not.toEqual('display: none;')
