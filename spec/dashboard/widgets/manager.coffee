@@ -3,7 +3,7 @@ describe "Dashboard.Widgets.Manager", ->
     wrapper = Dashboard.Widgets.Manager.wrapWidget(Pictures, "pictures", 3, "some-api-key")
     expect(wrapper.name).toEqual("pictures")
     expect(wrapper.widgetApiKey).toEqual("some-api-key")
-    expect(wrapper.numberOfSlots).toEqual(3)
+    expect(wrapper.slotSize).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
   it "wrappedWidgets has 4 widgets setup", ->
@@ -89,3 +89,10 @@ describe "Dashboard.Widgets.Manager", ->
     expect(weatherSpy).toHaveBeenCalled()
     expect(twitterSpy).not.toHaveBeenCalled()
     expect(stockSpy).not.toHaveBeenCalled()
+
+  it "getWrapperWithContainer returns the wrapper that has the given contaienr", ->
+    Dashboard.Widgets.Manager.generateWrappers()
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+    picturesWrapper.containerName = "[data-id=pictures-slot]"
+    returnedWrapper = Dashboard.Widgets.Manager.getWrapperInContainer("[data-id=pictures-slot]")
+    expect(returnedWrapper).toEqual(picturesWrapper)

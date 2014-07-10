@@ -9,7 +9,7 @@ class Dashboard.Widgets.Wrapper
     @widget = config.widget
     @widgetApiKey = config.apiKey
     @name = config.name
-    @numberOfSlots = config.numberOfSlots
+    @slotSize = config.slotSize
 
   setupWidgetIn:(containerInfo) ->
     @containerName = containerInfo.containerName

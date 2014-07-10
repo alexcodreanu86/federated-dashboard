@@ -2,7 +2,7 @@ widgetConfig = {
   widget: Pictures,
   apiKey: "some_api_key",
   name: "pictures"
-  numberOfSlots: 2
+  slotSize: 2
 }
 
 wrapper = null

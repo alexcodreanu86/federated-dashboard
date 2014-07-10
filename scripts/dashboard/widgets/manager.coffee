@@ -1,9 +1,6 @@
 namespace("Dashboard.Widgets")
 
 class Dashboard.Widgets.Manager
-  @wrapWidget: (widget, name, numberOfSlots, apiKey) ->
-    new Dashboard.Widgets.Wrapper({widget: widget, name: name, numberOfSlots: numberOfSlots, apiKey: apiKey})
-
   @generateWrappers: ->
     @wrappers = {
       pictures: @wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
@@ -11,6 +8,9 @@ class Dashboard.Widgets.Manager
       twitter: @wrapWidget(Twitter, "twitter", 2, ""),
       stock: @wrapWidget(Stock, "stock", 2, "")
     }
+
+  @wrapWidget: (widget, name, slotSize, apiKey) ->
+    new Dashboard.Widgets.Wrapper({widget: widget, name: name, slotSize: slotSize, apiKey: apiKey})
 
   @getSidenavButtons: ->
     widgets = _.values(Dashboard.Widgets.Manager.wrappers)
@@ -44,3 +44,7 @@ class Dashboard.Widgets.Manager
     _.each(wrappers, (wrapper) ->
       wrapper.showWidgetForm()
     )
+
+  @getWrapperInContainer: (containerName) ->
+    _.findWhere(@wrappers, {containerName: containerName})
+

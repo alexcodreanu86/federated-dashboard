@@ -24,9 +24,9 @@ setupAndBindController = ->
   Dashboard.Sidenav.Controller.bindButtons()
 
 resetSlots = ->
-  Dashboard.Widgets.Display.takenSlots.col0 = 0
-  Dashboard.Widgets.Display.takenSlots.col1 = 0
-  Dashboard.Widgets.Display.takenSlots.col2 = 0
+  Dashboard.Columns.Controller.takenSlots.col0 = 0
+  Dashboard.Columns.Controller.takenSlots.col1 = 0
+  Dashboard.Columns.Controller.takenSlots.col2 = 0
 
 describe "Dasbboard.Sidenav.Controller", ->
   it "bindButtons displays the form for pictures when the pictures button is clicked", ->

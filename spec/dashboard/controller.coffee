@@ -32,9 +32,9 @@ assertSidenavGetsLoaded = ->
   expect($('[data-id=side-nav]')).toContainElement('[data-id=twitter-widget]')
 
 resetSlots = ->
-  Dashboard.Widgets.Display.takenSlots.col0 = 0
-  Dashboard.Widgets.Display.takenSlots.col1 = 0
-  Dashboard.Widgets.Display.takenSlots.col2 = 0
+  Dashboard.Columns.Controller.takenSlots.col0 = 0
+  Dashboard.Columns.Controller.takenSlots.col1 = 0
+  Dashboard.Columns.Controller.takenSlots.col2 = 0
 
 describe "Dashboard.Controller", ->
   it "toggleSidenav displays the side-nav when the menu button is clicked", ->
@@ -54,6 +54,12 @@ describe "Dashboard.Controller", ->
     picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
     expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
 
+  it "setupSidenav enables columns editing", ->
+    setupDashboardFixtures()
+    spy = spyOn(Dashboard.Columns.Controller, 'enterEditMode')
+    Dashboard.Controller.setupSidenav()
+    expect(spy).toHaveBeenCalled()
+
   it "removeSidenav closes edit mode", ->
     setupAndBindController()
     clickOn('[data-id=pictures-widget]')
@@ -63,3 +69,11 @@ describe "Dashboard.Controller", ->
     expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
     Dashboard.Controller.removeSidenav()
     expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+
+  it "removeSidenav disables columns editing", ->
+    setupDashboardFixtures()
+    Dashboard.Controller.setupSidenav()
+    spy = spyOn(Dashboard.Columns.Controller, 'exitEditMode')
+    Dashboard.Controller.removeSidenav()
+    expect(spy).toHaveBeenCalled()
+

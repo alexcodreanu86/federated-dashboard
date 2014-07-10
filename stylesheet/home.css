@@ -5,6 +5,11 @@
   margin: 5px 0;
 }
 
+#menu-container{
+  display: inline-block;
+  float: left;
+  width: 75px;
+}
 .active {
   background: steelblue;
 }
@@ -18,11 +23,12 @@
 
 div.widget-col {
   display: inline-block;
+  float: left;
   margin: 1em 0.5em;
   width: 350px;
   height: 600px;
   max-height: 600px;
-  overflow: scroll;
+  border: 1px solid #bbb;
 }
 
 div[data-id=side-nav] {
@@ -32,18 +38,45 @@ div[data-id=side-nav] {
 }
 
 [data-id=widget-display] {
-  display:inline;
   margin: 3px;
 }
 
 [data-id=menu-button] {
   display: block;
+  padding: 10px;
+  width: 50px;
 }
 
 #widgets-menu {
   list-style-type: none;
+  padding: 10px;
 }
 
 #widgets-menu li{
   margin: 3px;
+}
+
+.widget-list {
+  margin: 0;
+  padding:  10px 0;
+  list-style: none;
+}
+
+.widget-handle {
+  display: inline;
+  border: 2px solid steelblue;
+  border-radius: 5px;
+  padding: 3px;
+  margin: 10px;
+}
+
+.widget-place-holder {
+  background: yellow;
+  height: 16px;
+}
+
+.droppable-column {
+  -webkit-box-shadow: 7px 7px 5px 0px rgba(52, 128, 50, 0.75);
+  -moz-box-shadow:    7px 7px 5px 0px rgba(52, 128, 50, 0.75);
+  box-shadow:         7px 7px 5px 0px rgba(52, 128, 50, 0.75);
 }

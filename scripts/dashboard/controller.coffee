@@ -20,8 +20,9 @@ class Dashboard.Controller
     Dashboard.Display.showSidenav(buttons)
     Dashboard.Sidenav.Controller.rebindButtons()
     Dashboard.Widgets.Controller.enterEditMode()
-
+    Dashboard.Columns.Controller.enterEditMode()
 
   @removeSidenav: ->
     Dashboard.Display.removeSidenav()
     Dashboard.Widgets.Controller.exitEditMode()
+    Dashboard.Columns.Controller.exitEditMode()

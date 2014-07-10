@@ -1,42 +1,29 @@
 namespace('Dashboard.Widgets')
 
 class Dashboard.Widgets.Display
-  SPACES_PER_COLUMN = 3
-
-  @takenSlots: {
-    col0: 0,
-    col1: 0,
-    col2: 0
-  }
-
-  @emptySlotsInColumn: (slotsCount, colName) ->
-    @takenSlots[colName] -= slotsCount
-
-  @generateAvailableSlotFor: (widgetWrapper) ->
-    dataId = "#{widgetWrapper.name}-slot"
-    size = widgetWrapper.numberOfSlots
-    col = @getAvailableColumn(size)
-    if col
-      @addWidgetContainerToColumn(dataId, col, size)
-      {containerName: "[data-id=#{dataId}]", containerColumn: col}
-
-  @addWidgetContainerToColumn: (dataId, col, size) ->
-    $("[data-id=#{col}]").append("<div class='widget' data-id='#{dataId}'></div>")
-    @takenSlots[col] += size
-
-  @getAvailableColumn: (space) ->
-    colNames = _.map(@takenSlots, (currentSpaces, colName) ->
-      if ((currentSpaces + space) <= SPACES_PER_COLUMN)
-        return colName
+  @addEditingButtonsFor: (activeWidgetsInfo) ->
+    _.each(activeWidgetsInfo,(widgetInfo)  =>
+      @addButtonAndHandleToContainer(widgetInfo)
     )
-    _.find(colNames, (colName) -> colName)
 
-  @addClosingButtonsFor: (activeWidgetsInfo) ->
-    _.each(activeWidgetsInfo, @addButtonToContainer)
+  @addButtonAndHandleToContainer: (widgetInfo) ->
+    @addButtonToContainer(widgetInfo)
+    @addHandleToContainer(widgetInfo)
 
   @addButtonToContainer: (widgetInfo) ->
-    button = "<button class='close-widget' data-name=#{widgetInfo.name}>X</button>"
+    button = Dashboard.Widgets.Templates.generateClosingButton(widgetInfo.name)
     $(widgetInfo.container).prepend(button)
+
+  @addHandleToContainer: (widgetInfo) ->
+    handle = Dashboard.Widgets.Templates.generateHandle(widgetInfo.name)
+    $(widgetInfo.container).prepend(handle)
+
+  @removeEditButtons: ->
+    @removeClosingButtons()
+    @removeDraggingHandles()
 
   @removeClosingButtons: ->
     $('.close-widget').remove()
+
+  @removeDraggingHandles: ->
+    $('.widget-handle').remove()
