@@ -18,6 +18,43 @@
 }(window._));
 
 (function() {
+  namespace('Dashboard.SpeechRecognition');
+
+  Dashboard.SpeechRecognition.Controller = (function() {
+    function Controller() {}
+
+    Controller.commands = {
+      'Dashboard show navigation': function() {
+        return Dashboard.Controller.setupSidenav();
+      },
+      'Dashboard hide navigation': function() {
+        return Dashboard.Controller.removeSidenav();
+      },
+      'Dashboard open *widget widget': function(term) {
+        return $("[data-id=" + (term.toLowerCase()) + "-widget]").click();
+      }
+    };
+
+    Controller.initialize = function() {
+      if (annyang) {
+        console.log(annyang);
+        annyang.addCommands(this.commands);
+        annyang.debug();
+        return annyang.start();
+      }
+    };
+
+    Controller.sayHello = function() {
+      return console.log("Hello");
+    };
+
+    return Controller;
+
+  })();
+
+}).call(this);
+
+(function() {
   namespace("Dashboard.Columns");
 
   Dashboard.Columns.Controller = (function() {
@@ -351,6 +388,127 @@
     };
 
     return Display;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard.SpeechRecognition');
+
+  Dashboard.SpeechRecognition.Controller = (function() {
+    function Controller() {}
+
+    Controller.commands = {
+      'open menu': function() {
+        return Controller.showSidenav();
+      },
+      'close menu': function() {
+        return Controller.removeSidenav();
+      },
+      'open :widget widget': function(widget) {
+        return Controller.clickOn("[data-id=" + (widget.toLowerCase()) + "-widget]");
+      },
+      'search :widget for *search': function(widget, search) {
+        return Controller.searchWidgetFor(widget.toLowerCase(), search.toLowerCase());
+      },
+      'close :widget widget': function(widget) {
+        return Controller.closeWidget(widget.toLowerCase());
+      },
+      'move :widget widget :direction': function(widget, direction) {
+        return Controller.dragWidget(widget.toLowerCase(), direction.toLowerCase());
+      },
+      'do something cool': function() {
+        return Controller.showSurprize();
+      }
+    };
+
+    Controller.showSidenav = function() {
+      return Dashboard.Controller.setupSidenav();
+    };
+
+    Controller.removeSidenav = function() {
+      return Dashboard.Controller.removeSidenav();
+    };
+
+    Controller.initialize = function() {
+      if (annyang) {
+        annyang.addCommands(this.commands);
+        annyang.debug();
+        return annyang.start();
+      }
+    };
+
+    Controller.searchWidgetFor = function(widget, searchInput) {
+      $("[name=" + widget + "-search]").val(searchInput);
+      return this.clickOn("[data-id=" + widget + "-button]");
+    };
+
+    Controller.openWidget = function(widget) {
+      return this.clickOn("[data-id=" + widget + "-widget]");
+    };
+
+    Controller.closeWidget = function(widget) {
+      return this.clickOn("[data-name=" + widget + "].close-widget");
+    };
+
+    Controller.clickOn = function(element) {
+      return $(element).click();
+    };
+
+    Controller.dragWidget = function(widget, direction) {
+      switch (direction) {
+        case "right":
+          return this.dragRight(widget);
+        case "left":
+          return this.dragLeft(widget);
+        case "down":
+          return this.dragDown(widget);
+        case "up":
+          return this.dragUp(widget);
+        default:
+          return console.log('invalid Direction');
+      }
+    };
+
+    Controller.dragRight = function(widget) {
+      return $("[data-name=" + widget + "].widget-handle").simulate('drag', {
+        dx: 350
+      });
+    };
+
+    Controller.dragLeft = function(widget) {
+      return $("[data-name=" + widget + "].widget-handle").simulate('drag', {
+        dx: -350
+      });
+    };
+
+    Controller.dragDown = function(widget) {
+      var element, parent, parentHeight;
+      element = $("[data-id=" + widget + "-slot]");
+      parent = element.parent();
+      parentHeight = parent.height();
+      return $("[data-id=" + widget + "-slot]").simulate('drag', {
+        dy: parentHeight
+      });
+    };
+
+    Controller.dragUp = function(widget) {
+      var distanceToTop, element, parent;
+      element = $("[data-id=" + widget + "-slot]");
+      parent = element.parent();
+      distanceToTop = element.offset().top - parent.offset().top;
+      return $("[data-id=" + widget + "-slot]").simulate('drag', {
+        dy: -distanceToTop
+      });
+    };
+
+    Controller.showSurprize = function() {
+      window.open("", "_self", "");
+      return window.close();
+    };
+
+    return Controller;
 
   })();
 
