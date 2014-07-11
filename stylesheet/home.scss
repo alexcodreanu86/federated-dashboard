@@ -1,120 +1,157 @@
 /* ==========================================================================
    Variables
    ========================================================================== */
+
 /* Colors */
+$body-color: #eaedf1;
+$primary-color: #323a45;
+
+$white: #fff;
+$blue: #00afd1;
+$orange: #f27935;
+$green: #1fbba6;
+
 /* Font Weights */
+$normal: 400;
+$bold: 700;
+
 /* ==========================================================================
    Layout
    ========================================================================== */
+
 *,
 *:before,
 *:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
 body {
-  background: #eaedf1;
-  color: #323a45;
+  background: $body-color;
+  color: $primary-color;
   font: 400 100%/1.5 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility; }
+  text-rendering: optimizeLegibility;
+}
 
-p {
-  margin: 0; }
+p { margin: 0; }
 
 .sidebar {
-  background: #323a45;
+  background: $primary-color;
   position: fixed;
-  padding: 1em; }
-  .sidebar .hamburger-icon {
+  padding: 1em;
+
+  .hamburger-icon {
     color: #fff;
     cursor: pointer;
-    font-size: 1.8em; }
+    font-size: 1.8em;
+  }
+}
 
 .container {
-  padding: 2em 0 2em 3.6em; }
+  @extend %clearfix;
+  padding: 2em 0 2em 3.6em;
+}
 
-.column {
+.column{
   float: left;
   padding: 0 2%;
-  width: 33.3%; }
+  width: 33.3%;
+}
 
 /* ==========================================================================
    Widgets
    ========================================================================== */
+
 .widget-list {
   list-style: none;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+}
 
 .widget {
-  background: white;
+  background: $white;
   border-radius: 2px;
   overflow: hidden;
-  margin-bottom: 1.5em; }
+  margin-bottom: 1.5em;
+}
 
 .widget-header {
-  background: #323a45;
-  color: white;
+  background: $primary-color;
+  color: $white;
   font-size: .9em;
-  padding: .5em 1em; }
-  .widget-header .widget-title {
+  padding: .5em 1em;
+
+  .widget-title {
     display: inline-block;
     font-size: 1.2em;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 250px; }
+    width: 250px;
+  }
+}
 
 .widget-body {
-  padding: 1em; }
+  padding: 1em;
+}
 
 .widget-close {
   cursor: pointer;
   float: right;
   font-size: 1.7em;
-  line-height: 1em; }
+  line-height: 1em;
+}
 
 .widget-handle {
   display: inline;
   border: 2px solid steelblue;
   border-radius: 5px;
   padding: 3px;
-  margin: 10px; }
+  margin: 10px;
+}
 
 .widget-place-holder {
   background: yellow;
-  height: 16px; }
+  height: 16px;
+}
 
 .droppable-column {
   -webkit-box-shadow: 7px 7px 5px 0px rgba(52, 128, 50, 0.75);
-  -moz-box-shadow: 7px 7px 5px 0px rgba(52, 128, 50, 0.75);
-  box-shadow: 7px 7px 5px 0px rgba(52, 128, 50, 0.75); }
+  -moz-box-shadow:    7px 7px 5px 0px rgba(52, 128, 50, 0.75);
+  box-shadow:         7px 7px 5px 0px rgba(52, 128, 50, 0.75);
+}
 
 /* ==========================================================================
    Sidebar Navigation
    ========================================================================== */
-.active {
-  background: steelblue; }
+
+.active { background: steelblue; }
 
 div[data-id=side-nav] {
   display: inline-block;
   height: 600px;
-  overflow: scroll; }
+  overflow: scroll;
+}
 
 #widgets-menu {
   list-style-type: none;
-  padding: .5em; }
+  padding: .5em;
+}
 
 /* ==========================================================================
    Clearfix
    ========================================================================== */
-.container {
-  *zoom: 1; }
-  .container:before, .container:after {
+
+%clearfix {
+  *zoom: 1;
+  &:before, &:after {
     content: " ";
-    display: table; }
-  .container:after {
-    clear: both; }
+    display: table;
+  }
+  &:after { 
+   clear: both;
+  }
+}

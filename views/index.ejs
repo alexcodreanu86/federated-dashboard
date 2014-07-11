@@ -1,47 +1,121 @@
 <!doctype html>
 <html>
   <head>
-  <title><%= title %></title>
-  <script src="/bower_components/underscore/underscore.js"></script>
-  <script src="/bower_components/jquery/dist/jquery.js"></script>
-  <script src="/bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js"></script>
-  <script src="/bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js"></script>
-  <script src="/bower_components/markitondemand-widget/lib/highstock.js"></script>
-  <script src="/bower_components/markitondemand-widget/lib/exports.js"></script>
-  <script src="/bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js"></script>
-  <script src="/bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js"></script>
-  <script src="/node_modules/flickrapi/browser/flickrapi.dev.js"></script>
-  <script src="/dist/federated-dashboard.js"></script>
-  <script src="/lib/ejs.js"></script>
-  <script src="/lib/jquery-ui.min.js"></script>
-  <script src="/lib/ejs.js"></script>
-  <script src="/lib/jquery.simulate.js"></script>
-  <script src="/lib/annyang.min.js"></script>
-  <link rel="stylesheet" type="text/css/" href="/lib/jquery-ui.min.css">
-  <link rel="stylesheet" type="text/css/" href="/stylesheet/home.css">
+    <title><%= title %></title>
+    <script src="/bower_components/underscore/underscore.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js"></script>
+    <script src="/bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js"></script>
+    <script src="/bower_components/markitondemand-widget/lib/highstock.js"></script>
+    <script src="/bower_components/markitondemand-widget/lib/exports.js"></script>
+    <script src="/bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js"></script>
+    <script src="/bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js"></script>
+    <script src="/node_modules/flickrapi/browser/flickrapi.dev.js"></script>
+    <script src="/dist/federated-dashboard.js"></script>
+    <script src="/lib/ejs.js"></script>
+    <script src="/lib/jquery-ui.min.js"></script>
+    <script src="/lib/ejs.js"></script>
+    <script src="/lib/jquery.simulate.js"></script>
+    <script src="/lib/annyang.min.js"></script>
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css/" href="/stylesheet/normalize.css">
+    <link rel="stylesheet" type="text/css/" href="/stylesheet/home.css">
   </head>
 
   <body>
-    <div id="menu-container">
-      <img data-id="menu-button" src="/lib/icons/hamburger.png">
+    <nav class="sidebar">
+      <div class="hamburger-icon" data-id="menu-button">☰</div>
       <div data-id="side-nav"></div>
-    </div>
-    <div data-id="widget-display">
-      <div class="widget-col" data-id="col0-container">
-        <ul class="widget-list" data-id="col0"></ul>
+    </nav>
+
+
+    <div class="container" data-id="widget-display">
+      <div class="column">
+        <ul class="widget-list">
+          <li>
+            <div class="widget">
+              <div class="widget-header">
+                <h2 class="widget-title">Weather</h2>
+                <span class="widget-close">×</span>
+              </div>
+
+              <div class="widget-body">
+                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
+                <p>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
 
-      <div class="widget-col" data-id="col1-container">
-        <ul class="widget-list" data-id="col1"></ul>
+      <div class="column">
+        <ul class="widget-list">
+          <li>
+            <div class="widget">
+              <div class="widget-header">
+                <h2 class="widget-title">Weather</h2>
+                <span class="widget-close">×</span>
+              </div>
+
+              <div class="widget-body">
+                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
+                <p>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="widget">
+              <div class="widget-header">
+                <h2 class="widget-title">Weather</h2>
+                <span class="widget-close">×</span>
+              </div>
+
+              <div class="widget-body">
+                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
+                <p>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="widget">
+              <div class="widget-header">
+                <h2 class="widget-title">Weather</h2>
+                <span class="widget-close">×</span>
+              </div>
+
+              <div class="widget-body">
+                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
+                <p>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
 
-      <div class="widget-col" data-id="col2-container">
-        <ul class="widget-list" data-id="col2"></ul> 
+      <div class="column">
+        <ul class="widget-list">
+          <li>
+            <div class="widget">
+              <div class="widget-header">
+                <h2 class="widget-title">Weather</h2>
+                <span class="widget-close">×</span>
+              </div>
+
+              <div class="widget-body">
+                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
+                <p>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
+
     <script>
       Dashboard.Controller.initialize()
-      Dashboard.SpeechRecognition.Controller.initialize()
+      //Dashboard.SpeechRecognition.Controller.initialize()
     </script>
   </body>
 </html>
