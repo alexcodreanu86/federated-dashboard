@@ -38,11 +38,11 @@ class Dashboard.SpeechRecognition.Controller
     $(element).click()
 
   @dragWidget: (widget, direction) ->
-    switch direction
-      when "right" then @dragRight(widget)
-      when "left" then @dragLeft(widget)
-      when "down" then @dragDown(widget)
-      when "up" then @dragUp(widget)
+    switch direction[0]
+      when "r" then @dragRight(widget)
+      when "l" then @dragLeft(widget)
+      when "d" then @dragDown(widget)
+      when "u" then @dragUp(widget)
       else console.log ('invalid Direction')
 
   @dragRight: (widget) ->
@@ -55,7 +55,6 @@ class Dashboard.SpeechRecognition.Controller
     element = $("[data-id=#{widget}-slot]")
     parent = element.parent()
     parentHeight = parent.height()
-
     $("[data-id=#{widget}-slot]").simulate('drag', {dy: parentHeight})
 
   @dragUp: (widget) ->

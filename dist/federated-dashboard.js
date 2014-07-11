@@ -457,14 +457,14 @@
     };
 
     Controller.dragWidget = function(widget, direction) {
-      switch (direction) {
-        case "right":
+      switch (direction[0]) {
+        case "r":
           return this.dragRight(widget);
-        case "left":
+        case "l":
           return this.dragLeft(widget);
-        case "down":
+        case "d":
           return this.dragDown(widget);
-        case "up":
+        case "u":
           return this.dragUp(widget);
         default:
           return console.log('invalid Direction');
