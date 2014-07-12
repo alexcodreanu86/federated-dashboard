@@ -32,7 +32,7 @@ class Dashboard.SpeechRecognition.Controller
     @clickOn("[data-id=#{widget}-widget]")
 
   @closeWidget: (widget) ->
-    @clickOn("[data-name=#{widget}].close-widget")
+    @clickOn("[data-name=#{widget}].widget-close")
 
   @clickOn: (element) ->
     $(element).click()

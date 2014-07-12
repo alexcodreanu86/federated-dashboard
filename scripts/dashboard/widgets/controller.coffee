@@ -30,7 +30,7 @@ class Dashboard.Widgets.Controller
     Dashboard.Widgets.Manager.hideActiveForms()
 
   @bindClosingWidgets: ->
-    $(document).on('click', '.close-widget', (event) =>
+    $(document).on('click', '.widget-close', (event) =>
       wrapperName = @getWidgetToBeClosed(event)
       @closeWidget(wrapperName)
     )

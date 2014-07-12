@@ -1,9 +1,9 @@
 setupDashboardFixtures = ->
   setFixtures """
     <div data-id="widget-display">
-      <div class="widget-col" data-id='col0-container'><ul class='widget-list' data-id="col0"></ul></div>
-      <div class="widget-col" data-id='col1-container'><ul class='widget-list' data-id="col1"></ul></div>
-      <div class="widget-col" data-id='col2-container'><ul class='widget-list' data-id="col2"></ul></div>
+      <div data-id='col0-container'><ul class='widget-list' data-id="col0"></ul></div>
+      <div data-id='col1-container'><ul class='widget-list' data-id="col1"></ul></div>
+      <div data-id='col2-container'><ul class='widget-list' data-id="col2"></ul></div>
     </div>
   """
 
@@ -11,7 +11,7 @@ describe "Dashboard.Columns.Display", ->
   it "append container to column appends the desired container to the given column", ->
     setFixtures("<div data-id='col0'></div>")
     Dashboard.Columns.Display.appendContainerToColumn('pictures', 'col0')
-    expect($('[data-id=col0]')).toContainElement("[data-id=pictures].widget")
+    expect($('[data-id=col0]')).toContainElement("[data-id=pictures].widget-item")
 
   it "setColumnAsAvailable adds available-slots class to the given list", ->
     setupDashboardFixtures()

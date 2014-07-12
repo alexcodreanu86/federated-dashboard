@@ -67,6 +67,11 @@ p {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 250px; }
+  .widget-header input {
+    color: #323a45; }
+  .widget-header button {
+    color: #323a45;
+    background: #f27935; }
 
 .widget-body {
   padding: 1em; }

@@ -2,7 +2,7 @@ namespace('Dashboard.Widgets')
 
 class Dashboard.Widgets.Templates
   @generateClosingButton: (dataName) ->
-    "<button class='close-widget' data-name='#{dataName}'>X</button>"
+    "<span class='widget-close' data-name='#{dataName}'>×</span>"
 
   @generateHandle: (dataName) ->
     #TODO SWITCH WITH REAL HANDLE

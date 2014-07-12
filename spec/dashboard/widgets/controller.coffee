@@ -61,9 +61,9 @@ describe "Dashboard.Widgets.Controller", ->
 
   it "setupWidget is setting the closing button", ->
     setupAndBindController()
-    picturesWidget = getWidget("pictures")
-    Dashboard.Widgets.Controller.setupWidget(picturesWidget)
-    expect($(picturesWidget.containerName)).toContainElement('.close-widget')
+    weatherWidget = getWidget("weather")
+    Dashboard.Widgets.Controller.setupWidget(weatherWidget)
+    expect($(weatherWidget.containerName)).toContainElement('.widget-close')
 
   it "setupWidget doesn't set the widget if a container is not available for it", ->
     setupAndBindController()
@@ -82,11 +82,11 @@ describe "Dashboard.Widgets.Controller", ->
   it "closeWidget is closing the widget that is given to it", ->
     resetController()
     setFixtures(sandbox())
-    picturesWrapped = getWidget('pictures')
-    picturesWrapped.setupWidgetIn("#sandbox")
-    expect(picturesWrapped.isActive).toBe(true)
-    Dashboard.Widgets.Controller.closeWidget("pictures")
-    expect(picturesWrapped.isActive).toBe(false)
+    weatherWrapper = getWidget('weather')
+    weatherWrapper.setupWidgetIn("#sandbox")
+    expect(weatherWrapper.isActive).toBe(true)
+    Dashboard.Widgets.Controller.closeWidget("weather")
+    expect(weatherWrapper.isActive).toBe(false)
 
   it "closeWidget updates the view slots", ->
     setupAndBindController()
@@ -104,22 +104,22 @@ describe "Dashboard.Widgets.Controller", ->
     Dashboard.Widgets.Controller.closeWidget('pictures')
     expect($('[data-id=side-nav] li').first()).not.toBeMatchedBy('.active')
 
-  it "bindClosingWidgets closes the pictures widget when the pictures close button is clicked", ->
+  it "bindClosingWidgets closes the weather widget when the weather close button is clicked", ->
     setupAndBindController()
     Dashboard.Widgets.Controller.bindClosingWidgets()
-    clickOn('[data-id=pictures-widget]')
-    expect('[data-name=pictures].close-widget').toBeInDOM()
-    clickOn('[data-name=pictures].close-widget')
-    expect($('[data-id=pictures-slot]')).not.toBeInDOM()
+    clickOn('[data-id=weather-widget]')
+    expect('[data-name=weather].widget-close').toBeInDOM()
+    clickOn('[data-name=weather].widget-close')
+    expect($('[data-id=weather-slot]')).not.toBeInDOM()
 
   it "enterEditMode adds closing buttons to the widgets containers", ->
     setupAndBindController()
-    clickOn('[data-id=pictures-widget]')
+    clickOn('[data-id=weather-widget]')
     Dashboard.Controller.removeSidenav()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(weatherWrapper.containerName)).not.toContainElement('[data-name=weather].widget-close')
     Dashboard.Widgets.Controller.enterEditMode()
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+    expect($(weatherWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
 
   it "enterEditMode shows the forms for the widgets", ->
     spy = spyOn(Dashboard.Widgets.Manager, 'showActiveForms')
@@ -129,11 +129,11 @@ describe "Dashboard.Widgets.Controller", ->
 
   it "exitEditMode removes closing buttons from the widgets containers", ->
     setupAndBindController()
-    clickOn('[data-id=pictures-widget]')
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+    clickOn('[data-id=weather-widget]')
+    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(weatherWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
     Dashboard.Widgets.Controller.exitEditMode()
-    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+    expect($(weatherWrapper.containerName)).not.toContainElement('[data-name=weather].widget-close')
 
   it "exitEditMode hides the forms for the widgets", ->
     spy = spyOn(Dashboard.Widgets.Manager, 'hideActiveForms')

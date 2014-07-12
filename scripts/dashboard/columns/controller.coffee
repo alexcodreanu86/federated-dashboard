@@ -53,7 +53,7 @@ class Dashboard.Columns.Controller
     @enableDraggableWidgets()
 
   @enableDraggableWidgets: ->
-    $('.widget').draggable({
+    $('.widget-item').draggable({
       handle: '.widget-handle',
       snap: '.widget-col',
       snapMode: 'inner',
@@ -71,7 +71,7 @@ class Dashboard.Columns.Controller
 
   @activateDroppable: ->
     $('.droppable-column').droppable({
-      accept: '.widget',
+      accept: '.widget-item',
       tolerance: 'pointer',
       drop: (event, ui) ->
         droppedList = $(this).children()[0]
@@ -88,7 +88,7 @@ class Dashboard.Columns.Controller
     })
 
   @disableDraggableWidgets: ->
-    $('.widget').draggable('destroy')
+    $('.widget-item').draggable('destroy')
 
   @processDroppedWidgetIn: (wrapper, newColumn) ->
     previousCol = wrapper.containerColumn

@@ -12,7 +12,7 @@ class Dashboard.Widgets.Display
 
   @addButtonToContainer: (widgetInfo) ->
     button = Dashboard.Widgets.Templates.generateClosingButton(widgetInfo.name)
-    $(widgetInfo.container).prepend(button)
+    $("#{widgetInfo.container} .widget-title").after(button)
 
   @addHandleToContainer: (widgetInfo) ->
     handle = Dashboard.Widgets.Templates.generateHandle(widgetInfo.name)
@@ -23,7 +23,7 @@ class Dashboard.Widgets.Display
     @removeDraggingHandles()
 
   @removeClosingButtons: ->
-    $('.close-widget').remove()
+    $('.widget-close').remove()
 
   @removeDraggingHandles: ->
     $('.widget-handle').remove()

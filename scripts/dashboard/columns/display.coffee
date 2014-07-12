@@ -3,7 +3,7 @@ namespace('Dashboard.Columns')
 class Dashboard.Columns.Display
   @appendContainerToColumn: (dataId, column) ->
     $("[data-id=#{column}]").append(
-      "<li class='widget' data-id='#{dataId}'></li>"
+      "<li class='widget-item' data-id='#{dataId}'></li>"
     )
 
   @setColumnAsAvailable: (colDataId) ->

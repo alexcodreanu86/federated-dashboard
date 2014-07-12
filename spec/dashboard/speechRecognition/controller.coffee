@@ -50,8 +50,8 @@ describe "Dashboard.SpeechRecognition.Controller", ->
   it "closeWidget is closing the widget", ->
     prepareDashboard()
     Dashboard.Controller.setupSidenav()
-    Dashboard.SpeechRecognition.Controller.openWidget('pictures')
-    Dashboard.SpeechRecognition.Controller.closeWidget('pictures')
+    Dashboard.SpeechRecognition.Controller.openWidget('weather')
+    Dashboard.SpeechRecognition.Controller.closeWidget('weather')
     expect($('[data-id=col0]')).not.toContainElement('[data-id=pictures-button]')
 
   it "dragWidget will drag the widget to the right when direction is right", ->

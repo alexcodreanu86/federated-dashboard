@@ -92,6 +92,13 @@ p { margin: 0; }
     text-overflow: ellipsis;
     width: 250px;
   }
+
+  input { color: $primary-color; }
+
+  button {
+    color: $primary-color;
+    background: $orange;
+  }
 }
 
 .widget-body {

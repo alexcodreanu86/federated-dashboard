@@ -1,25 +1,31 @@
 mockActiveWidgetsData = [{container: "#first-container", name: "pictures"}, {container: "#second-container", name: "weather"}]
 
+setupFixtures = ->
+    setFixtures("""
+      <div id='first-container'><div class='widget-title'></div></div>
+      <div id='second-container'><div class='widget-title'></div></div>
+    """)
+
 describe "Dashboard.Widgets.Display", ->
   it "addEditindButtonsFor adds closing buttons into the containers that are passed to it", ->
-    setFixtures("<div id='first-container'></div><div id='second-container'></div>")
+    setupFixtures()
     Dashboard.Widgets.Display.addEditingButtonsFor(mockActiveWidgetsData)
-    expect($("#first-container")).toContainElement('[data-name=pictures].close-widget')
-    expect($("#second-container")).toContainElement('[data-name=weather].close-widget')
+    expect($("#first-container")).toContainElement('[data-name=pictures].widget-close')
+    expect($("#second-container")).toContainElement('[data-name=weather].widget-close')
 
   it "addEditingButtonsFor adds dragging handles into the containers that are passed to it", ->
-    setFixtures("<div id='first-container'></div><div id='second-container'></div>")
+    setupFixtures()
     Dashboard.Widgets.Display.addEditingButtonsFor(mockActiveWidgetsData)
     expect($("#first-container")).toContainElement('[data-name=pictures].widget-handle')
     expect($("#second-container")).toContainElement('[data-name=weather].widget-handle')
 
   it "removeClosingButtons removes all the closing buttons off the widgets", ->
-    setFixtures("<div id='first-container'></div><div id='second-container'></div>")
+    setupFixtures()
     Dashboard.Widgets.Display.addEditingButtonsFor(mockActiveWidgetsData)
-    expect($("#first-container")).toContainElement('[data-name=pictures].close-widget')
+    expect($("#first-container")).toContainElement('[data-name=pictures].widget-close')
     Dashboard.Widgets.Display.removeClosingButtons()
-    expect($("#first-container")).not.toContainElement('[data-name=pictures].close-widget')
-    expect($("#second-container")).not.toContainElement('[data-name=weather].close-widget')
+    expect($("#first-container")).not.toContainElement('[data-name=pictures].widget-close')
+    expect($("#second-container")).not.toContainElement('[data-name=weather].widget-close')
 
   it "removeDraggingHandles removes all the dragging handles", ->
     setFixtures("<div id='first-container'></div><div id='second-container'></div>")

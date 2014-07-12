@@ -48,11 +48,11 @@ describe "Dashboard.Controller", ->
   it "setupSidenav enables widget editing", ->
     setupAndBindController()
     spy = spyOn(Dashboard.Widgets.Manager, 'showActiveForms')
-    clickOn('[data-id=pictures-widget]')
+    clickOn('[data-id=weather-widget]')
     Dashboard.Controller.removeSidenav()
     Dashboard.Controller.setupSidenav()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(picturesWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
 
   it "setupSidenav enables columns editing", ->
     setupDashboardFixtures()
@@ -62,13 +62,13 @@ describe "Dashboard.Controller", ->
 
   it "removeSidenav closes edit mode", ->
     setupAndBindController()
-    clickOn('[data-id=pictures-widget]')
+    clickOn('[data-id=weather-widget]')
     Dashboard.Controller.removeSidenav()
     Dashboard.Controller.setupSidenav()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=pictures].close-widget')
+    picturesWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(picturesWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
     Dashboard.Controller.removeSidenav()
-    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=pictures].close-widget')
+    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=weather].widget-close')
 
   it "removeSidenav disables columns editing", ->
     setupDashboardFixtures()

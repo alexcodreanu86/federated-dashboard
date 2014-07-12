@@ -136,7 +136,7 @@
     };
 
     Controller.enableDraggableWidgets = function() {
-      return $('.widget').draggable({
+      return $('.widget-item').draggable({
         handle: '.widget-handle',
         snap: '.widget-col',
         snapMode: 'inner',
@@ -157,7 +157,7 @@
 
     Controller.activateDroppable = function() {
       return $('.droppable-column').droppable({
-        accept: '.widget',
+        accept: '.widget-item',
         tolerance: 'pointer',
         drop: function(event, ui) {
           var column, droppedList, widgetContainer, wrapper;
@@ -177,7 +177,7 @@
     };
 
     Controller.disableDraggableWidgets = function() {
-      return $('.widget').draggable('destroy');
+      return $('.widget-item').draggable('destroy');
     };
 
     Controller.processDroppedWidgetIn = function(wrapper, newColumn) {
@@ -223,7 +223,7 @@
     function Display() {}
 
     Display.appendContainerToColumn = function(dataId, column) {
-      return $("[data-id=" + column + "]").append("<li class='widget' data-id='" + dataId + "'></li>");
+      return $("[data-id=" + column + "]").append("<li class='widget-item' data-id='" + dataId + "'></li>");
     };
 
     Display.setColumnAsAvailable = function(colDataId) {
@@ -449,7 +449,7 @@
     };
 
     Controller.closeWidget = function(widget) {
-      return this.clickOn("[data-name=" + widget + "].close-widget");
+      return this.clickOn("[data-name=" + widget + "].widget-close");
     };
 
     Controller.clickOn = function(element) {
@@ -558,7 +558,7 @@
     };
 
     Controller.bindClosingWidgets = function() {
-      return $(document).on('click', '.close-widget', (function(_this) {
+      return $(document).on('click', '.widget-close', (function(_this) {
         return function(event) {
           var wrapperName;
           wrapperName = _this.getWidgetToBeClosed(event);
@@ -608,7 +608,7 @@
     Display.addButtonToContainer = function(widgetInfo) {
       var button;
       button = Dashboard.Widgets.Templates.generateClosingButton(widgetInfo.name);
-      return $(widgetInfo.container).prepend(button);
+      return $("" + widgetInfo.container + " .widget-title").after(button);
     };
 
     Display.addHandleToContainer = function(widgetInfo) {
@@ -623,7 +623,7 @@
     };
 
     Display.removeClosingButtons = function() {
-      return $('.close-widget').remove();
+      return $('.widget-close').remove();
     };
 
     Display.removeDraggingHandles = function() {
@@ -722,7 +722,7 @@
     function Templates() {}
 
     Templates.generateClosingButton = function(dataName) {
-      return "<button class='close-widget' data-name='" + dataName + "'>X</button>";
+      return "<span class='widget-close' data-name='" + dataName + "'>×</span>";
     };
 
     Templates.generateHandle = function(dataName) {
