@@ -249,7 +249,6 @@
 
     Controller.initialize = function() {
       this.bindMenuButton();
-      Dashboard.Sidenav.Controller.bindButtons();
       return Dashboard.Widgets.Controller.initialize();
     };
 
@@ -368,28 +367,7 @@
 }).call(this);
 
 (function() {
-  namespace('Dashboard.Sidenav');
 
-  Dashboard.Sidenav.Display = (function() {
-    function Display() {}
-
-    Display.setButtonActive = function(widgetWrapper) {
-      var button;
-      button = "[data-id=" + widgetWrapper.name + "-widget]";
-      $(button).parent().removeClass('inactive');
-      return $(button).parent().addClass('active');
-    };
-
-    Display.setButtonInactive = function(widgetWrapper) {
-      var button;
-      button = "[data-id=" + widgetWrapper.name + "-widget]";
-      $(button).parent().removeClass('active');
-      return $(button).parent().addClass('inactive');
-    };
-
-    return Display;
-
-  })();
 
 }).call(this);
 
@@ -521,26 +499,22 @@
     function Controller() {}
 
     Controller.initialize = function() {
-      Dashboard.Widgets.Manager.generateWrappers();
-      return this.bindClosingWidgets();
+      return Dashboard.Widgets.Manager.generateWrappers();
     };
 
     Controller.checkWidget = function(name) {
       var wrapper;
       wrapper = Dashboard.Widgets.Manager.wrappers[name];
-      if (!wrapper.isActive) {
-        return this.setupWidget(wrapper);
-      }
+      return this.setupWidget(wrapper);
     };
 
     Controller.setupWidget = function(wrappedWidget) {
       var containerInfo;
       containerInfo = Dashboard.Columns.Controller.generateAvailableSlotFor(wrappedWidget);
       if (containerInfo) {
-        Dashboard.Sidenav.Display.setButtonActive(wrappedWidget);
         wrappedWidget.setupWidgetIn(containerInfo);
         containerInfo = Dashboard.Widgets.Manager.getContainerAndNameOf(wrappedWidget);
-        Dashboard.Widgets.Display.addButtonAndHandleToContainer(containerInfo);
+        Dashboard.Widgets.Display.addHandleToContainer(containerInfo);
         return Dashboard.Columns.Controller.enableDraggableWidgets();
       }
     };
@@ -557,27 +531,9 @@
       return Dashboard.Widgets.Manager.hideActiveForms();
     };
 
-    Controller.bindClosingWidgets = function() {
-      return $(document).on('click', '.widget-close', (function(_this) {
-        return function(event) {
-          var wrapperName;
-          wrapperName = _this.getWidgetToBeClosed(event);
-          return _this.closeWidget(wrapperName);
-        };
-      })(this));
-    };
-
     Controller.getWidgetToBeClosed = function(event) {
       var wrapperName;
       return wrapperName = $(event.currentTarget).attr('data-name');
-    };
-
-    Controller.closeWidget = function(wrapperName) {
-      var wrappedWidget;
-      wrappedWidget = Dashboard.Widgets.Manager.wrappers[wrapperName];
-      Dashboard.Columns.Controller.emptySlotsInColumn(wrappedWidget.slotSize, wrappedWidget.containerColumn);
-      Dashboard.Sidenav.Display.setButtonInactive(wrappedWidget);
-      return wrappedWidget.deactivateWidget();
     };
 
     return Controller;
@@ -595,20 +551,9 @@
     Display.addEditingButtonsFor = function(activeWidgetsInfo) {
       return _.each(activeWidgetsInfo, (function(_this) {
         return function(widgetInfo) {
-          return _this.addButtonAndHandleToContainer(widgetInfo);
+          return _this.addHandleToContainer(widgetInfo);
         };
       })(this));
-    };
-
-    Display.addButtonAndHandleToContainer = function(widgetInfo) {
-      this.addButtonToContainer(widgetInfo);
-      return this.addHandleToContainer(widgetInfo);
-    };
-
-    Display.addButtonToContainer = function(widgetInfo) {
-      var button;
-      button = Dashboard.Widgets.Templates.generateClosingButton(widgetInfo.name);
-      return $("" + widgetInfo.container + " .widget-title").after(button);
     };
 
     Display.addHandleToContainer = function(widgetInfo) {
@@ -618,12 +563,7 @@
     };
 
     Display.removeEditButtons = function() {
-      this.removeClosingButtons();
       return this.removeDraggingHandles();
-    };
-
-    Display.removeClosingButtons = function() {
-      return $('.widget-close').remove();
     };
 
     Display.removeDraggingHandles = function() {
@@ -784,11 +724,11 @@
     };
 
     Wrapper.prototype.hideWidgetForm = function() {
-      return this.widget.Display.hideForm();
+      return this.widget.Controller.hideForms();
     };
 
     Wrapper.prototype.showWidgetForm = function() {
-      return this.widget.Display.showForm();
+      return this.widget.Controller.showForms();
     };
 
     return Wrapper;

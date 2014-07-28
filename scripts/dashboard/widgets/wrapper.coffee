@@ -31,7 +31,7 @@ class Dashboard.Widgets.Wrapper
     $(@containerName).prepend("<button data-id='#{dataId}'>X</button>")
 
   hideWidgetForm: ->
-    @widget.Display.hideForm()
+    @widget.Controller.hideForms()
 
   showWidgetForm: ->
-    @widget.Display.showForm()
+    @widget.Controller.showForms()

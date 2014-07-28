@@ -3,7 +3,6 @@ namespace('Dashboard')
 class Dashboard.Controller
   @initialize: ->
     @bindMenuButton()
-    Dashboard.Sidenav.Controller.bindButtons()
     Dashboard.Widgets.Controller.initialize()
 
   @bindMenuButton: ->

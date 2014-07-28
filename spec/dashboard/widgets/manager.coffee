@@ -64,10 +64,10 @@ describe "Dashboard.Widgets.Manager", ->
     weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
     picturesWrapper.isActive = true
     weatherWrapper.isActive = true
-    picturesSpy = spyOn(Pictures.Display, 'hideForm')
-    weatherSpy = spyOn(Weather.Display, 'hideForm')
-    twitterSpy = spyOn(Twitter.Display, 'hideForm')
-    stockSpy = spyOn(Stock.Display, 'hideForm')
+    picturesSpy = spyOn(Pictures.Controller, 'hideForms')
+    weatherSpy = spyOn(Weather.Controller, 'hideForms')
+    twitterSpy = spyOn(Twitter.Controller, 'hideForms')
+    stockSpy = spyOn(Stock.Controller, 'hideForms')
     Dashboard.Widgets.Manager.hideActiveForms()
     expect(picturesSpy).toHaveBeenCalled()
     expect(weatherSpy).toHaveBeenCalled()
@@ -80,10 +80,10 @@ describe "Dashboard.Widgets.Manager", ->
     weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
     picturesWrapper.isActive = true
     weatherWrapper.isActive = true
-    picturesSpy = spyOn(Pictures.Display, 'showForm')
-    weatherSpy = spyOn(Weather.Display, 'showForm')
-    twitterSpy = spyOn(Twitter.Display, 'showForm')
-    stockSpy = spyOn(Stock.Display, 'showForm')
+    picturesSpy = spyOn(Pictures.Controller, 'showForms')
+    weatherSpy = spyOn(Weather.Controller, 'showForms')
+    twitterSpy = spyOn(Twitter.Controller, 'showForms')
+    stockSpy = spyOn(Stock.Controller, 'showForms')
     Dashboard.Widgets.Manager.showActiveForms()
     expect(picturesSpy).toHaveBeenCalled()
     expect(weatherSpy).toHaveBeenCalled()

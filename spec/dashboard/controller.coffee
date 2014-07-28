@@ -51,8 +51,8 @@ describe "Dashboard.Controller", ->
     clickOn('[data-id=weather-widget]')
     Dashboard.Controller.removeSidenav()
     Dashboard.Controller.setupSidenav()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.weather
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
+    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(weatherWrapper.containerName)).toContainElement('.widget-close')
 
   it "setupSidenav enables columns editing", ->
     setupDashboardFixtures()
@@ -65,10 +65,10 @@ describe "Dashboard.Controller", ->
     clickOn('[data-id=weather-widget]')
     Dashboard.Controller.removeSidenav()
     Dashboard.Controller.setupSidenav()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.weather
-    expect($(picturesWrapper.containerName)).toContainElement('[data-name=weather].widget-close')
+    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
+    expect($(weatherWrapper.containerName)).toContainElement('.widget-close')
     Dashboard.Controller.removeSidenav()
-    expect($(picturesWrapper.containerName)).not.toContainElement('[data-name=weather].widget-close')
+    expect($("#{weatherWrapper.containerName} .widget-close").attr('style')).toEqual('display: none;')
 
   it "removeSidenav disables columns editing", ->
     setupDashboardFixtures()

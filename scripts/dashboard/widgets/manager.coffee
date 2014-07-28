@@ -47,4 +47,3 @@ class Dashboard.Widgets.Manager
 
   @getWrapperInContainer: (containerName) ->
     _.findWhere(@wrappers, {containerName: containerName})
-
