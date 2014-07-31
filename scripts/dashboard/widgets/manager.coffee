@@ -1,49 +1,45 @@
 namespace("Dashboard.Widgets")
 
 class Dashboard.Widgets.Manager
-  @generateWrappers: ->
+  @generateWrappers: (settings) ->
     @wrappers = {
       pictures: @wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
       weather: @wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
       twitter: @wrapWidget(Twitter, "twitter", 2, ""),
       stock: @wrapWidget(Stock, "stock", 2, "")
     }
+    if settings && settings.defaults
+      @addDefaultsToWrappers()
 
-  @wrapWidget: (widget, name, slotSize, apiKey) ->
+  @wrapWidget: (widget, name, slotSize, apiKey, defaultValue) ->
     new Dashboard.Widgets.Wrapper({widget: widget, name: name, slotSize: slotSize, apiKey: apiKey})
 
+  @addDefaultsToWrappers: ->
+    @wrappers.pictures.defaultValue = 'bikes'
+    @wrappers.twitter.defaultValue = 'bikes'
+    @wrappers.weather.defaultValue = 'Chicago IL'
+    @wrappers.stock.defaultValue = 'AAPL YHOO'
+
+  @enterEditMode: ->
+    @mapOnAllWidgets('showWidgetForm')
+
+  @exitEditMode: ->
+    @mapOnAllWidgets('hideWidgetForm')
+
   @getSidenavButtons: ->
-    widgets = _.values(Dashboard.Widgets.Manager.wrappers)
+    @mapOnAllWidgets('widgetLogo')
+
+  @mapOnAllWidgets: (functionName) ->
+    widgets = @getListOfWidgets()
     _.map(widgets, (wrapper) ->
-      wrapper.widgetLogo()
+      wrapper[functionName]()
     )
 
-  @getActiveWidgetsData: ->
-    activeWidgets = @getActiveWidgets()
-    _.map(activeWidgets, @getContainerAndNameOf)
+  @getListOfWidgets: ->
+    _.values(@wrappers)
 
-  @getActiveWidgets: ->
-    _.filter(Dashboard.Widgets.Manager.wrappers, (widget) ->
-      widget.isActive
-    )
-
-  @getContainerAndNameOf: (wrapper) ->
-    {
-      container: wrapper.containerName,
-      name: wrapper.name
-    }
-
-  @hideActiveForms: ->
-    wrappers =  @getActiveWidgets()
-    _.each(wrappers, (wrapper) ->
-      wrapper.hideWidgetForm()
-    )
-
-  @showActiveForms: ->
-    wrappers =  @getActiveWidgets()
-    _.each(wrappers, (wrapper) ->
-      wrapper.showWidgetForm()
-    )
-
-  @getWrapperInContainer: (containerName) ->
-    _.findWhere(@wrappers, {containerName: containerName})
+  @setupWidget: (name) ->
+    wrapper = @wrappers[name]
+    container = Dashboard.Widgets.Display.generateContainer(wrapper.slotSize)
+    if container
+      wrapper.setupWidgetIn(container)

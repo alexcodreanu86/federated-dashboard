@@ -18,238 +18,14 @@
 }(window._));
 
 (function() {
-  namespace('Dashboard.SpeechRecognition');
-
-  Dashboard.SpeechRecognition.Controller = (function() {
-    function Controller() {}
-
-    Controller.commands = {
-      'Dashboard show navigation': function() {
-        return Dashboard.Controller.setupSidenav();
-      },
-      'Dashboard hide navigation': function() {
-        return Dashboard.Controller.removeSidenav();
-      },
-      'Dashboard open *widget widget': function(term) {
-        return $("[data-id=" + (term.toLowerCase()) + "-widget]").click();
-      }
-    };
-
-    Controller.initialize = function() {
-      if (annyang) {
-        console.log(annyang);
-        annyang.addCommands(this.commands);
-        annyang.debug();
-        return annyang.start();
-      }
-    };
-
-    Controller.sayHello = function() {
-      return console.log("Hello");
-    };
-
-    return Controller;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace("Dashboard.Columns");
-
-  Dashboard.Columns.Controller = (function() {
-    var SPACES_PER_COLUMN;
-
-    function Controller() {}
-
-    SPACES_PER_COLUMN = 3;
-
-    Controller.takenSlots = {
-      col0: 0,
-      col1: 0,
-      col2: 0
-    };
-
-    Controller.hasEnoughSlots = function(colName, desiredSize) {
-      return this.takenSlots[colName] + desiredSize <= SPACES_PER_COLUMN;
-    };
-
-    Controller.emptySlotsInColumn = function(slotSize, colName) {
-      return this.takenSlots[colName] -= slotSize;
-    };
-
-    Controller.addSlotsToColumn = function(slotSize, colName) {
-      return this.takenSlots[colName] += slotSize;
-    };
-
-    Controller.generateAvailableSlotFor = function(widgetWrapper) {
-      var col, dataId, size;
-      dataId = "" + widgetWrapper.name + "-slot";
-      size = widgetWrapper.slotSize;
-      col = this.getFirstAvailableColumn(size);
-      if (col) {
-        this.addWidgetContainerToColumn(dataId, col, size);
-        return {
-          containerName: "[data-id=" + dataId + "]",
-          containerColumn: col
-        };
-      }
-    };
-
-    Controller.addWidgetContainerToColumn = function(dataId, col, size) {
-      Dashboard.Columns.Display.appendContainerToColumn(dataId, col);
-      return this.addSlotsToColumn(size, col);
-    };
-
-    Controller.getFirstAvailableColumn = function(space) {
-      var colNames;
-      colNames = this.getAllAvailableColumns(space);
-      return colNames[0];
-    };
-
-    Controller.getAllAvailableColumns = function(space) {
-      var colNames;
-      colNames = _.map(this.takenSlots, (function(_this) {
-        return function(currentSpaces, colName) {
-          if (_this.hasEnoughSlots(colName, space)) {
-            return colName;
-          }
-        };
-      })(this));
-      return _.filter(colNames, function(colName) {
-        return colName;
-      });
-    };
-
-    Controller.activateListsWithAvailableSlots = function(wrapper) {
-      var availableColumns;
-      availableColumns = this.getAllAvailableColumns(wrapper.slotSize);
-      availableColumns.push(wrapper.containerColumn);
-      return _.each(availableColumns, function(columnName) {
-        return Dashboard.Columns.Display.setColumnAsAvailable(columnName);
-      });
-    };
-
-    Controller.enterEditMode = function() {
-      this.enableSortableColumns();
-      return this.enableDraggableWidgets();
-    };
-
-    Controller.enableDraggableWidgets = function() {
-      return $('.widget-item').draggable({
-        handle: '.widget-handle',
-        snap: '.widget-col',
-        snapMode: 'inner',
-        revert: true,
-        revertDuration: 0,
-        start: function(event, ui) {
-          var dataId, wrapper;
-          dataId = $(this).attr('data-id');
-          wrapper = Dashboard.Widgets.Manager.getWrapperInContainer("[data-id=" + dataId + "]");
-          Dashboard.Columns.Controller.activateListsWithAvailableSlots(wrapper);
-          return Dashboard.Columns.Controller.activateDroppable();
-        },
-        stop: function() {
-          return $(this).attr('style', "position: relative;");
-        }
-      });
-    };
-
-    Controller.activateDroppable = function() {
-      return $('.droppable-column').droppable({
-        accept: '.widget-item',
-        tolerance: 'pointer',
-        drop: function(event, ui) {
-          var column, droppedList, widgetContainer, wrapper;
-          droppedList = $(this).children()[0];
-          column = $(droppedList).attr('data-id');
-          widgetContainer = $(ui.draggable).attr('data-id');
-          wrapper = Dashboard.Widgets.Manager.getWrapperInContainer("[data-id=" + widgetContainer + "]");
-          if (Dashboard.Columns.Controller.hasEnoughSlots(column, wrapper.slotSize)) {
-            $(droppedList).append(ui.draggable);
-            Dashboard.Columns.Controller.processDroppedWidgetIn(wrapper, column);
-          }
-          Dashboard.Columns.Display.removeDroppableColumns();
-          Dashboard.Columns.Controller.resetSortableColumns();
-          return $('.droppable-column').droppable('destroy');
-        }
-      });
-    };
-
-    Controller.disableDraggableWidgets = function() {
-      return $('.widget-item').draggable('destroy');
-    };
-
-    Controller.processDroppedWidgetIn = function(wrapper, newColumn) {
-      var previousCol;
-      previousCol = wrapper.containerColumn;
-      if (previousCol !== newColumn) {
-        wrapper.containerColumn = newColumn;
-        this.emptySlotsInColumn(wrapper.slotSize, previousCol);
-        return this.addSlotsToColumn(wrapper.slotSize, newColumn);
-      }
-    };
-
-    Controller.resetSortableColumns = function() {
-      this.disableSortableColumns();
-      return this.enableSortableColumns();
-    };
-
-    Controller.enableSortableColumns = function() {
-      return $('.widget-list').sortable({
-        axis: 'y'
-      });
-    };
-
-    Controller.disableSortableColumns = function() {
-      return $('.widget-list').sortable('destroy');
-    };
-
-    Controller.exitEditMode = function() {
-      this.disableDraggableWidgets();
-      return this.disableSortableColumns();
-    };
-
-    return Controller;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Dashboard.Columns');
-
-  Dashboard.Columns.Display = (function() {
-    function Display() {}
-
-    Display.appendContainerToColumn = function(dataId, column) {
-      return $("[data-id=" + column + "]").append("<li class='widget-item' data-id='" + dataId + "'></li>");
-    };
-
-    Display.setColumnAsAvailable = function(colDataId) {
-      return $("[data-id=" + colDataId + "-container]").addClass('droppable-column');
-    };
-
-    Display.removeDroppableColumns = function() {
-      $('.droppable-column').removeClass('droppable-column');
-      return $('.ui-droppable').removeClass('ui-droppable');
-    };
-
-    return Display;
-
-  })();
-
-}).call(this);
-
-(function() {
   namespace('Dashboard');
 
   Dashboard.Controller = (function() {
     function Controller() {}
 
-    Controller.initialize = function() {
+    Controller.initialize = function(settings) {
       this.bindMenuButton();
-      return Dashboard.Widgets.Controller.initialize();
+      return Dashboard.Widgets.Manager.generateWrappers(settings);
     };
 
     Controller.bindMenuButton = function() {
@@ -269,18 +45,20 @@
     };
 
     Controller.setupSidenav = function() {
-      var buttons;
-      buttons = Dashboard.Widgets.Manager.getSidenavButtons();
-      Dashboard.Display.showSidenav(buttons);
-      Dashboard.Sidenav.Controller.rebindButtons();
-      Dashboard.Widgets.Controller.enterEditMode();
-      return Dashboard.Columns.Controller.enterEditMode();
+      Dashboard.Display.showSidenav(this.getButtons());
+      Dashboard.Sidenav.Controller.bindSetupWidgets();
+      Dashboard.Widgets.Manager.enterEditMode();
+      return Dashboard.Widgets.Sorter.setupSortable();
+    };
+
+    Controller.getButtons = function() {
+      return this.sidenavButtons || (this.sidenavButtons = Dashboard.Widgets.Manager.getSidenavButtons());
     };
 
     Controller.removeSidenav = function() {
       Dashboard.Display.removeSidenav();
-      Dashboard.Widgets.Controller.exitEditMode();
-      return Dashboard.Columns.Controller.exitEditMode();
+      Dashboard.Widgets.Manager.exitEditMode();
+      return Dashboard.Widgets.Sorter.disableSortable();
     };
 
     return Controller;
@@ -325,49 +103,26 @@
   Dashboard.Sidenav.Controller = (function() {
     function Controller() {}
 
-    Controller.bindButtons = function() {
-      $('[data-id=pictures-widget]').click((function(_this) {
-        return function() {
-          return Dashboard.Widgets.Controller.checkWidget("pictures");
-        };
-      })(this));
-      $('[data-id=weather-widget]').click((function(_this) {
-        return function() {
-          return Dashboard.Widgets.Controller.checkWidget("weather");
-        };
-      })(this));
-      $('[data-id=stock-widget]').click((function(_this) {
-        return function() {
-          return Dashboard.Widgets.Controller.checkWidget("stock");
-        };
-      })(this));
-      return $('[data-id=twitter-widget]').click((function(_this) {
-        return function() {
-          return Dashboard.Widgets.Controller.checkWidget("twitter");
-        };
-      })(this));
+    Controller.bindSetupWidgets = function() {
+      return $('[data-id=widgets-menu] li img').click(function() {
+        return Dashboard.Sidenav.Controller.processClickedButton(this);
+      });
     };
 
-    Controller.unbind = function() {
-      $('[data-id=pictures-widget]').unbind('click');
-      $('[data-id=weather-widget]').unbind('click');
-      $('[data-id=stock-widget]').unbind('click');
-      return $('[data-id=twitter-widget]').unbind('click');
+    Controller.processClickedButton = function(button) {
+      var buttonDataId, widgetName;
+      buttonDataId = button.getAttribute('data-id');
+      widgetName = this.getWidgetName(buttonDataId);
+      return Dashboard.Widgets.Manager.setupWidget(widgetName);
     };
 
-    Controller.rebindButtons = function() {
-      this.unbind();
-      return this.bindButtons();
+    Controller.getWidgetName = function(dataId) {
+      return dataId.split('-')[0];
     };
 
     return Controller;
 
   })();
-
-}).call(this);
-
-(function() {
-
 
 }).call(this);
 
@@ -495,79 +250,82 @@
 (function() {
   namespace('Dashboard.Widgets');
 
-  Dashboard.Widgets.Controller = (function() {
-    function Controller() {}
+  Dashboard.Widgets.Display = (function() {
+    var COLUMNS, SPACES_PER_COLUMN;
 
-    Controller.initialize = function() {
-      return Dashboard.Widgets.Manager.generateWrappers();
-    };
+    function Display() {}
 
-    Controller.checkWidget = function(name) {
-      var wrapper;
-      wrapper = Dashboard.Widgets.Manager.wrappers[name];
-      return this.setupWidget(wrapper);
-    };
+    SPACES_PER_COLUMN = 3;
 
-    Controller.setupWidget = function(wrappedWidget) {
-      var containerInfo;
-      containerInfo = Dashboard.Columns.Controller.generateAvailableSlotFor(wrappedWidget);
-      if (containerInfo) {
-        wrappedWidget.setupWidgetIn(containerInfo);
-        containerInfo = Dashboard.Widgets.Manager.getContainerAndNameOf(wrappedWidget);
-        Dashboard.Widgets.Display.addHandleToContainer(containerInfo);
-        return Dashboard.Columns.Controller.enableDraggableWidgets();
+    COLUMNS = ['col0', 'col1', 'col2'];
+
+    Display.containerCount = 0;
+
+    Display.generateContainer = function(size) {
+      var columnWithSpace, containerId;
+      columnWithSpace = this.getFirstAvailableColumn(size);
+      if (columnWithSpace) {
+        containerId = this.getNextContainer();
+        this.incrementContainerCount();
+        $("[data-id=" + columnWithSpace + "]").append("<li data-id=" + containerId + " data-size=" + size + "></li>");
+        return "[data-id=" + containerId + "]";
       }
     };
 
-    Controller.enterEditMode = function() {
-      var activeWidgetsInfo;
-      activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData();
-      Dashboard.Widgets.Display.addEditingButtonsFor(activeWidgetsInfo);
-      return Dashboard.Widgets.Manager.showActiveForms();
+    Display.getFirstAvailableColumn = function(size) {
+      return this.getAllAvailableColumns(size)[0];
     };
 
-    Controller.exitEditMode = function() {
-      Dashboard.Widgets.Display.removeEditButtons();
-      return Dashboard.Widgets.Manager.hideActiveForms();
-    };
-
-    Controller.getWidgetToBeClosed = function(event) {
-      var wrapperName;
-      return wrapperName = $(event.currentTarget).attr('data-name');
-    };
-
-    return Controller;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Dashboard.Widgets');
-
-  Dashboard.Widgets.Display = (function() {
-    function Display() {}
-
-    Display.addEditingButtonsFor = function(activeWidgetsInfo) {
-      return _.each(activeWidgetsInfo, (function(_this) {
-        return function(widgetInfo) {
-          return _this.addHandleToContainer(widgetInfo);
+    Display.getAllAvailableColumns = function(size) {
+      return _.filter(COLUMNS, (function(_this) {
+        return function(column) {
+          return _this.hasEnoughSpace(column, size);
         };
       })(this));
     };
 
-    Display.addHandleToContainer = function(widgetInfo) {
-      var handle;
-      handle = Dashboard.Widgets.Templates.generateHandle(widgetInfo.name);
-      return $(widgetInfo.container).prepend(handle);
+    Display.hasEnoughSpace = function(column, neededSpace) {
+      var takenSlots;
+      takenSlots = this.getColumnSlots(column);
+      return (takenSlots + neededSpace) <= SPACES_PER_COLUMN;
     };
 
-    Display.removeEditButtons = function() {
-      return this.removeDraggingHandles();
+    Display.getColumnSlots = function(column) {
+      var containers, total;
+      total = 0;
+      containers = $("[data-id=" + column + "] li");
+      _.forEach(containers, (function(_this) {
+        return function(container) {
+          return total += _this.getContainerSize(container);
+        };
+      })(this));
+      return total;
     };
 
-    Display.removeDraggingHandles = function() {
-      return $('.widget-handle').remove();
+    Display.getContainerSize = function(container) {
+      return parseInt(container.getAttribute('data-size'));
+    };
+
+    Display.getNextContainer = function() {
+      return "container-" + this.containerCount;
+    };
+
+    Display.incrementContainerCount = function() {
+      return this.containerCount++;
+    };
+
+    Display.showAvailableColumns = function(size) {
+      var columns;
+      columns = this.getAllAvailableColumns(size);
+      return _.forEach(columns, (function(_this) {
+        return function(column) {
+          return _this.setAsDroppable(column);
+        };
+      })(this));
+    };
+
+    Display.setAsDroppable = function(column) {
+      return $("[data-id=" + column).addClass('droppable-column');
     };
 
     return Display;
@@ -582,16 +340,19 @@
   Dashboard.Widgets.Manager = (function() {
     function Manager() {}
 
-    Manager.generateWrappers = function() {
-      return this.wrappers = {
+    Manager.generateWrappers = function(settings) {
+      this.wrappers = {
         pictures: this.wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
         weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
         twitter: this.wrapWidget(Twitter, "twitter", 2, ""),
         stock: this.wrapWidget(Stock, "stock", 2, "")
       };
+      if (settings && settings.defaults) {
+        return this.addDefaultsToWrappers();
+      }
     };
 
-    Manager.wrapWidget = function(widget, name, slotSize, apiKey) {
+    Manager.wrapWidget = function(widget, name, slotSize, apiKey, defaultValue) {
       return new Dashboard.Widgets.Wrapper({
         widget: widget,
         name: name,
@@ -600,53 +361,44 @@
       });
     };
 
+    Manager.addDefaultsToWrappers = function() {
+      this.wrappers.pictures.defaultValue = 'bikes';
+      this.wrappers.twitter.defaultValue = 'bikes';
+      this.wrappers.weather.defaultValue = 'Chicago IL';
+      return this.wrappers.stock.defaultValue = 'AAPL YHOO';
+    };
+
+    Manager.enterEditMode = function() {
+      return this.mapOnAllWidgets('showWidgetForm');
+    };
+
+    Manager.exitEditMode = function() {
+      return this.mapOnAllWidgets('hideWidgetForm');
+    };
+
     Manager.getSidenavButtons = function() {
+      return this.mapOnAllWidgets('widgetLogo');
+    };
+
+    Manager.mapOnAllWidgets = function(functionName) {
       var widgets;
-      widgets = _.values(Dashboard.Widgets.Manager.wrappers);
+      widgets = this.getListOfWidgets();
       return _.map(widgets, function(wrapper) {
-        return wrapper.widgetLogo();
+        return wrapper[functionName]();
       });
     };
 
-    Manager.getActiveWidgetsData = function() {
-      var activeWidgets;
-      activeWidgets = this.getActiveWidgets();
-      return _.map(activeWidgets, this.getContainerAndNameOf);
+    Manager.getListOfWidgets = function() {
+      return _.values(this.wrappers);
     };
 
-    Manager.getActiveWidgets = function() {
-      return _.filter(Dashboard.Widgets.Manager.wrappers, function(widget) {
-        return widget.isActive;
-      });
-    };
-
-    Manager.getContainerAndNameOf = function(wrapper) {
-      return {
-        container: wrapper.containerName,
-        name: wrapper.name
-      };
-    };
-
-    Manager.hideActiveForms = function() {
-      var wrappers;
-      wrappers = this.getActiveWidgets();
-      return _.each(wrappers, function(wrapper) {
-        return wrapper.hideWidgetForm();
-      });
-    };
-
-    Manager.showActiveForms = function() {
-      var wrappers;
-      wrappers = this.getActiveWidgets();
-      return _.each(wrappers, function(wrapper) {
-        return wrapper.showWidgetForm();
-      });
-    };
-
-    Manager.getWrapperInContainer = function(containerName) {
-      return _.findWhere(this.wrappers, {
-        containerName: containerName
-      });
+    Manager.setupWidget = function(name) {
+      var container, wrapper;
+      wrapper = this.wrappers[name];
+      container = Dashboard.Widgets.Display.generateContainer(wrapper.slotSize);
+      if (container) {
+        return wrapper.setupWidgetIn(container);
+      }
     };
 
     return Manager;
@@ -658,16 +410,55 @@
 (function() {
   namespace('Dashboard.Widgets');
 
+  Dashboard.Widgets.Sorter = (function() {
+    function Sorter() {}
+
+    Sorter.setupSortable = function() {
+      $('.widget-list').sortable({
+        connectWith: '.widget-list',
+        handle: '.widget-header',
+        start: function(event, ui) {
+          return Dashboard.Widgets.Sorter.startSorting(event, ui, this);
+        },
+        receive: function(event, ui) {
+          return Dashboard.Widgets.Sorter.receiveSortable(event, ui, this);
+        },
+        stop: this.disableDroppableColumns
+      });
+      return $('.widget-list').sortable('enable');
+    };
+
+    Sorter.disableSortable = function() {
+      return $('.widget-list').sortable('disable');
+    };
+
+    Sorter.startSorting = function(event, ui, sender) {
+      this.draggedItemSize = parseInt(ui.item.attr('data-size'));
+      return Dashboard.Widgets.Display.showAvailableColumns(this.draggedItemSize);
+    };
+
+    Sorter.receiveSortable = function(event, ui, receiver) {
+      if (!$(receiver).attr('class').match('droppable-column')) {
+        $(ui.sender).sortable("cancel");
+      }
+      return this.disableDroppableColumns();
+    };
+
+    Sorter.disableDroppableColumns = function() {
+      return $('.droppable-column').removeClass('droppable-column');
+    };
+
+    return Sorter;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Dashboard.Widgets');
+
   Dashboard.Widgets.Templates = (function() {
     function Templates() {}
-
-    Templates.generateClosingButton = function(dataName) {
-      return "<span class='widget-close' data-name='" + dataName + "'>×</span>";
-    };
-
-    Templates.generateHandle = function(dataName) {
-      return "<p class='widget-handle' data-name=" + dataName + ">Handle</p>";
-    };
 
     return Templates;
 
@@ -683,8 +474,6 @@
 
     WIDGET_LOGO_WIDTH = "50";
 
-    Wrapper.prototype.isActive = false;
-
     function Wrapper(config) {
       this.widget = config.widget;
       this.widgetApiKey = config.apiKey;
@@ -692,35 +481,18 @@
       this.slotSize = config.slotSize;
     }
 
-    Wrapper.prototype.setupWidgetIn = function(containerInfo) {
-      this.containerName = containerInfo.containerName;
-      this.containerColumn = containerInfo.containerColumn;
-      this.isActive = true;
-      return this.widget.Controller.setupWidgetIn(this.containerName, this.widgetApiKey);
+    Wrapper.prototype.setupWidgetIn = function(container) {
+      this.container = container;
+      return this.widget.Controller.setupWidgetIn(this.container, this.widgetApiKey, this.defaultValue);
     };
 
     Wrapper.prototype.widgetLogo = function() {
-      var button, dataId;
+      var dataId;
       dataId = "" + this.name + "-widget";
-      button = this.widget.Display.generateLogo({
+      return this.widget.Display.generateLogo({
         dataId: dataId,
         width: WIDGET_LOGO_WIDTH
       });
-      return {
-        html: button,
-        isActive: this.isActive
-      };
-    };
-
-    Wrapper.prototype.deactivateWidget = function() {
-      $(this.containerName).remove();
-      return this.isActive = false;
-    };
-
-    Wrapper.prototype.addClosingButtonToContainer = function() {
-      var dataId;
-      dataId = "" + this.name + "-closing-button";
-      return $(this.containerName).prepend("<button data-id='" + dataId + "'>X</button>");
     };
 
     Wrapper.prototype.hideWidgetForm = function() {

@@ -11,19 +11,13 @@ setupDashboardFixtures = ->
 
 clickOn = (element) -> $(element).click()
 
-resetSlots = ->
-  Dashboard.Columns.Controller.takenSlots.col0 = 0
-  Dashboard.Columns.Controller.takenSlots.col1 = 0
-  Dashboard.Columns.Controller.takenSlots.col2 = 0
-
 prepareDashboard = ->
-  resetSlots()
   setupDashboardFixtures()
   Dashboard.Controller.initialize()
 
 
 describe "Dashboard.SpeechRecognition.Controller", ->
-  it "showSidenav displays the sidenav", ->
+ it "showSidenav displays the sidenav", ->
     spy = spyOn(Dashboard.Controller, 'setupSidenav')
     Dashboard.SpeechRecognition.Controller.showSidenav()
     expect(spy).toHaveBeenCalled()
@@ -54,22 +48,22 @@ describe "Dashboard.SpeechRecognition.Controller", ->
     Dashboard.SpeechRecognition.Controller.closeWidget('weather')
     expect($('[data-id=col0]')).not.toContainElement('[data-id=pictures-button]')
 
-  it "dragWidget will drag the widget to the right when direction is right", ->
+  xit "dragWidget will drag the widget to the right when direction is right", ->
     spy = spyOn(Dashboard.SpeechRecognition.Controller, 'dragRight')
     Dashboard.SpeechRecognition.Controller.dragWidget('pictures', 'right')
     expect(spy).toHaveBeenCalledWith('pictures')
 
-  it "dragWidget will drag the widget to the left when direction is left", ->
+  xit "dragWidget will drag the widget to the left when direction is left", ->
     spy = spyOn(Dashboard.SpeechRecognition.Controller, 'dragLeft')
     Dashboard.SpeechRecognition.Controller.dragWidget('pictures', 'left')
     expect(spy).toHaveBeenCalledWith('pictures')
 
-  it "dragWidget will drag the widget to the down when direction is down", ->
+  xit "dragWidget will drag the widget to the down when direction is down", ->
     spy = spyOn(Dashboard.SpeechRecognition.Controller, 'dragDown')
     Dashboard.SpeechRecognition.Controller.dragWidget('pictures', 'down')
     expect(spy).toHaveBeenCalledWith('pictures')
 
-  it "dragWidget will drag the widget to the left when direction is up", ->
+  xit "dragWidget will drag the widget to the left when direction is up", ->
     spy = spyOn(Dashboard.SpeechRecognition.Controller, 'dragUp')
     Dashboard.SpeechRecognition.Controller.dragWidget('pictures', 'up')
     expect(spy).toHaveBeenCalledWith('pictures')

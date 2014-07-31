@@ -5,75 +5,83 @@ setupDashboardFixtures = ->
   setFixtures """
     <img data-id="menu-button" src="/lib/icons/hamburger.png" style="width: 75px">
     <div data-id="side-nav"></div>
-    <div data-id="widget-display">
-      <div class="widget-col" data-id="col0"></div>
-      <div class="widget-col" data-id="col1"></div>
-      <div class="widget-col" data-id="col2"></div>
-    </div>
   """
 
-resetController = ->
-  Dashboard.Controller.initialize()
-  resetSlots()
+clickMenuButton = ->
+  $('[data-id=menu-button]').click()
 
-setupAndBindController = ->
-  resetController()
-  Dashboard.Widgets.Manager.generateWrappers()
-  setupDashboardFixtures()
-  Dashboard.Controller.setupSidenav()
-
-assertSidenavGetsLoaded = ->
-  setFixtures "<image data-id='menu-button'/><div data-id='side-nav'></div>"
-  resetController()
-  clickOn('[data-id=menu-button]')
-  expect($('[data-id=side-nav]')).toContainElement('[data-id=pictures-widget]')
-  expect($('[data-id=side-nav]')).toContainElement('[data-id=weather-widget]')
-  expect($('[data-id=side-nav]')).toContainElement('[data-id=stock-widget]')
-  expect($('[data-id=side-nav]')).toContainElement('[data-id=twitter-widget]')
-
-resetSlots = ->
-  Dashboard.Columns.Controller.takenSlots.col0 = 0
-  Dashboard.Columns.Controller.takenSlots.col1 = 0
-  Dashboard.Columns.Controller.takenSlots.col2 = 0
+Dashboard.Widgets.Manager.generateWrappers()
 
 describe "Dashboard.Controller", ->
-  it "toggleSidenav displays the side-nav when the menu button is clicked", ->
-    assertSidenavGetsLoaded()
+  describe 'initialize', ->
+    it 'is binding the controller', ->
+      spy = spyOn(Dashboard.Controller, 'bindMenuButton')
+      Dashboard.Controller.initialize()
+      expect(spy).toHaveBeenCalled()
 
-  it "toggleSidenav removes the side-nav when menu-button is clicked and side-nav is on the screen", ->
-    assertSidenavGetsLoaded()
-    clickOn('[data-id=menu-button]')
-    expect($('[data-id=side-nav]')).toBeEmpty()
+    it 'is sending the settings to Dashboard.Widgets.Manager', ->
+      spy = spyOn(Dashboard.Widgets.Manager, 'generateWrappers')
+      data = {default: true}
+      Dashboard.Controller.initialize(data)
+      expect(spy).toHaveBeenCalledWith(data)
 
-  it "setupSidenav enables widget editing", ->
-    setupAndBindController()
-    spy = spyOn(Dashboard.Widgets.Manager, 'showActiveForms')
-    clickOn('[data-id=weather-widget]')
-    Dashboard.Controller.removeSidenav()
-    Dashboard.Controller.setupSidenav()
-    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
-    expect($(weatherWrapper.containerName)).toContainElement('.widget-close')
+    it 'is generating the wrappers', ->
+      Dashboard.Controller.initialize()
+      picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
+      expect(picturesWrapper).toBeDefined()
 
-  it "setupSidenav enables columns editing", ->
-    setupDashboardFixtures()
-    spy = spyOn(Dashboard.Columns.Controller, 'enterEditMode')
-    Dashboard.Controller.setupSidenav()
-    expect(spy).toHaveBeenCalled()
+  describe 'bindMenuButton', ->
+    beforeEach ->
+      setupDashboardFixtures()
+      Dashboard.Controller.bindMenuButton()
+      clickMenuButton()
 
-  it "removeSidenav closes edit mode", ->
-    setupAndBindController()
-    clickOn('[data-id=weather-widget]')
-    Dashboard.Controller.removeSidenav()
-    Dashboard.Controller.setupSidenav()
-    weatherWrapper = Dashboard.Widgets.Manager.wrappers.weather
-    expect($(weatherWrapper.containerName)).toContainElement('.widget-close')
-    Dashboard.Controller.removeSidenav()
-    expect($("#{weatherWrapper.containerName} .widget-close").attr('style')).toEqual('display: none;')
+    it 'shows the sidenav when the menu button is clicked', ->
+      expect($('[data-id=pictures-widget]')).toBeInDOM()
 
-  it "removeSidenav disables columns editing", ->
-    setupDashboardFixtures()
-    Dashboard.Controller.setupSidenav()
-    spy = spyOn(Dashboard.Columns.Controller, 'exitEditMode')
-    Dashboard.Controller.removeSidenav()
-    expect(spy).toHaveBeenCalled()
+    it 'removes the sidenav when the menu button is clicked and sidenav is displayed already', ->
+      clickMenuButton()
+      expect($('[data-id=pictures-widget]')).not.toBeInDOM()
 
+  describe 'setupSidenav', ->
+    it 'binds the sidenav controller', ->
+      spy = spyOn Dashboard.Sidenav.Controller, 'bindSetupWidgets'
+      Dashboard.Controller.setupSidenav()
+      expect(spy).toHaveBeenCalled()
+
+    it 'enters widgets edit mode', ->
+      spy = spyOn Dashboard.Widgets.Manager, 'enterEditMode'
+      Dashboard.Controller.setupSidenav()
+      expect(spy).toHaveBeenCalled()
+
+    it 'enabls widget sorting', ->
+      spy = spyOn(Dashboard.Widgets.Sorter, 'setupSortable')
+      Dashboard.Controller.setupSidenav()
+      expect(spy).toHaveBeenCalled()
+
+    it 'gets the buttons the first time it is setup', ->
+      Dashboard.Widgets.Manager.generateWrappers()
+      Dashboard.Controller.sidenavButtons = undefined
+      spy = spyOn(Dashboard.Widgets.Manager, 'getSidenavButtons').and.callThrough()
+      Dashboard.Controller.setupSidenav()
+      expect(spy).toHaveBeenCalled()
+
+    it 'doesn\'t request the buttons if they have been requested already', ->
+      Dashboard.Widgets.Manager.generateWrappers()
+      Dashboard.Controller.setupSidenav()
+      Dashboard.Controller.removeSidenav()
+      spy = spyOn(Dashboard.Widgets.Manager, 'getSidenavButtons').and.callThrough()
+      Dashboard.Controller.setupSidenav()
+      expect(spy).not.toHaveBeenCalled()
+
+
+  describe 'removeSidenav', ->
+    it 'exits edit mode', ->
+      spy = spyOn Dashboard.Widgets.Manager, 'exitEditMode'
+      Dashboard.Controller.removeSidenav()
+      expect(spy).toHaveBeenCalled()
+
+    it 'disables widget sorting', ->
+      spy = spyOn Dashboard.Widgets.Sorter, 'disableSortable'
+      Dashboard.Controller.removeSidenav()
+      expect(spy).toHaveBeenCalled()

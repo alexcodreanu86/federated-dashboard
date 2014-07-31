@@ -1,3 +1,17 @@
+setupDashboardFixtures = ->
+  setFixtures """
+    <img data-id="menu-button">
+    <div data-id="side-nav"></div>
+    <div data-id="widget-display">
+      <div class="widget-col"><ul class='widget-list' data-id="col0"></ul></div>
+      <div class="widget-col"><ul class='widget-list' data-id="col1"></ul></div>
+      <div class="widget-col"><ul class='widget-list' data-id="col2"></ul></div>
+    </div>
+  """
+
+getWrapper = (name) ->
+  Dashboard.Widgets.Manager.wrappers[name]
+
 describe "Dashboard.Widgets.Manager", ->
   it "wrapWidget returns a new widgetWrapper", ->
     wrapper = Dashboard.Widgets.Manager.wrapWidget(Pictures, "pictures", 3, "some-api-key")
@@ -6,93 +20,55 @@ describe "Dashboard.Widgets.Manager", ->
     expect(wrapper.slotSize).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
-  it "wrappedWidgets has 4 widgets setup", ->
+  it "wrappers has 4 widgets setup", ->
     Dashboard.Widgets.Manager.generateWrappers()
     widgets = _.keys(Dashboard.Widgets.Manager.wrappers)
     expect(widgets.length).toEqual(4)
 
-  it "getActiveWidgets returns an emtpy container when no widgets are active", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    activeWidgets = Dashboard.Widgets.Manager.getActiveWidgets()
-    expect(activeWidgets).toEqual([])
-
-  it "getActiveWidgets returns all the active widgets", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
-    picturesWrapper.isActive = true
-    weatherWrapper.isActive = true
-    activeWidgets = Dashboard.Widgets.Manager.getActiveWidgets()
-    expect(activeWidgets).toEqual([picturesWrapper, weatherWrapper])
-
   it "getSidenavButtons returns the buttons for all widgets", ->
     Dashboard.Widgets.Manager.generateWrappers()
     buttons = Dashboard.Widgets.Manager.getSidenavButtons()
-    expect(buttons[0].html).toBeMatchedBy('[data-id=pictures-widget]')
-    expect(buttons[1].html).toBeMatchedBy('[data-id=weather-widget]')
-    expect(buttons[2].html).toBeMatchedBy('[data-id=twitter-widget]')
-    expect(buttons[3].html).toBeMatchedBy('[data-id=stock-widget]')
+    expect(buttons[0]).toBeMatchedBy('[data-id=pictures-widget]')
+    expect(buttons[1]).toBeMatchedBy('[data-id=weather-widget]')
+    expect(buttons[2]).toBeMatchedBy('[data-id=twitter-widget]')
+    expect(buttons[3]).toBeMatchedBy('[data-id=stock-widget]')
 
-  it "getActiveWidgetsData returns an empty container when no widget is active", ->
-    data = Dashboard.Widgets.Manager.getActiveWidgetsData()
-    expect(data).toEqual([])
+  describe 'setupWidget', ->
+    beforeEach ->
+      setupDashboardFixtures()
 
-  it "getContainerAndNameOf returns the name and the container of the given widget", ->
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    picturesWrapper.isActive = true
-    picturesWrapper.containerName = "pictures-container"
-    data = Dashboard.Widgets.Manager.getContainerAndNameOf(picturesWrapper)
-    expect(data.container).toEqual("pictures-container")
-    expect(data.name).toEqual("pictures")
+    it 'is setting up the pictures widget for pictures', ->
+      Dashboard.Widgets.Manager.generateWrappers()
+      Dashboard.Widgets.Manager.setupWidget('pictures')
+      expect($('[data-id=col0]')).toContainElement('[data-id=pictures-widget-wrapper]')
 
+    it 'is not setting up the pictures widget when container is not valid', ->
+      spyOn(Dashboard.Widgets.Display, 'generateContainer').and.returnValue(undefined)
+      Dashboard.Widgets.Manager.setupWidget('pictures')
+      expect($('[data-id=pictures-widget-wrapper]')).not.toBeInDOM()
 
-  it "getActiveWidgetsData returns the container name and the widget name for for all the active widgets", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
-    picturesWrapper.isActive = true
-    picturesWrapper.containerName = "pictures-container"
-    weatherWrapper.isActive = true
-    weatherWrapper.containerName = "weather-container"
-    expectedResponse = [{container: "pictures-container", name: "pictures"}, {container: "weather-container", name: "weather"}]
-    activeWidgetsInfo = Dashboard.Widgets.Manager.getActiveWidgetsData()
-    expect(activeWidgetsInfo).toEqual(expectedResponse)
+  describe 'generateWrappers', ->
+    it 'adds default values to widgets when settings.defaults is true', ->
+      Dashboard.Widgets.Manager.generateWrappers({defaults: true})
+      weatherWrapper = getWrapper('weather')
+      expect(weatherWrapper.defaultValue).toEqual('Chicago IL')
 
-  it "hideActiveForms is hiding the forms of active widgets", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
-    picturesWrapper.isActive = true
-    weatherWrapper.isActive = true
-    picturesSpy = spyOn(Pictures.Controller, 'hideForms')
-    weatherSpy = spyOn(Weather.Controller, 'hideForms')
-    twitterSpy = spyOn(Twitter.Controller, 'hideForms')
-    stockSpy = spyOn(Stock.Controller, 'hideForms')
-    Dashboard.Widgets.Manager.hideActiveForms()
-    expect(picturesSpy).toHaveBeenCalled()
-    expect(weatherSpy).toHaveBeenCalled()
-    expect(twitterSpy).not.toHaveBeenCalled()
-    expect(stockSpy).not.toHaveBeenCalled()
+    it 'doesn\'t add default values to widgets when settings are not provided', ->
+      Dashboard.Widgets.Manager.generateWrappers()
+      weatherWrapper = getWrapper('weather')
+      expect(weatherWrapper.defaultValue).not.toBeDefined()
 
-  it "showActiveForms is showing the forms of active widgets", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    weatherWrapper  = Dashboard.Widgets.Manager.wrappers.weather
-    picturesWrapper.isActive = true
-    weatherWrapper.isActive = true
-    picturesSpy = spyOn(Pictures.Controller, 'showForms')
-    weatherSpy = spyOn(Weather.Controller, 'showForms')
-    twitterSpy = spyOn(Twitter.Controller, 'showForms')
-    stockSpy = spyOn(Stock.Controller, 'showForms')
-    Dashboard.Widgets.Manager.showActiveForms()
-    expect(picturesSpy).toHaveBeenCalled()
-    expect(weatherSpy).toHaveBeenCalled()
-    expect(twitterSpy).not.toHaveBeenCalled()
-    expect(stockSpy).not.toHaveBeenCalled()
+  describe 'editMode', ->
+    beforeEach ->
+      setupDashboardFixtures()
+      Dashboard.Widgets.Manager.setupWidget('pictures')
+      Dashboard.Widgets.Manager.exitEditMode()
 
-  it "getWrapperWithContainer returns the wrapper that has the given contaienr", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    picturesWrapper = Dashboard.Widgets.Manager.wrappers.pictures
-    picturesWrapper.containerName = "[data-id=pictures-slot]"
-    returnedWrapper = Dashboard.Widgets.Manager.getWrapperInContainer("[data-id=pictures-slot]")
-    expect(returnedWrapper).toEqual(picturesWrapper)
+    it 'exitEditMode is hiding the widgets\' forms', ->
+      picturesCloseButton = $('[data-id=pictures-close]')
+      expect(picturesCloseButton.attr('style')).toEqual('display: none;')
+
+    it 'enterEditMode is hiding the widgets\' forms', ->
+      Dashboard.Widgets.Manager.enterEditMode()
+      picturesCloseButton = $('[data-id=pictures-close]')
+      expect(picturesCloseButton.attr('style')).not.toEqual('display: none;')

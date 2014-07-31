@@ -1,13 +1,8 @@
-<div id="widgets-container">
-  <ul id="widgets-menu">
+<div data-id="widgets-container">
+  <ul id="widgets-menu" data-id="widgets-menu">
     <% for (var i = 0; i < buttons.length; i++) { %>
-
-      <% if (buttons[i].isActive) { %>
-      <li class='active'>
-      <% } else { %>
-      <li class='inactive'>
-      <% } %>
-        <%= buttons[i].html %>
+      <li>
+        <%= buttons[i] %>
       </li>
     <% } %>
   </ul>

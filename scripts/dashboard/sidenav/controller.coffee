@@ -1,19 +1,15 @@
 namespace('Dashboard.Sidenav')
 
 class Dashboard.Sidenav.Controller
+  @bindSetupWidgets: ->
+    $('[data-id=widgets-menu] li img').click( ->
+      Dashboard.Sidenav.Controller.processClickedButton(this)
+    )
 
-  @bindButtons: ->
-    $('[data-id=pictures-widget]').click(=> Dashboard.Widgets.Controller.checkWidget("pictures"))
-    $('[data-id=weather-widget]').click(=> Dashboard.Widgets.Controller.checkWidget("weather"))
-    $('[data-id=stock-widget]').click( =>  Dashboard.Widgets.Controller.checkWidget("stock"))
-    $('[data-id=twitter-widget]').click( => Dashboard.Widgets.Controller.checkWidget("twitter"))
+  @processClickedButton: (button) ->
+    buttonDataId = button.getAttribute('data-id')
+    widgetName = @getWidgetName(buttonDataId)
+    Dashboard.Widgets.Manager.setupWidget(widgetName)
 
-  @unbind: ->
-    $('[data-id=pictures-widget]').unbind('click')
-    $('[data-id=weather-widget]').unbind('click')
-    $('[data-id=stock-widget]').unbind('click')
-    $('[data-id=twitter-widget]').unbind('click')
-
-  @rebindButtons: ->
-    @unbind()
-    @bindButtons()
+  @getWidgetName: (dataId) ->
+    dataId.split('-')[0]

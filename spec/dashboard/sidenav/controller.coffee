@@ -12,41 +12,13 @@ setupDashboardFixtures = ->
     </div>
   """
 
-resetController = ->
-  Dashboard.Controller.initialize()
-  resetSlots()
-
-setupAndBindController = ->
-  resetSlots()
-  Dashboard.Widgets.Manager.generateWrappers()
-  setupDashboardFixtures()
-  Dashboard.Controller.setupSidenav()
-  Dashboard.Sidenav.Controller.bindButtons()
-
-resetSlots = ->
-  Dashboard.Columns.Controller.takenSlots.col0 = 0
-  Dashboard.Columns.Controller.takenSlots.col1 = 0
-  Dashboard.Columns.Controller.takenSlots.col2 = 0
-
 describe "Dasbboard.Sidenav.Controller", ->
-  it "bindButtons displays the form for pictures when the pictures button is clicked", ->
-    setupAndBindController()
+  it 'bindSetupWidgets is setting up the widget of the button clicked', ->
+    setupDashboardFixtures()
+    Dashboard.Controller.setupSidenav()
     clickOn('[data-id=pictures-widget]')
-    expect($('[data-id=pictures-button]')).toBeInDOM()
+    expect($('[data-id=col0]')).not.toBeEmpty()
 
-  it "bindButtons displays the form for weather when the weather button is clicked", ->
-    setupAndBindController()
-    clickOn('[data-id=weather-widget]')
-    expect($('[data-id=weather-button]')).toBeInDOM()
-
-  it "bindButtons displays the form for stocks when the stock button is clicked", ->
-    setupAndBindController()
-    clickOn('[data-id=stock-widget]')
-    expect($('[data-id=stock-button]')).toBeInDOM()
-
-  it "unbind unbinds all click bindings", ->
-    setupAndBindController()
-    Dashboard.Sidenav.Controller.unbind()
-    clickOn('[data-id=pictures-widget]')
-    expect($('[data-id=pictures-button]')).not.toBeInDOM()
-
+  it 'getWidgetName returns pictures for the pictures button', ->
+    name = Dashboard.Sidenav.Controller.getWidgetName('pictures-widget')
+    expect(name).toEqual('pictures')

@@ -1,12 +1,12 @@
 namespace('Dashboard')
 
 class Dashboard.Controller
-  @initialize: ->
+  @initialize: (settings) ->
     @bindMenuButton()
-    Dashboard.Widgets.Controller.initialize()
+    Dashboard.Widgets.Manager.generateWrappers(settings)
 
   @bindMenuButton: ->
-    $('[data-id=menu-button]').click( => @toggleSidenav())
+    $('[data-id=menu-button]').click(=> @toggleSidenav())
 
   @toggleSidenav: ->
     if Dashboard.Display.isSidenavDisplayed()
@@ -15,13 +15,15 @@ class Dashboard.Controller
       @setupSidenav()
 
   @setupSidenav: ->
-    buttons = Dashboard.Widgets.Manager.getSidenavButtons()
-    Dashboard.Display.showSidenav(buttons)
-    Dashboard.Sidenav.Controller.rebindButtons()
-    Dashboard.Widgets.Controller.enterEditMode()
-    Dashboard.Columns.Controller.enterEditMode()
+    Dashboard.Display.showSidenav(@getButtons())
+    Dashboard.Sidenav.Controller.bindSetupWidgets()
+    Dashboard.Widgets.Manager.enterEditMode()
+    Dashboard.Widgets.Sorter.setupSortable()
+
+  @getButtons: ->
+    @sidenavButtons ||= Dashboard.Widgets.Manager.getSidenavButtons()
 
   @removeSidenav: ->
     Dashboard.Display.removeSidenav()
-    Dashboard.Widgets.Controller.exitEditMode()
-    Dashboard.Columns.Controller.exitEditMode()
+    Dashboard.Widgets.Manager.exitEditMode()
+    Dashboard.Widgets.Sorter.disableSortable()
