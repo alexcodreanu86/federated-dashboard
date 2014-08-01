@@ -3,10 +3,10 @@ namespace('Dashboard')
 class Dashboard.Display
   @showSidenav: (buttons) ->
     contentHtml = new EJS({url: 'scripts/dashboard/sidenav/sidenavContent.ejs'}).render({buttons: buttons})
-    $('[data-id=side-nav]').html(contentHtml)
+    $('[data-id=widget-buttons]').html(contentHtml)
 
   @removeSidenav: ->
-    $('[data-id=side-nav]').empty()
+    $('[data-id=widget-buttons]').empty()
 
   @isSidenavDisplayed: ->
-    $('[data-id=side-nav]').html().length > 0
+    $('[data-id=widget-buttons]').html().length > 0

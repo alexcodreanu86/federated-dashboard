@@ -3,8 +3,8 @@ clickOn = (element) ->
 
 setupDashboardFixtures = ->
   setFixtures """
-    <img data-id="menu-button" src="/lib/icons/hamburger.png" style="width: 75px">
-    <div data-id="side-nav"></div>
+    <span data-id="menu-button" src="/lib/icons/hamburger.png" style="width: 75px">
+    <div data-id="widget-buttons"></div>
   """
 
 clickMenuButton = ->

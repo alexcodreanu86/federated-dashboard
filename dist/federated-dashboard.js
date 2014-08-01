@@ -80,15 +80,15 @@
       }).render({
         buttons: buttons
       });
-      return $('[data-id=side-nav]').html(contentHtml);
+      return $('[data-id=widget-buttons]').html(contentHtml);
     };
 
     Display.removeSidenav = function() {
-      return $('[data-id=side-nav]').empty();
+      return $('[data-id=widget-buttons]').empty();
     };
 
     Display.isSidenavDisplayed = function() {
-      return $('[data-id=side-nav]').html().length > 0;
+      return $('[data-id=widget-buttons]').html().length > 0;
     };
 
     return Display;
@@ -104,7 +104,7 @@
     function Controller() {}
 
     Controller.bindSetupWidgets = function() {
-      return $('[data-id=widgets-menu] li img').click(function() {
+      return $('[data-id=widget-buttons] li span').click(function() {
         return Dashboard.Sidenav.Controller.processClickedButton(this);
       });
     };
@@ -255,7 +255,7 @@
 
     function Display() {}
 
-    SPACES_PER_COLUMN = 3;
+    SPACES_PER_COLUMN = 4;
 
     COLUMNS = ['col0', 'col1', 'col2'];
 
@@ -342,7 +342,7 @@
 
     Manager.generateWrappers = function(settings) {
       this.wrappers = {
-        pictures: this.wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
+        pictures: this.wrapWidget(Pictures, "pictures", 2, "a48194703ae0d0d1055d6ded6c4c9869"),
         weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
         twitter: this.wrapWidget(Twitter, "twitter", 2, ""),
         stock: this.wrapWidget(Stock, "stock", 2, "")
@@ -362,7 +362,7 @@
     };
 
     Manager.addDefaultsToWrappers = function() {
-      this.wrappers.pictures.defaultValue = 'bikes';
+      this.wrappers.pictures.defaultValue = 'dirtbikes';
       this.wrappers.twitter.defaultValue = 'bikes';
       this.wrappers.weather.defaultValue = 'Chicago IL';
       return this.wrappers.stock.defaultValue = 'AAPL YHOO';

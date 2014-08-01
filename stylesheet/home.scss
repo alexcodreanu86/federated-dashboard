@@ -5,15 +5,50 @@
 /* Colors */
 $body-color: #eaedf1;
 $primary-color: #323a45;
+$primary-hover: #39424f;
 
 $white: #fff;
-$blue: #00afd1;
 $orange: #f27935;
 $green: #1fbba6;
+$dark-green: #1dac99;
 
 /* Font Weights */
 $normal: 400;
 $bold: 700;
+
+/* ==========================================================================
+   Mixins
+   ========================================================================== */
+
+@mixin border-radius ($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+  border-radius: $radius;
+}
+
+@mixin transition ($transition-time) {
+  -webkit-transition: background $transition-time ease;
+  -moz-transition: background $transition-time ease;
+  -o-transition: background $transition-time ease;
+  -ms-transition: background $transition-time ease;
+  transition: background $transition-time ease;
+}
+
+@mixin user-select {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin appearance-none {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
 
 /* ==========================================================================
    Layout
@@ -40,26 +75,39 @@ p { margin: 0; }
 .sidebar {
   background: $primary-color;
   position: fixed;
-  padding: 1em;
-  height: 100%;
-
-  .hamburger-icon {
-    color: #fff;
-    cursor: pointer;
-    font-size: 1.8em;
-  }
+  -webkit-touch-callout: none;
+  @include user-select;
 }
 
 .container {
   @extend %clearfix;
-  padding: 2em 0 2em 3.6em;
+  padding-left: 5.2em;
 }
 
-.column{
+.column {
   float: left;
   padding: 0 2%;
   width: 33.3%;
-  height: 500px;
+  height: 800px;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.menu-button { cursor: pointer; }
+
+#widgets-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  .widgets-menu-item {
+    cursor: pointer;
+    @include transition(0.2s);
+
+    &:hover { background: $primary-hover; }
+  }
 }
 
 /* ==========================================================================
@@ -71,11 +119,15 @@ p { margin: 0; }
   margin: 0;
   padding: 0;
   height: 100%;
+  border: 3px dashed transparent;
+  padding: 1em;
 }
+
+.droppable-column { border: 3px dashed $green; }
 
 .widget {
   background: $white;
-  border-radius: 2px;
+  @include border-radius(2px);
   overflow: hidden;
   margin-bottom: 1.5em;
 }
@@ -95,18 +147,9 @@ p { margin: 0; }
     text-overflow: ellipsis;
     width: 250px;
   }
-
-  input { color: $primary-color; }
-
-  button {
-    color: $primary-color;
-    background: $orange;
-  }
 }
 
-.widget-body {
-  padding: 1em;
-}
+.widget-body { padding: 1em; }
 
 .widget-close {
   cursor: pointer;
@@ -115,40 +158,69 @@ p { margin: 0; }
   line-height: 1em;
 }
 
-.widget-handle {
-  display: inline;
-  border: 2px solid steelblue;
-  border-radius: 5px;
-  padding: 3px;
-  margin: 10px;
-}
-
 .widget-place-holder {
   background: yellow;
   height: 16px;
 }
 
-.droppable-column {
-  -webkit-box-shadow: 0px -15px 10px -2px rgba(31, 187, 166, 1);
-  -moz-box-shadow:    0px -15px 10px -2px rgba(31, 187, 166, 1);
-  box-shadow:         0px -15px 10px -2px rgba(31, 187, 166, 1);
+#flickr-images { height: 320px; }
+
+/* ==========================================================================
+   Font Icons
+   ========================================================================== */
+
+.icon {
+  color: $white;
+  font-size: 2em;
+  display: inline-block;
+  padding: .8em;
 }
 
 /* ==========================================================================
-   Sidebar Navigation
+   Inputs
    ========================================================================== */
 
-.active { background: steelblue; }
+.widget-form { margin-bottom: .3em; }
 
-div[data-id=side-nav] {
+input[type="text"] { 
+  border: none;
+  color: $primary-color;
+  padding: .5em; 
+  @include border-radius(2px 0 0 2px);
+  height: 33px;
+  line-height: 1.5em;
+  font-size: 1em;
   display: inline-block;
-  height: 600px;
-  overflow: scroll;
+  vertical-align: top;
+  width: 200px;
 }
 
-#widgets-menu {
-  list-style-type: none;
-  padding: .5em;
+/* ==========================================================================
+   Button
+   ========================================================================== */
+
+button {
+  @include appearance-none;
+  background: $green;
+  @include border-radius(0 2px 2px 0);
+  border: none;
+  color: $white;
+  cursor: pointer;
+  display: inline-block;
+  padding: .5em .8em;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  font-style: normal;
+  line-height: 1.5em;
+  height: 33px;
+  font-size: 1em;
+  font-weight: normal;
+  vertical-align: top;
+  margin-left: -3.6px;
+  @include transition(0.2s);
+
+  &:hover { background: $dark-green; }
 }
 
 /* ==========================================================================
@@ -161,7 +233,5 @@ div[data-id=side-nav] {
     content: " ";
     display: table;
   }
-  &:after {
-   clear: both;
-  }
+  &:after { clear: both; }
 }

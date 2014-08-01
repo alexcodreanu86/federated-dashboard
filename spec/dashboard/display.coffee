@@ -8,7 +8,9 @@ displaySidenav = ->
   Dashboard.Display.showSidenav(buttons)
 
 setSidenavContainer = ->
-  setFixtures "<div data-id='side-nav'></div>"
+  setFixtures "<div data-id='widget-buttons'></div>"
+
+buttonsContainer = '[data-id=widget-buttons]'
 
 clickOn = (element) ->
   $(element).click()
@@ -16,15 +18,15 @@ clickOn = (element) ->
 describe 'Dashboard.Display', ->
   it "showSidenav displays the sideNav", ->
     displaySidenav()
-    expect($('[data-id=side-nav]')).toContainElement('[data-id=pictures-widget]')
-    expect($('[data-id=side-nav]')).toContainElement('[data-id=weather-widget]')
-    expect($('[data-id=side-nav]')).toContainElement('[data-id=stock-widget]')
-    expect($('[data-id=side-nav]')).toContainElement('[data-id=twitter-widget]')
+    expect($(buttonsContainer)).toContainElement('[data-id=pictures-widget]')
+    expect($(buttonsContainer)).toContainElement('[data-id=weather-widget]')
+    expect($(buttonsContainer)).toContainElement('[data-id=stock-widget]')
+    expect($(buttonsContainer)).toContainElement('[data-id=twitter-widget]')
 
   it "removeSidenav removes the sidenav of the screen", ->
     displaySidenav()
     Dashboard.Display.removeSidenav()
-    expect($('[data-id=side-nav]')).toBeEmpty()
+    expect($(buttonsContainer)).toBeEmpty()
 
   it "isSidenavDisplayed returns false if sidenav is not displayed", ->
     setSidenavContainer()

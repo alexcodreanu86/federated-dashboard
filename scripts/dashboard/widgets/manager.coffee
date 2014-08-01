@@ -3,7 +3,7 @@ namespace("Dashboard.Widgets")
 class Dashboard.Widgets.Manager
   @generateWrappers: (settings) ->
     @wrappers = {
-      pictures: @wrapWidget(Pictures, "pictures", 3, "a48194703ae0d0d1055d6ded6c4c9869"),
+      pictures: @wrapWidget(Pictures, "pictures", 2, "a48194703ae0d0d1055d6ded6c4c9869"),
       weather: @wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
       twitter: @wrapWidget(Twitter, "twitter", 2, ""),
       stock: @wrapWidget(Stock, "stock", 2, "")
@@ -15,7 +15,7 @@ class Dashboard.Widgets.Manager
     new Dashboard.Widgets.Wrapper({widget: widget, name: name, slotSize: slotSize, apiKey: apiKey})
 
   @addDefaultsToWrappers: ->
-    @wrappers.pictures.defaultValue = 'bikes'
+    @wrappers.pictures.defaultValue = 'dirtbikes'
     @wrappers.twitter.defaultValue = 'bikes'
     @wrappers.weather.defaultValue = 'Chicago IL'
     @wrappers.stock.defaultValue = 'AAPL YHOO'

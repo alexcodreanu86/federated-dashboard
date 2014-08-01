@@ -2,7 +2,7 @@ namespace('Dashboard.Sidenav')
 
 class Dashboard.Sidenav.Controller
   @bindSetupWidgets: ->
-    $('[data-id=widgets-menu] li img').click( ->
+    $('[data-id=widget-buttons] li span').click( ->
       Dashboard.Sidenav.Controller.processClickedButton(this)
     )
 

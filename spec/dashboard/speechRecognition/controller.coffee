@@ -1,7 +1,7 @@
 setupDashboardFixtures = ->
   setFixtures """
     <img data-id="menu-button">
-    <div data-id="side-nav"></div>
+    <div data-id="widget-buttons"></div>
     <div data-id="widget-display">
       <div class="widget-col" data-id='col0-container'><ul class='widget-list' data-id="col0"></ul></div>
       <div class="widget-col" data-id='col1-container'><ul class='widget-list' data-id="col1"></ul></div>
@@ -67,4 +67,3 @@ describe "Dashboard.SpeechRecognition.Controller", ->
     spy = spyOn(Dashboard.SpeechRecognition.Controller, 'dragUp')
     Dashboard.SpeechRecognition.Controller.dragWidget('pictures', 'up')
     expect(spy).toHaveBeenCalledWith('pictures')
-

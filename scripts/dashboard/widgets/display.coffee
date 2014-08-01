@@ -1,7 +1,7 @@
 namespace('Dashboard.Widgets')
 
 class Dashboard.Widgets.Display
-  SPACES_PER_COLUMN = 3
+  SPACES_PER_COLUMN = 4
   COLUMNS = ['col0', 'col1', 'col2']
 
   @containerCount = 0
