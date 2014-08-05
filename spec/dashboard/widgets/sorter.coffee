@@ -69,7 +69,7 @@ describe 'Dashboard.Widgets.Sorter', ->
     setupDashboardFixtures()
     populateColumn('col0')
     Dashboard.Widgets.Sorter.startSorting("event", mockUi(), sender())
-    expect(col0()).not.toBeMatchedBy('.droppable-column')
+    expect(col0()).toBeMatchedBy('.droppable-column')
     expect(col1()).toBeMatchedBy('.droppable-column')
     expect(col2()).toBeMatchedBy('.droppable-column')
 

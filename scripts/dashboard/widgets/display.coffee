@@ -30,7 +30,9 @@ class Dashboard.Widgets.Display
     total = 0
     containers = $("[data-id=#{column}] li")
     _.forEach(containers, (container) =>
-      total += @getContainerSize(container)
+      size = @getContainerSize(container)
+      if size
+        total += size
     )
     total
 
@@ -43,12 +45,12 @@ class Dashboard.Widgets.Display
   @incrementContainerCount: ->
     @containerCount++
 
-  @showAvailableColumns: (size) ->
+  @showAvailableColumns: (size, senderColumn) ->
     columns = @getAllAvailableColumns(size)
+    columns.push(senderColumn)
     _.forEach(columns, (column) =>
       @setAsDroppable(column)
     )
 
   @setAsDroppable: (column) ->
     $("[data-id=#{column}").addClass('droppable-column')
-

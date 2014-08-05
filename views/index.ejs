@@ -34,7 +34,7 @@
             <li class="widgets-menu-item">
               <span class="menu-button icon icon-list" data-id="menu-button"></span>
             </li>
-            <div data-id="widget-buttons"></div>
+            <div class= 'widget-buttons' data-id="widget-buttons"></div>
           </div>
         </li>
     <div>
@@ -58,8 +58,11 @@
         </ul>
       </div>
     </div>
+    <div style="display:none">
+      <div data-id="inside-invizible" ></div>
+    </div>
     <script>
-      Dashboard.Controller.initialize({defaults: true})
+      Dashboard.Controller.initialize({defaults: true, animationSpeed: 400})
     </script>
   </body>
 </html>

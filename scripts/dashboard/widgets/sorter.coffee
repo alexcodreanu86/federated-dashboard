@@ -17,8 +17,9 @@ class Dashboard.Widgets.Sorter
     $('.widget-list').sortable('disable')
 
   @startSorting: (event, ui, sender) ->
-    @draggedItemSize = parseInt(ui.item.attr('data-size'))
-    Dashboard.Widgets.Display.showAvailableColumns(@draggedItemSize)
+    draggedItemSize = parseInt(ui.item.attr('data-size'))
+    senderColumn = $(sender).attr('data-id')
+    Dashboard.Widgets.Display.showAvailableColumns(draggedItemSize, senderColumn)
 
   @receiveSortable: (event, ui, receiver) ->
     if !$(receiver).attr('class').match('droppable-column')

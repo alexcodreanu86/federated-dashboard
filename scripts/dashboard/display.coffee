@@ -1,12 +1,39 @@
 namespace('Dashboard')
 
 class Dashboard.Display
-  @showSidenav: (buttons) ->
-    contentHtml = new EJS({url: 'scripts/dashboard/sidenav/sidenavContent.ejs'}).render({buttons: buttons})
-    $('[data-id=widget-buttons]').html(contentHtml)
+  COLUMNS = ['col0', 'col1', 'col2']
+  WIDGETS_BUTTONS_CONTAINER = '[data-id=widget-buttons]'
+  @initialize: (settings) ->
+    @setColumnsHeight()
+    @watchWindowResize()
+    @hideSidenav()
+    @setupSidenav(settings.buttons)
+    @animationSpeed = settings.animationSpeed
 
-  @removeSidenav: ->
-    $('[data-id=widget-buttons]').empty()
+  @setColumnsHeight: ->
+    windowHeight = window.innerHeight
+    _.forEach(COLUMNS, (column) ->
+      $("[data-id=#{column}-container]").height(windowHeight)
+    )
+
+  @watchWindowResize: ->
+    $(window).resize( =>
+      @setColumnsHeight()
+    )
+
+  @setupSidenav: (buttons) ->
+    contentHtml = new EJS({url: 'scripts/dashboard/sidenav/sidenavContent.ejs'}).render({buttons: buttons})
+    @buttonsContainer().html(contentHtml)
+
+  @showSidenav: () ->
+    @buttonsContainer().show(@animationSpeed)
+
+  @hideSidenav:() ->
+    @buttonsContainer().hide(@animationSpeed)
 
   @isSidenavDisplayed: ->
-    $('[data-id=widget-buttons]').html().length > 0
+    @buttonsContainer().attr('style') != "display: none;"
+
+  @buttonsContainer: ->
+    $(WIDGETS_BUTTONS_CONTAINER)
+

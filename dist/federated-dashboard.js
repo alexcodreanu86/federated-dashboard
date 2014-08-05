@@ -25,7 +25,26 @@
 
     Controller.initialize = function(settings) {
       this.bindMenuButton();
-      return Dashboard.Widgets.Manager.generateWrappers(settings);
+      Dashboard.Widgets.Manager.generateWrappers(settings);
+      this.initializeDisplay(settings);
+      return Dashboard.Sidenav.Controller.bindSetupWidgets();
+    };
+
+    Controller.initializeDisplay = function(settings) {
+      var displaySettings;
+      displaySettings = this.generateDisplaySettings(settings);
+      return Dashboard.Display.initialize(displaySettings);
+    };
+
+    Controller.generateDisplaySettings = function(settings) {
+      var displaySettings;
+      displaySettings = {
+        buttons: this.getButtons()
+      };
+      if (settings) {
+        displaySettings.animationSpeed = settings.animationSpeed;
+      }
+      return displaySettings;
     };
 
     Controller.bindMenuButton = function() {
@@ -45,8 +64,7 @@
     };
 
     Controller.setupSidenav = function() {
-      Dashboard.Display.showSidenav(this.getButtons());
-      Dashboard.Sidenav.Controller.bindSetupWidgets();
+      Dashboard.Display.showSidenav();
       Dashboard.Widgets.Manager.enterEditMode();
       return Dashboard.Widgets.Sorter.setupSortable();
     };
@@ -56,7 +74,7 @@
     };
 
     Controller.removeSidenav = function() {
-      Dashboard.Display.removeSidenav();
+      Dashboard.Display.hideSidenav();
       Dashboard.Widgets.Manager.exitEditMode();
       return Dashboard.Widgets.Sorter.disableSortable();
     };
@@ -71,24 +89,62 @@
   namespace('Dashboard');
 
   Dashboard.Display = (function() {
+    var COLUMNS, WIDGETS_BUTTONS_CONTAINER;
+
     function Display() {}
 
-    Display.showSidenav = function(buttons) {
+    COLUMNS = ['col0', 'col1', 'col2'];
+
+    WIDGETS_BUTTONS_CONTAINER = '[data-id=widget-buttons]';
+
+    Display.initialize = function(settings) {
+      this.setColumnsHeight();
+      this.watchWindowResize();
+      this.hideSidenav();
+      this.setupSidenav(settings.buttons);
+      return this.animationSpeed = settings.animationSpeed;
+    };
+
+    Display.setColumnsHeight = function() {
+      var windowHeight;
+      windowHeight = window.innerHeight;
+      return _.forEach(COLUMNS, function(column) {
+        return $("[data-id=" + column + "-container]").height(windowHeight);
+      });
+    };
+
+    Display.watchWindowResize = function() {
+      return $(window).resize((function(_this) {
+        return function() {
+          return _this.setColumnsHeight();
+        };
+      })(this));
+    };
+
+    Display.setupSidenav = function(buttons) {
       var contentHtml;
       contentHtml = new EJS({
         url: 'scripts/dashboard/sidenav/sidenavContent.ejs'
       }).render({
         buttons: buttons
       });
-      return $('[data-id=widget-buttons]').html(contentHtml);
+      return this.buttonsContainer().html(contentHtml);
     };
 
-    Display.removeSidenav = function() {
-      return $('[data-id=widget-buttons]').empty();
+    Display.showSidenav = function() {
+      return this.buttonsContainer().show(this.animationSpeed);
+    };
+
+    Display.hideSidenav = function() {
+      return this.buttonsContainer().hide(this.animationSpeed);
     };
 
     Display.isSidenavDisplayed = function() {
-      return $('[data-id=widget-buttons]').html().length > 0;
+      return this.buttonsContainer().attr('style') !== "display: none;";
+    };
+
+    Display.buttonsContainer = function() {
+      return $(WIDGETS_BUTTONS_CONTAINER);
     };
 
     return Display;
@@ -296,7 +352,11 @@
       containers = $("[data-id=" + column + "] li");
       _.forEach(containers, (function(_this) {
         return function(container) {
-          return total += _this.getContainerSize(container);
+          var size;
+          size = _this.getContainerSize(container);
+          if (size) {
+            return total += size;
+          }
         };
       })(this));
       return total;
@@ -314,9 +374,10 @@
       return this.containerCount++;
     };
 
-    Display.showAvailableColumns = function(size) {
+    Display.showAvailableColumns = function(size, senderColumn) {
       var columns;
       columns = this.getAllAvailableColumns(size);
+      columns.push(senderColumn);
       return _.forEach(columns, (function(_this) {
         return function(column) {
           return _this.setAsDroppable(column);
@@ -433,8 +494,10 @@
     };
 
     Sorter.startSorting = function(event, ui, sender) {
-      this.draggedItemSize = parseInt(ui.item.attr('data-size'));
-      return Dashboard.Widgets.Display.showAvailableColumns(this.draggedItemSize);
+      var draggedItemSize, senderColumn;
+      draggedItemSize = parseInt(ui.item.attr('data-size'));
+      senderColumn = $(sender).attr('data-id');
+      return Dashboard.Widgets.Display.showAvailableColumns(draggedItemSize, senderColumn);
     };
 
     Sorter.receiveSortable = function(event, ui, receiver) {

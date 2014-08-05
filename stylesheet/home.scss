@@ -88,7 +88,6 @@ p { margin: 0; }
   float: left;
   padding: 0 2%;
   width: 33.3%;
-  height: 800px;
 }
 
 /* ==========================================================================
@@ -182,10 +181,10 @@ p { margin: 0; }
 
 .widget-form { margin-bottom: .3em; }
 
-input[type="text"] { 
+input[type="text"] {
   border: none;
   color: $primary-color;
-  padding: .5em; 
+  padding: .5em;
   @include border-radius(2px 0 0 2px);
   height: 33px;
   line-height: 1.5em;

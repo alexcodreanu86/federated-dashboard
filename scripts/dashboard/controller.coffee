@@ -4,6 +4,18 @@ class Dashboard.Controller
   @initialize: (settings) ->
     @bindMenuButton()
     Dashboard.Widgets.Manager.generateWrappers(settings)
+    @initializeDisplay(settings)
+    Dashboard.Sidenav.Controller.bindSetupWidgets()
+
+  @initializeDisplay: (settings) ->
+    displaySettings = @generateDisplaySettings(settings)
+    Dashboard.Display.initialize(displaySettings)
+
+  @generateDisplaySettings: (settings) ->
+    displaySettings = {buttons: @getButtons()}
+    if settings
+      displaySettings.animationSpeed = settings.animationSpeed
+    displaySettings
 
   @bindMenuButton: ->
     $('[data-id=menu-button]').click(=> @toggleSidenav())
@@ -15,8 +27,7 @@ class Dashboard.Controller
       @setupSidenav()
 
   @setupSidenav: ->
-    Dashboard.Display.showSidenav(@getButtons())
-    Dashboard.Sidenav.Controller.bindSetupWidgets()
+    Dashboard.Display.showSidenav()
     Dashboard.Widgets.Manager.enterEditMode()
     Dashboard.Widgets.Sorter.setupSortable()
 
@@ -24,6 +35,6 @@ class Dashboard.Controller
     @sidenavButtons ||= Dashboard.Widgets.Manager.getSidenavButtons()
 
   @removeSidenav: ->
-    Dashboard.Display.removeSidenav()
+    Dashboard.Display.hideSidenav()
     Dashboard.Widgets.Manager.exitEditMode()
     Dashboard.Widgets.Sorter.disableSortable()
