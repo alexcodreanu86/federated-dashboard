@@ -5,7 +5,7 @@ buttons = Dashboard.Widgets.Manager.getSidenavButtons()
 
 setupSidenav = ->
   setupDashboardFixtures()
-  Dashboard.Display.initialize(buttons)
+  Dashboard.Display.initialize(buttons: buttons)
 
 setSidenavContainer = ->
   setFixtures "<div data-id='widget-buttons'></div>"
@@ -57,27 +57,27 @@ describe 'Dashboard.Display', ->
       setupDashboardFixtures()
       windowHeight = 400
       window.innerHeight = windowHeight
-      Dashboard.Display.initialize(buttons)
-      expect(getColumnHeight('col1')).toEqual(windowHeight)
-      expect(getColumnHeight('col1')).toEqual(windowHeight)
-      expect(getColumnHeight('col2')).toEqual(windowHeight)
+      Dashboard.Display.initialize(buttons: buttons)
+      expect(getColumnHeight('col1')).toEqual(400)
+      expect(getColumnHeight('col1')).toEqual(400)
+      expect(getColumnHeight('col2')).toEqual(400)
 
     it "is updating the column height when window is resized", ->
       setupDashboardFixtures()
       window.innerHeight = 400
-      Dashboard.Display.initialize(buttons)
+      Dashboard.Display.initialize(buttons: buttons)
       window.innerHeight = 380
       $(window).trigger('resize')
       expect(getColumnHeight('col1')).toEqual(380)
 
     it "is hiding the widget-buttons", ->
       setupDashboardFixtures()
-      Dashboard.Display.initialize(buttons)
+      Dashboard.Display.initialize(buttons: buttons)
       expect($('[data-id=widget-buttons]').attr('style')).toEqual('display: none;')
 
     it "is setting up the sidenav", ->
       setupDashboardFixtures()
-      Dashboard.Display.initialize(buttons)
+      Dashboard.Display.initialize(buttons: buttons)
       expect($('[data-id=widget-buttons]')).not.toBeEmpty()
 
     it "assigns the animationSpeed to the value given", ->

@@ -23,7 +23,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility; }
 
-p {
+p, h3 {
   margin: 0; }
 
 .sidebar {
@@ -119,11 +119,40 @@ p {
   height: 320px; }
 
 /* ==========================================================================
+   Twitter
+   ========================================================================== */
+[data-id=twitter-output], [data-id=blog-output] {
+  display: table; }
+
+.user-img, .blog-image-container {
+  float: left;
+  width: 5em; }
+
+.tweet, .blog-post {
+  width: 100%;
+  clear: both;
+  border-bottom: 1px solid #CECECE;
+  padding: 0.5em 0;
+  min-height: 6em; }
+
+.tweet-body, .blog-information {
+  margin-left: 3.5em; }
+
+.tweeter-user-img, .blog-image {
+  height: 4em; }
+
+/* ==========================================================================
+   Flickr
+   ========================================================================== */
+#flickr-images {
+  text-align: center; }
+
+/* ==========================================================================
    Font Icons
    ========================================================================== */
 .icon {
   color: white;
-  font-size: 2em;
+  font-size: 1.5em;
   display: inline-block;
   padding: .8em; }
 

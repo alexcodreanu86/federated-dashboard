@@ -22,7 +22,8 @@ class Dashboard.Display
     )
 
   @setupSidenav: (buttons) ->
-    contentHtml = new EJS({url: 'scripts/dashboard/sidenav/sidenavContent.ejs'}).render({buttons: buttons})
+    data = {buttons: buttons}
+    contentHtml = new EJS({url: 'scripts/dashboard/sidenav/sidenavContent.ejs'}).render(data)
     @buttonsContainer().html(contentHtml)
 
   @showSidenav: () ->
@@ -36,4 +37,3 @@ class Dashboard.Display
 
   @buttonsContainer: ->
     $(WIDGETS_BUTTONS_CONTAINER)
-

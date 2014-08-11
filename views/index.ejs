@@ -6,6 +6,7 @@
     <script src="/bower_components/jquery/dist/jquery.js"></script>
     <script src="/bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js"></script>
     <script src="/bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js"></script>
+    <script src="/bower_components/blog-parser-widget/dist/federated-dashboard-blog-parser-widget.js"></script>
     <script src="/bower_components/markitondemand-widget/lib/highstock.js"></script>
     <script src="/bower_components/markitondemand-widget/lib/exports.js"></script>
     <script src="/bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js"></script>
@@ -22,8 +23,8 @@
 
     <link rel="stylesheet" type="text/css/" href="/stylesheet/normalize.css">
     <link rel="stylesheet" type="text/css/" href="/stylesheet/fonts.css">
+    <link rel="stylesheet" type="text/css/" href="/stylesheet/font-awesome.css">
     <link rel="stylesheet" type="text/css/" href="/stylesheet/home.css">
-
   </head>
 
   <body>
@@ -31,13 +32,15 @@
       <div data-id="side-nav">
         <div data-id="widgets-container">
           <ul id="widgets-menu" data-id="widgets-menu">
-            <li class="widgets-menu-item">
+         <!--   <li class="widgets-menu-item">
               <span class="menu-button icon icon-list" data-id="menu-button"></span>
+            </li> -->
+            <li class="widgets-menu-item">
+              <i class="fa fa-bars menu-button icon icon-list" data-id="menu-button"></i>
             </li>
             <div class= 'widget-buttons' data-id="widget-buttons"></div>
-          </div>
-        </li>
-    <div>
+          </ul>
+        </div>
       </div>
     </nav>
 
@@ -63,24 +66,7 @@
     </div>
     <script>
       Dashboard.Controller.initialize({defaults: true, animationSpeed: 400})
+      //Dashboard.SpeechRecognition.Controller.initialize()
     </script>
   </body>
 </html>
-<!--
-
-          <li>
-            <div class="widget">
-              <div class="widget-header">
-                <h2 class="widget-title">Weather</h2>
-                <span class="widget-close">×</span>
-              </div>
-
-              <div class="widget-body">
-                <p>Cheesecake oat cake gingerbread topping cotton candy brownie.</p> 
-                <p>
-              </div>
-            </div>
-          </li>
-
-    -->
-

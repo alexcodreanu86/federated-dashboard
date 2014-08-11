@@ -1,5 +1,5 @@
 (function() {
-  var Twitter, app, express, fs, path, server, twit, util;
+  var FeedParser, Twitter, app, express, fs, path, processRequest, request, server, twit, url, util;
 
   express = require('express');
 
@@ -10,6 +10,12 @@
   util = require('util');
 
   Twitter = require('./bower_components/twitter-widget/dist/backend_module');
+
+  request = require('request');
+
+  url = require('url');
+
+  FeedParser = require('feedparser');
 
   app = express();
 
@@ -33,6 +39,44 @@
       return response.send(data.statuses);
     });
   });
+
+  app.post('/blog_feed', function(req, res) {
+    var urlData;
+    urlData = void 0;
+    req.on('data', function(data) {
+      return urlData = data;
+    });
+    return req.on('end', function() {
+      url = JSON.parse(urlData).url;
+      console.log(url);
+      return processRequest(url, res);
+    });
+  });
+
+  processRequest = function(url, response) {
+    var data, feedParser, feedRequest;
+    data = [];
+    feedRequest = request(url);
+    feedParser = new FeedParser();
+    feedRequest.on('response', function(resp) {
+      return this.pipe(feedParser);
+    });
+    feedParser.on('readable', function() {
+      var item, _results;
+      _results = [];
+      while (item = this.read()) {
+        _results.push(data.push(item));
+      }
+      return _results;
+    });
+    feedParser.on('error', function(err) {
+      console.log('Not a valid feed');
+      return console.log(err);
+    });
+    return feedParser.on('end', function() {
+      return response.send(data);
+    });
+  };
 
   app.get('/', function(request, response) {
     return response.render('index', {

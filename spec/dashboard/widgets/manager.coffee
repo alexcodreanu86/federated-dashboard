@@ -14,16 +14,15 @@ getWrapper = (name) ->
 
 describe "Dashboard.Widgets.Manager", ->
   it "wrapWidget returns a new widgetWrapper", ->
-    wrapper = Dashboard.Widgets.Manager.wrapWidget(Pictures, "pictures", 3, "some-api-key")
+    wrapper = Dashboard.Widgets.Manager.wrapWidget({widget: Pictures, name: "pictures", slotSize: 3, key: "some-api-key"})
     expect(wrapper.name).toEqual("pictures")
-    expect(wrapper.widgetApiKey).toEqual("some-api-key")
     expect(wrapper.slotSize).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
-  it "wrappers has 4 widgets setup", ->
+  it "wrappers several widgets wrappers", ->
     Dashboard.Widgets.Manager.generateWrappers()
     widgets = _.keys(Dashboard.Widgets.Manager.wrappers)
-    expect(widgets.length).toEqual(4)
+    expect(widgets.length > 4 ).toBe(true)
 
   it "getSidenavButtons returns the buttons for all widgets", ->
     Dashboard.Widgets.Manager.generateWrappers()

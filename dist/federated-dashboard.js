@@ -122,12 +122,13 @@
     };
 
     Display.setupSidenav = function(buttons) {
-      var contentHtml;
+      var contentHtml, data;
+      data = {
+        buttons: buttons
+      };
       contentHtml = new EJS({
         url: 'scripts/dashboard/sidenav/sidenavContent.ejs'
-      }).render({
-        buttons: buttons
-      });
+      }).render(data);
       return this.buttonsContainer().html(contentHtml);
     };
 
@@ -160,7 +161,7 @@
     function Controller() {}
 
     Controller.bindSetupWidgets = function() {
-      return $('[data-id=widget-buttons] li span').click(function() {
+      return $('[data-id=widget-buttons] li i').click(function() {
         return Dashboard.Sidenav.Controller.processClickedButton(this);
       });
     };
@@ -403,30 +404,50 @@
 
     Manager.generateWrappers = function(settings) {
       this.wrappers = {
-        pictures: this.wrapWidget(Pictures, "pictures", 2, "a48194703ae0d0d1055d6ded6c4c9869"),
-        weather: this.wrapWidget(Weather, "weather", 1, "12ba191e2fec98ad"),
-        twitter: this.wrapWidget(Twitter, "twitter", 2, ""),
-        stock: this.wrapWidget(Stock, "stock", 2, "")
+        pictures: this.wrapWidget({
+          widget: Pictures,
+          name: "pictures",
+          slotSize: 2,
+          key: "a48194703ae0d0d1055d6ded6c4c9869"
+        }),
+        weather: this.wrapWidget({
+          widget: Weather,
+          name: "weather",
+          slotSize: 1,
+          key: "12ba191e2fec98ad"
+        }),
+        twitter: this.wrapWidget({
+          widget: Twitter,
+          name: "twitter",
+          slotSize: 3
+        }),
+        stock: this.wrapWidget({
+          widget: Stock,
+          name: "stock",
+          slotSize: 2
+        }),
+        blog: this.wrapWidget({
+          widget: Blog,
+          name: "blog",
+          slotSize: 2,
+          numberOfPosts: 4
+        })
       };
       if (settings && settings.defaults) {
         return this.addDefaultsToWrappers();
       }
     };
 
-    Manager.wrapWidget = function(widget, name, slotSize, apiKey, defaultValue) {
-      return new Dashboard.Widgets.Wrapper({
-        widget: widget,
-        name: name,
-        slotSize: slotSize,
-        apiKey: apiKey
-      });
+    Manager.wrapWidget = function(settings) {
+      return new Dashboard.Widgets.Wrapper(settings);
     };
 
     Manager.addDefaultsToWrappers = function() {
       this.wrappers.pictures.defaultValue = 'dirtbikes';
       this.wrappers.twitter.defaultValue = 'bikes';
       this.wrappers.weather.defaultValue = 'Chicago IL';
-      return this.wrappers.stock.defaultValue = 'AAPL YHOO';
+      this.wrappers.stock.defaultValue = 'AAPL YHOO';
+      return this.wrappers.blog.defaultValue = 'http://blog.8thlight.com/feed/atom.xml';
     };
 
     Manager.enterEditMode = function() {
@@ -539,23 +560,27 @@
 
     function Wrapper(config) {
       this.widget = config.widget;
-      this.widgetApiKey = config.apiKey;
       this.name = config.name;
       this.slotSize = config.slotSize;
+      this.config = config;
     }
 
     Wrapper.prototype.setupWidgetIn = function(container) {
-      this.container = container;
-      return this.widget.Controller.setupWidgetIn(this.container, this.widgetApiKey, this.defaultValue);
+      var widgetConfig;
+      widgetConfig = _.extend(this.config, {
+        container: container,
+        defaultValue: this.defaultValue
+      });
+      return this.widget.Controller.setupWidgetIn(widgetConfig);
     };
 
     Wrapper.prototype.widgetLogo = function() {
-      var dataId;
-      dataId = "" + this.name + "-widget";
-      return this.widget.Display.generateLogo({
-        dataId: dataId,
-        width: WIDGET_LOGO_WIDTH
-      });
+      var settings;
+      settings = {
+        dataId: "" + this.name + "-widget",
+        "class": 'icon'
+      };
+      return this.widget.Display.generateLogo(settings);
     };
 
     Wrapper.prototype.hideWidgetForm = function() {

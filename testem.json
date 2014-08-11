@@ -8,6 +8,7 @@
     "lib/sinon.js",
     "bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js",
     "bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js",
+    "bower_components/blog-parser-widget/dist/federated-dashboard-blog-parser-widget.js",
     "bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js",
     "bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js",
     "bower_components/jquery/dist/jquery.js",

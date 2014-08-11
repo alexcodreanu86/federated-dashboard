@@ -5,17 +5,17 @@ class Dashboard.Widgets.Wrapper
 
   constructor: (config) ->
     @widget       = config.widget
-    @widgetApiKey = config.apiKey
     @name         = config.name
     @slotSize     = config.slotSize
+    @config       = config
 
   setupWidgetIn:(container) ->
-    @container = container
-    @widget.Controller.setupWidgetIn(@container, @widgetApiKey, @defaultValue)
+    widgetConfig = _.extend(@config, {container: container, defaultValue: @defaultValue})
+    @widget.Controller.setupWidgetIn(widgetConfig)
 
   widgetLogo: ->
-    dataId = "#{@name}-widget"
-    @widget.Display.generateLogo({dataId: dataId, width: WIDGET_LOGO_WIDTH})
+    settings = {dataId: "#{@name}-widget", class: 'icon'}
+    @widget.Display.generateLogo(settings)
 
   hideWidgetForm: ->
     @widget.Controller.hideForms()
