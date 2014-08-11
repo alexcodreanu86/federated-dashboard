@@ -1,14 +1,29 @@
 {
   "framework": "jasmine2",
-  "before_tests": "grunt coffee",
+  "before_tests": "grunt",
   "src_files": [
     "bower_components/underscore/underscore.js",
-    "namespace.js",
+    "lib/namespace.js",
+    "lib/ejs.js",
+    "lib/sinon.js",
+    "bower_components/flickr-widget/dist/federated-dashboard-flickr-widget.js",
+    "bower_components/wunderground-widget/dist/federated-dashboard-wunderground-widget.js",
+    "bower_components/blog-parser-widget/dist/federated-dashboard-blog-parser-widget.js",
+    "bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js",
+    "bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js",
     "bower_components/jquery/dist/jquery.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
-    ".tmp/scripts/**/*.js"
-    ".tmp/spec/**/*.js"
+    "lib/jquery-ui.min.js",
+    "lib/jquery.simulate.js",
+    "lib/annyang.js",
+    ".tmp/scripts/dashboard/**/*.js",
+    ".tmp/spec/dashboard/**/*.js"
   ],
+  "launchers":{
+    "Node": {
+      "command": "jasmine-node --coffee spec/twitter_backend/"
+    }
+  },
   "launch_in_ci": ["PhantomJS"],
   "launch_in_dev": ["Chrome"]
 }

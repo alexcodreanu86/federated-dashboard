@@ -9,7 +9,13 @@
     "package.json",
     "testem.json"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "flickr-widget": ">=0.0.5",
+    "wunderground-widget": ">=0.0.5",
+    "markitondemand-widget": ">=0.0.3",
+    "twitter-widget": ">=0.0.3",
+    "blog-parser-widget": "~0.0.0"
+  },
   "devDependencies": {
     "jasmine-jquery": "2.0.3",
     "underscore": "~1.6.0",

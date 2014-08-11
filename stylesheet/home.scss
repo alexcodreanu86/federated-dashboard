@@ -1,0 +1,267 @@
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+
+/* Colors */
+$body-color: #eaedf1;
+$primary-color: #323a45;
+$primary-hover: #39424f;
+
+$white: #fff;
+$orange: #f27935;
+$green: #1fbba6;
+$dark-green: #1dac99;
+
+/* Font Weights */
+$normal: 400;
+$bold: 700;
+
+/* ==========================================================================
+   Mixins
+   ========================================================================== */
+
+@mixin border-radius ($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+  border-radius: $radius;
+}
+
+@mixin transition ($transition-time) {
+  -webkit-transition: background $transition-time ease;
+  -moz-transition: background $transition-time ease;
+  -o-transition: background $transition-time ease;
+  -ms-transition: background $transition-time ease;
+  transition: background $transition-time ease;
+}
+
+@mixin user-select {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin appearance-none {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  background: $body-color;
+  color: $primary-color;
+  font: 400 100%/1.5 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+p, h3 { margin: 0; }
+
+.sidebar {
+  background: $primary-color;
+  position: fixed;
+  -webkit-touch-callout: none;
+  @include user-select;
+}
+
+.container {
+  @extend %clearfix;
+  padding-left: 5.2em;
+}
+
+.column {
+  float: left;
+  padding: 0 2%;
+  width: 33.3%;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.menu-button { cursor: pointer; }
+
+#widgets-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  .widgets-menu-item {
+    cursor: pointer;
+    @include transition(0.2s);
+
+    &:hover { background: $primary-hover; }
+  }
+}
+
+/* ==========================================================================
+   Widgets
+   ========================================================================== */
+
+.widget-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  border: 3px dashed transparent;
+  padding: 1em;
+}
+
+.droppable-column { border: 3px dashed $green; }
+
+.widget {
+  background: $white;
+  @include border-radius(2px);
+  overflow: hidden;
+  margin-bottom: 1.5em;
+}
+
+.widget-header {
+  background: $primary-color;
+  color: $white;
+  font-size: .9em;
+  padding: .5em 1em;
+
+  .widget-title {
+    display: inline-block;
+    font-size: 1.2em;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 250px;
+  }
+}
+
+.widget-body { padding: 1em; }
+
+.widget-close {
+  cursor: pointer;
+  float: right;
+  font-size: 1.7em;
+  line-height: 1em;
+}
+
+.widget-place-holder {
+  background: yellow;
+  height: 16px;
+}
+
+#flickr-images { height: 320px; }
+
+/* ==========================================================================
+   Twitter
+   ========================================================================== */
+[data-id=twitter-output], [data-id=blog-output] { display: table; }
+.user-img, .blog-image-container {
+  float: left;
+  width: 5em;
+}
+
+.tweet, .blog-post {
+  width: 100%;
+  clear: both;
+  border-bottom: 1px solid #CECECE;
+  padding: 0.5em 0;
+  min-height: 6em;
+}
+
+.tweet-body, .blog-information{ margin-left: 3.5em; }
+
+.tweeter-user-img, .blog-image { height: 4em; }
+
+
+/* ==========================================================================
+   Flickr
+   ========================================================================== */
+
+#flickr-images {
+  text-align: center;
+}
+
+/* ==========================================================================
+   Font Icons
+   ========================================================================== */
+
+.icon {
+  color: $white;
+  font-size: 1.5em;
+  display: inline-block;
+  padding: .8em;
+}
+
+
+/* ==========================================================================
+   Inputs
+   ========================================================================== */
+
+.widget-form { margin-bottom: .3em; }
+
+input[type="text"] {
+  border: none;
+  color: $primary-color;
+  padding: .5em;
+  @include border-radius(2px 0 0 2px);
+  height: 33px;
+  line-height: 1.5em;
+  font-size: 1em;
+  display: inline-block;
+  vertical-align: top;
+  width: 200px;
+}
+
+/* ==========================================================================
+   Button
+   ========================================================================== */
+
+button {
+  @include appearance-none;
+  background: $green;
+  @include border-radius(0 2px 2px 0);
+  border: none;
+  color: $white;
+  cursor: pointer;
+  display: inline-block;
+  padding: .5em .8em;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  font-style: normal;
+  line-height: 1.5em;
+  height: 33px;
+  font-size: 1em;
+  font-weight: normal;
+  vertical-align: top;
+  margin-left: -3.6px;
+  @include transition(0.2s);
+
+  &:hover { background: $dark-green; }
+}
+
+/* ==========================================================================
+   Clearfix
+   ========================================================================== */
+
+%clearfix {
+  *zoom: 1;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after { clear: both; }
+}
