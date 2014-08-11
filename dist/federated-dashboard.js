@@ -408,13 +408,13 @@
           widget: Pictures,
           name: "pictures",
           slotSize: 2,
-          key: "api_key"
+          key: "a48194703ae0d0d1055d6ded6c4c9869"
         }),
         weather: this.wrapWidget({
           widget: Weather,
           name: "weather",
           slotSize: 1,
-          key: "weather_api_key"
+          key: "12ba191e2fec98ad"
         }),
         twitter: this.wrapWidget({
           widget: Twitter,
