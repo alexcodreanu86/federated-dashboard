@@ -1,5 +1,27 @@
 ## Federated Dashboard
+---
 
+### How to use the dashboard
+
+1. After cloning this repo, inside the cloned directory run `bower install` to install all the bower components and `npm install` to install all the node dependencies.
+
+2. Some widgets will require API keys that can be requested from the api provider. API keys will have to be setup in the `Dashboard.Widgets.Manager.widgets`, in the `key` fields.
+
+For twitter widget the keys will have to be set as environment variables:
+```
+export TWITTER_API_KEY=twitterapikey
+export TWITTER_API_SECRET=twitterapisecret
+export TWITTER_ACCESS_TOKEN=twitteraccesstoken
+export TWITTER_ACCESS_TOKEN_SECRET=twitteraccesstokensecret
+```
+
+Api providers for the following widgets:
+
++ Pictures: [flickr](https://www.flickr.com/services/api/)
++ Weather:  [wunderground](http://www.wunderground.com/weather/api/)
++ Twitter:  [twitter](https://dev.twitter.com/)
+
+3. To compile the changes in the CoffeeScript files run `grunt`. This will recompile the dashboard code files inside `dist/` and the `server.js` file.
 
 ### How to create your own widget
 
@@ -84,4 +106,8 @@ randomWidget: @wrapWidget({widget:        RandomWidget,
 @wrappers.randomWidget.defaultValue = "some default value to search for"
 ```
 
+If the widget is added as a bower component, the widget scripts will have to be added to `views/index.ejs`
+
 If the widget meets the 5 requirements listed in  **How to create your own widget** then you should be able to see that widget logo in the sidenav and you should be all set to use your widget.
+
+For widgets that require backend logic, new routes can be added to `scripts/server.coffee`. The compiled version of this file is `server.js` in the root directory.
