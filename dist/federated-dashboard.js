@@ -409,14 +409,14 @@
           widget: Pictures,
           name: "pictures",
           slotSize: 2,
-          key: "a48194703ae0d0d1055d6ded6c4c9869",
+          key: "key",
           animationSpeed: this.animationSpeed
         }),
         weather: this.wrapWidget({
           widget: Weather,
           name: "weather",
           slotSize: 1,
-          key: "12ba191e2fec98ad",
+          key: "key",
           animationSpeed: this.animationSpeed
         }),
         twitter: this.wrapWidget({
