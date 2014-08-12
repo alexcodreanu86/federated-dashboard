@@ -403,34 +403,40 @@
     function Manager() {}
 
     Manager.generateWrappers = function(settings) {
+      this.animationSpeed = settings && settings.animationSpeed;
       this.wrappers = {
         pictures: this.wrapWidget({
           widget: Pictures,
           name: "pictures",
           slotSize: 2,
-          key: "a48194703ae0d0d1055d6ded6c4c9869"
+          key: "a48194703ae0d0d1055d6ded6c4c9869",
+          animationSpeed: this.animationSpeed
         }),
         weather: this.wrapWidget({
           widget: Weather,
           name: "weather",
           slotSize: 1,
-          key: "12ba191e2fec98ad"
+          key: "12ba191e2fec98ad",
+          animationSpeed: this.animationSpeed
         }),
         twitter: this.wrapWidget({
           widget: Twitter,
           name: "twitter",
-          slotSize: 3
+          slotSize: 3,
+          animationSpeed: this.animationSpeed
         }),
         stock: this.wrapWidget({
           widget: Stock,
           name: "stock",
-          slotSize: 2
+          slotSize: 2,
+          animationSpeed: this.animationSpeed
         }),
         blog: this.wrapWidget({
           widget: Blog,
           name: "blog",
           slotSize: 2,
-          numberOfPosts: 4
+          numberOfPosts: 4,
+          animationSpeed: this.animationSpeed
         })
       };
       if (settings && settings.defaults) {

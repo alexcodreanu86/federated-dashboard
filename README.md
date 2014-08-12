@@ -8,7 +8,10 @@ From the functionality point of view the widget should respond to the following 
 
 1.
 ```javascript
-RandomWidget.Controller.setupWidgetIn({container: '#some-container', otherOption: 'other-option'i, ...more options })
+RandomWidget.Controller.setupWidgetIn({container: '#some-container', animationSpeed: 300, otherOption: 'other-option'i, ...more options })
+container is a required field
+animationSpeed is required as well if you want to use the dashboard with animations
+on hide and show forms
 ```
 This command should setup one widget instance in '#some-container' element.
 The settings parameter can include any value and as many as are needed for the widget to function as desired.
@@ -67,12 +70,16 @@ The widget functionality is fully up to you here are a few examples of existing 
 
 In `Dashboard.Widgets.Manager.wrappers` add your widget like this:
 ```javascript
-randomWidget: @wrapWidget({widget: RandomWidget, name: 'randomWidget', slotSize: 3, ... and other settings that the widget requires ...})
+randomWidget: @wrapWidget({widget:        RandomWidget,
+                          name:           'randomWidget',
+                          slotSize:       3,
+                          animationSpeed: 300,
+                          ... and other settings that the widget requires ...})
 // widget = widget name space
 // name = same as the key coresponding to the wrapper in @wrappers object
 // slotSize = the number of slots the widget would be occupying in a column
 // these three fields are required for dashboard use, the rest are optional
-
+// animationSpeed = speed to animate forms and sidenav hide and show, include if using animations
 // if the new widget accepts a defaultValue field it can also be added to the Dashboard.Widgets.Manager.addDefaultsToWrappers() function like this:
 @wrappers.randomWidget.defaultValue = "some default value to search for"
 ```
