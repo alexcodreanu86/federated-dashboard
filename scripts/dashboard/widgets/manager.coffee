@@ -4,8 +4,8 @@ class Dashboard.Widgets.Manager
   @generateWrappers: (settings) ->
     @animationSpeed = settings && settings.animationSpeed
     @wrappers = {
-      pictures: @wrapWidget({widget: Pictures, name: "pictures", slotSize: 2, key: "key", animationSpeed: @animationSpeed}),
-      weather: @wrapWidget({widget: Weather, name: "weather", slotSize: 1, key: "key", animationSpeed: @animationSpeed}),
+      pictures: @wrapWidget({widget: Pictures, name: "pictures", slotSize: 2, key: "api", animationSpeed: @animationSpeed, slideSpeed: 3000}),
+      weather: @wrapWidget({widget: Weather, name: "weather", slotSize: 1, key: "api", animationSpeed: @animationSpeed, refresh: true}),
       twitter: @wrapWidget({widget: Twitter, name: "twitter",slotSize:  3, animationSpeed: @animationSpeed}),
       stock: @wrapWidget({widget: Stock, name: "stock", slotSize: 2, animationSpeed: @animationSpeed})
       blog: @wrapWidget({widget: Blog, name: "blog", slotSize: 2, numberOfPosts: 4, animationSpeed: @animationSpeed})

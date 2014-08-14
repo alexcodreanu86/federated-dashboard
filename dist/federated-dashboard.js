@@ -409,15 +409,17 @@
           widget: Pictures,
           name: "pictures",
           slotSize: 2,
-          key: "key",
-          animationSpeed: this.animationSpeed
+          key: "a48194703ae0d0d1055d6ded6c4c9869",
+          animationSpeed: this.animationSpeed,
+          slideSpeed: 3000
         }),
         weather: this.wrapWidget({
           widget: Weather,
           name: "weather",
           slotSize: 1,
-          key: "key",
-          animationSpeed: this.animationSpeed
+          key: "12ba191e2fec98ad",
+          animationSpeed: this.animationSpeed,
+          refresh: true
         }),
         twitter: this.wrapWidget({
           widget: Twitter,

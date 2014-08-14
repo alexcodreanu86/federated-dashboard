@@ -1,5 +1,8 @@
 ## Federated Dashboard
 ---
+### What is it?
+
+The idea behind creating the Federated Dashboard was to have a dashboard that is easy to use and customize. Each widget in it is a separate bower component that is included in the `dependencies` section of `bower.json`. Each widget setup adds one line of code with the setup settings and one `<script>` tag in the view to load the source file/files of the widget. The widgets are fully functional mini applications. The dashboard acts as a coordonator for all the widgets to function properly together.
 
 ### How to use the dashboard
 
@@ -14,14 +17,15 @@ export TWITTER_API_SECRET=twitterapisecret
 export TWITTER_ACCESS_TOKEN=twitteraccesstoken
 export TWITTER_ACCESS_TOKEN_SECRET=twitteraccesstokensecret
 ```
-
-Api providers for the following widgets:
+Here are some API providers for the coresponding widgets:
 
 + Pictures: [flickr](https://www.flickr.com/services/api/)
 + Weather:  [wunderground](http://www.wunderground.com/weather/api/)
 + Twitter:  [twitter](https://dev.twitter.com/)
 
 3. To compile the changes in the CoffeeScript files run `grunt`. This will recompile the dashboard code files inside `dist/` and the `server.js` file.
+
+4. And the last step is to start your server. By Executing the command `node server.js` the application should be available at (localhost:5000)[http://localhost:5000].
 
 ### How to create your own widget
 
