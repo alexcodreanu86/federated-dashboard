@@ -53,4 +53,4 @@ class Dashboard.Widgets.Display
     )
 
   @setAsDroppable: (column) ->
-    $("[data-id=#{column}").addClass('droppable-column')
+    $("[data-id=#{column}]").addClass('droppable-column')
