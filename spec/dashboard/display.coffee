@@ -34,7 +34,6 @@ describe 'Dashboard.Display', ->
     setupSidenav()
     expect($(buttonsContainer)).toContainElement('[data-id=pictures-widget]')
     expect($(buttonsContainer)).toContainElement('[data-id=weather-widget]')
-    expect($(buttonsContainer)).toContainElement('[data-id=stock-widget]')
     expect($(buttonsContainer)).toContainElement('[data-id=twitter-widget]')
 
   it "hideSidenav removes the sidenav of the screen", ->

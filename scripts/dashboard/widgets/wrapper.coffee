@@ -6,8 +6,14 @@ class Dashboard.Widgets.Wrapper
   constructor: (config) ->
     @widget       = config.widget
     @name         = config.name
-    @slotSize     = config.slotSize
+    @slotSize     = @getSlotSize(config.slotSize)
     @config       = config
+
+  getSlotSize: (sizeLetter) ->
+    switch sizeLetter
+      when "S", "s" then 1
+      when "M", "m" then 2
+      else 3
 
   setupWidgetIn:(container) ->
     widgetConfig = _.extend(@config, {container: container, defaultValue: @defaultValue})

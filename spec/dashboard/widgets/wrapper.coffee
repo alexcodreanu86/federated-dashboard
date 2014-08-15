@@ -1,22 +1,23 @@
-widgetConfig = {
-  widget: Pictures,
-  apiKey: "some_api_key",
-  name: "pictures",
-  slotSize: 2
-}
-
-wrapper = null
-
-setWrapperInContainer = ->
-  setFixtures(sandbox())
-  $('#sandbox').append("<div data-id='widget-container'></div>")
-  wrapper.setupWidgetIn(containerName)
-
-containerName = "[data-id=widget-container]"
-
 describe "Dashboard.Widgets.Wrapper", ->
+  wrapper = null
+
+  setWrapperInContainer = ->
+    setFixtures(sandbox())
+    $('#sandbox').append("<div data-id='widget-container'></div>")
+    wrapper.setupWidgetIn(containerName)
+
+  containerName = "[data-id=widget-container]"
+
+  widgetConfig = (slotSize) ->
+    {
+      widget: Pictures,
+      apiKey: "some_api_key",
+      name: "pictures",
+      slotSize: slotSize
+    }
+
   beforeEach ->
-    wrapper = new Dashboard.Widgets.Wrapper(widgetConfig)
+    wrapper = new Dashboard.Widgets.Wrapper(widgetConfig('s'))
 
   it "widget returns the widget it is initialized with", ->
     expect(wrapper.widget).toEqual(Pictures)
@@ -42,3 +43,18 @@ describe "Dashboard.Widgets.Wrapper", ->
     wrapper.hideWidgetForm()
     wrapper.showWidgetForm()
     expect($('[data-id=pictures-form]').attr('style')).not.toEqual('display: none;')
+
+  it "assigns slotSize on initialization", ->
+    expect(wrapper.slotSize).toBe(1)
+
+  it "getSlotSize returns 1 for s or S", ->
+    expect(wrapper.getSlotSize("s")).toBe(1)
+    expect(wrapper.getSlotSize('S')).toBe(1)
+
+  it "getSlotSize returns 2 for m or M", ->
+    expect(wrapper.getSlotSize("m")).toBe(2)
+    expect(wrapper.getSlotSize('M')).toBe(2)
+
+  it "getSlotSize returns 3 anything else", ->
+    expect(wrapper.getSlotSize("L")).toBe(3)
+    expect(wrapper.getSlotSize('XL')).toBe(3)

@@ -14,23 +14,24 @@ getWrapper = (name) ->
 
 describe "Dashboard.Widgets.Manager", ->
   it "wrapWidget returns a new widgetWrapper", ->
-    wrapper = Dashboard.Widgets.Manager.wrapWidget({widget: Pictures, name: "pictures", slotSize: 3, key: "some-api-key"})
+    wrapper = Dashboard.Widgets.Manager.wrapWidget({widget: Pictures, name: "pictures", slotSize: "L", key: "some-api-key"})
     expect(wrapper.name).toEqual("pictures")
     expect(wrapper.slotSize).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
-  it "wrappers several widgets wrappers", ->
+  it "wraps several widgets wrappers", ->
     Dashboard.Widgets.Manager.generateWrappers()
     widgets = _.keys(Dashboard.Widgets.Manager.wrappers)
-    expect(widgets.length > 4 ).toBe(true)
+    expect(widgets.length > 2 ).toBe(true)
 
   it "getSidenavButtons returns the buttons for all widgets", ->
+    setFixtures sandbox()
     Dashboard.Widgets.Manager.generateWrappers()
     buttons = Dashboard.Widgets.Manager.getSidenavButtons()
-    expect(buttons[0]).toBeMatchedBy('[data-id=pictures-widget]')
-    expect(buttons[1]).toBeMatchedBy('[data-id=weather-widget]')
-    expect(buttons[2]).toBeMatchedBy('[data-id=twitter-widget]')
-    expect(buttons[3]).toBeMatchedBy('[data-id=stock-widget]')
+    $('#sandbox').append(buttons)
+    expect($('#sandbox')).toContainElement('[data-id=pictures-widget]')
+    expect($('#sandbox')).toContainElement('[data-id=weather-widget]')
+    expect($('#sandbox')).toContainElement('[data-id=twitter-widget]')
 
   describe 'setupWidget', ->
     beforeEach ->

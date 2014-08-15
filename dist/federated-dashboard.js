@@ -408,36 +408,38 @@
         pictures: this.wrapWidget({
           widget: Pictures,
           name: "pictures",
-          slotSize: 2,
+          slotSize: "M",
           key: "api",
           animationSpeed: this.animationSpeed,
+          refreshRate: 120,
           slideSpeed: 3000
-        }),
-        weather: this.wrapWidget({
-          widget: Weather,
-          name: "weather",
-          slotSize: 1,
-          key: "api",
-          animationSpeed: this.animationSpeed,
-          refresh: true
         }),
         twitter: this.wrapWidget({
           widget: Twitter,
           name: "twitter",
-          slotSize: 3,
-          animationSpeed: this.animationSpeed
-        }),
-        stock: this.wrapWidget({
-          widget: Stock,
-          name: "stock",
-          slotSize: 2,
+          slotSize: "L",
           animationSpeed: this.animationSpeed
         }),
         blog: this.wrapWidget({
           widget: Blog,
           name: "blog",
-          slotSize: 2,
+          slotSize: "M",
           numberOfPosts: 4,
+          animationSpeed: this.animationSpeed,
+          refreshRate: 600
+        }),
+        weather: this.wrapWidget({
+          widget: Weather,
+          name: "weather",
+          slotSize: "S",
+          key: "api",
+          animationSpeed: this.animationSpeed,
+          refresh: true
+        }),
+        stock: this.wrapWidget({
+          widget: Stock,
+          name: 'stock',
+          slotSize: "M",
           animationSpeed: this.animationSpeed
         })
       };
@@ -451,11 +453,11 @@
     };
 
     Manager.addDefaultsToWrappers = function() {
-      this.wrappers.pictures.defaultValue = 'dirtbikes';
-      this.wrappers.twitter.defaultValue = 'bikes';
+      this.wrappers.pictures.defaultValue = '8thLight craftsmen';
+      this.wrappers.twitter.defaultValue = '8thLight';
       this.wrappers.weather.defaultValue = 'Chicago IL';
-      this.wrappers.stock.defaultValue = 'AAPL YHOO';
-      return this.wrappers.blog.defaultValue = 'http://blog.8thlight.com/feed/atom.xml';
+      this.wrappers.blog.defaultValue = 'http://blog.8thlight.com/feed/atom.xml';
+      return this.wrappers.stock.defaultValue = 'AAPl';
     };
 
     Manager.enterEditMode = function() {
@@ -557,9 +559,22 @@
     function Wrapper(config) {
       this.widget = config.widget;
       this.name = config.name;
-      this.slotSize = config.slotSize;
+      this.slotSize = this.getSlotSize(config.slotSize);
       this.config = config;
     }
+
+    Wrapper.prototype.getSlotSize = function(sizeLetter) {
+      switch (sizeLetter) {
+        case "S":
+        case "s":
+          return 1;
+        case "M":
+        case "m":
+          return 2;
+        default:
+          return 3;
+      }
+    };
 
     Wrapper.prototype.setupWidgetIn = function(container) {
       var widgetConfig;
