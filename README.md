@@ -44,13 +44,15 @@ The settings parameter can include any value and as many as are needed for the w
 
 2.
 ```javascript
-RandomWidget.Controller.hideForms()
+RandomWidget.Controller.enterEditMode()
+// Hide Forms and Closing X
 ```
 This command should hide the forms and closing x's of all widget instances running.
 
 3.
 ```javascript
-RandomWidget.Controller.showForms()
+RandomWidget.Controller.enterEditMode()
+// Show Forms and Closing X
 ```
 This command should show the forms and closing x's of all widget instances running.
 

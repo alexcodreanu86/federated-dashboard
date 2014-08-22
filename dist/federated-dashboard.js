@@ -411,13 +411,14 @@
           slotSize: "M",
           key: "api",
           animationSpeed: this.animationSpeed,
-          refreshRate: 120,
+          refreshRate: 300,
           slideSpeed: 3000
         }),
         twitter: this.wrapWidget({
           widget: Twitter,
           name: "twitter",
           slotSize: "L",
+          refreshRate: 600,
           animationSpeed: this.animationSpeed
         }),
         blog: this.wrapWidget({
@@ -595,11 +596,11 @@
     };
 
     Wrapper.prototype.hideWidgetForm = function() {
-      return this.widget.Controller.hideForms();
+      return this.widget.Controller.exitEditMode();
     };
 
     Wrapper.prototype.showWidgetForm = function() {
-      return this.widget.Controller.showForms();
+      return this.widget.Controller.enterEditMode();
     };
 
     return Wrapper;

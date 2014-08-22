@@ -24,7 +24,7 @@ class Dashboard.Widgets.Wrapper
     @widget.Display.generateLogo(settings)
 
   hideWidgetForm: ->
-    @widget.Controller.hideForms()
+    @widget.Controller.exitEditMode()
 
   showWidgetForm: ->
-    @widget.Controller.showForms()
+    @widget.Controller.enterEditMode()
