@@ -117,3 +117,5 @@ If the widget is added as a bower component, the widget scripts will have to be 
 If the widget meets the 5 requirements listed in  **How to create your own widget** then you should be able to see that widget logo in the sidenav and you should be all set to use your widget.
 
 For widgets that require backend logic, new routes can be added to `scripts/server.coffee`. The compiled version of this file is `server.js` in the root directory.
+
+[Here](https://github.com/alexcodreanu86/federated-dashboard-widget-template) is a link to a widget template that can be used to start building a new widget.
