@@ -31,29 +31,6 @@ describe "Dashboard.SpeechRecognition.Controller", ->
     controller.removeSidenav()
     expect(spy).toHaveBeenCalled()
 
-  it "searchWidgetFor searches the widget with the given input", ->
-    controller = newController()
-    prepareDashboard(controller)
-    clickOn('[data-id=pictures-widget]')
-    $('[data-id=pictures-button]').unbind('click')
-    controller.searchWidgetFor('pictures', "bikes")
-    expect($('[name=pictures-search]').val()).toEqual('bikes')
-
-  it "openWidget will open the widget that is passed to it", ->
-    controller = newController()
-    prepareDashboard(controller)
-    controller.dashboardController.setupSidenav()
-    controller.openWidget('pictures')
-    expect($('[data-id=col0]')).toContainElement('[data-id=pictures-button]')
-
-  it "closeWidget is closing the widget", ->
-    controller = newController()
-    prepareDashboard(controller)
-    controller.dashboardController.setupSidenav()
-    controller.openWidget('weather')
-    controller.closeWidget('weather')
-    expect($('[data-id=col0]')).not.toContainElement('[data-id=pictures-button]')
-
   xit "dragWidget will drag the widget to the right when direction is right", ->
     controller = newController()
     spy = spyOn(controller, 'dragRight')

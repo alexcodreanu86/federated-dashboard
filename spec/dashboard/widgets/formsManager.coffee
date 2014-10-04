@@ -2,8 +2,8 @@ describe 'Dashboard.Widgets.FormsManager', ->
   describe '#exitEditMode', ->
     it 'hides the forms of all widgets on the screen', ->
       setFixtures """
-        <div data-selector='widget-form' id='form1'></div>
-        <div data-selector='widget-form' id='form2'></div>
+        <div data-name='widget-form' id='form1'></div>
+        <div data-name='widget-form' id='form2'></div>
       """
       manager = new Dashboard.Widgets.FormsManager()
 
@@ -13,8 +13,8 @@ describe 'Dashboard.Widgets.FormsManager', ->
 
     it 'hides all the closing buttons', ->
       setFixtures """
-        <div data-selector='widget-close' id='close1'></div>
-        <div data-selector='widget-close' id='close2'></div>
+        <div data-name='widget-close' id='close1'></div>
+        <div data-name='widget-close' id='close2'></div>
       """
       manager = new Dashboard.Widgets.FormsManager()
 
@@ -32,8 +32,8 @@ describe 'Dashboard.Widgets.FormsManager', ->
   describe '#enterEditMode', ->
     it 'shows the forms of all widgets on the screen', ->
       setFixtures """
-        <div data-selector='widget-form' id='form1'></div>
-        <div data-selector='widget-form' id='form2'></div>
+        <div data-name='widget-form' id='form1'></div>
+        <div data-name='widget-form' id='form2'></div>
       """
       manager = new Dashboard.Widgets.FormsManager()
 
@@ -47,8 +47,8 @@ describe 'Dashboard.Widgets.FormsManager', ->
 
     it 'shows all the closing buttons', ->
       setFixtures """
-        <div data-selector='widget-close' id='close1'></div>
-        <div data-selector='widget-close' id='close2'></div>
+        <div data-name='widget-close' id='close1'></div>
+        <div data-name='widget-close' id='close2'></div>
       """
       manager = new Dashboard.Widgets.FormsManager()
 

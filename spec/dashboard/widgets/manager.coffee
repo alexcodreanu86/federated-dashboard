@@ -47,7 +47,7 @@ describe "Dashboard.Widgets.Manager", ->
       manager = newManager()
       manager.generateWrappers()
       manager.setupWidget('pictures')
-      expect($('[data-id=col0]')).toContainElement('[data-id=pictures-widget-wrapper]')
+      expect($('[data-id=col0]')).toContainText('Pictures')
 
     it 'is not setting up the pictures widget when container is not valid', ->
       manager = newManager()
@@ -58,8 +58,8 @@ describe "Dashboard.Widgets.Manager", ->
 
   describe 'generateWrappers', ->
     it 'adds default values to widgets when settings.defaults is true', ->
-      manager = newManager()
-      manager.generateWrappers({defaults: true})
+      manager = newManager({defaults: true})
+      manager.generateWrappers()
       weatherWrapper = getWrapper(manager, 'weather')
       expect(weatherWrapper.defaultValue).toEqual('Chicago IL')
 

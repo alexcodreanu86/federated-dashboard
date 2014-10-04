@@ -39,9 +39,7 @@ newSorter = (sortableList, handle) ->
   new Dashboard.Widgets.Sorter(sortableList, handle)
 
 sortableSelector = "[data-name=sortable-list]"
-handle = ".widget-header"
-
-# TODO add data-name sortable-handle to widgets views
+handle = "[data-name=sortable-handle]"
 
 describe 'Dashboard.Widgets.Sorter', ->
   describe 'setupSortable', ->
@@ -57,21 +55,21 @@ describe 'Dashboard.Widgets.Sorter', ->
       manager.setupWidget('pictures')
       sorter = newSorter(sortableSelector, handle)
       sorter.setupSortable()
-      spy = spyOn(sorter, 'startSorting')
+      spy = spyOn(Dashboard.Widgets.Display, 'showAvailableColumns')
       $(handle).simulate('drag', {dy: 50})
       expect(spy).toHaveBeenCalled()
 
-    it 'calls disableDroppableColumns when draging ends', ->
-      setupDashboardFixtures()
-      manager = newWidgetManager()
-      manager.generateWrappers()
-      manager.setupWidget('pictures')
-      newSorter().setupSortable()
-      $(handle).simulate('drag', {dy: 50})
-
-      expect(col0()).not.toBeMatchedBy('.droppable-column')
-      expect(col1()).not.toBeMatchedBy('.droppable-column')
-      expect(col2()).not.toBeMatchedBy('.droppable-column')
+  it 'disableDroppableColumns removes class droppable-column of the columns', ->
+    setupDashboardFixtures()
+    manager = newWidgetManager()
+    manager.generateWrappers()
+    manager.setupWidget('pictures')
+    sorter = newSorter()
+    sorter.setupSortable()
+    $(handle).simulate('drag', {dy: 50})
+    expect(col0()).not.toBeMatchedBy('.droppable-column')
+    expect(col1()).not.toBeMatchedBy('.droppable-column')
+    expect(col2()).not.toBeMatchedBy('.droppable-column')
 
   it 'disableSortable disables the sortable feature', ->
     setupDashboardFixtures()
@@ -79,22 +77,3 @@ describe 'Dashboard.Widgets.Sorter', ->
     sorter.setupSortable()
     sorter.disableSortable()
     expect($(sortableSelector)).toBeMatchedBy('.ui-sortable-disabled')
-
-  it 'startSorting adds droppable-column class to the columns that can fit the dragged item', ->
-    setupDashboardFixtures()
-    populateColumn('col0')
-    newSorter(sortableSelector).startSorting("event", mockUi(), sender())
-    expect(col0()).toBeMatchedBy('.droppable-column')
-    expect(col1()).toBeMatchedBy('.droppable-column')
-    expect(col2()).toBeMatchedBy('.droppable-column')
-
-  it 'receiveSortable removes the droppable-column class from all columns', ->
-    setupDashboardFixtures()
-    populateColumn('col0')
-    sorter = newSorter()
-    sorter.setupSortable(sortableSelector)
-    sorter.startSorting("event", mockUi(), sender())
-    sorter.receiveSortable('event', mockUi(), sender())
-    expect(col0()).not.toBeMatchedBy('.droppable-column')
-    expect(col1()).not.toBeMatchedBy('.droppable-column')
-    expect(col2()).not.toBeMatchedBy('.droppable-column')

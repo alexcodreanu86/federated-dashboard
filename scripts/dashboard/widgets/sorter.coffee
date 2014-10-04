@@ -2,19 +2,22 @@ namespace('Dashboard.Widgets')
 
 class Dashboard.Widgets.Sorter
   constructor: (sortableList, handle) ->
-    @sortableList = sortableList || '.widget-list'
-    @handle       = handle       || '.widget-header'
+    @sortableList = sortableList || '[data-name=sortable-list]'
+    @handle       = handle       || '[data-name=sortable-handle]'
+
   setupSortable: ->
     $(@sortableList).sortable({
       connectWith: @sortableList,
       handle: @handle,
       start: @startSorting
       receive: @receiveSortable
-      stop: @disableDroppableColumns
+      stop: -> $('.droppable-column').removeClass('droppable-column')
+ 
     })
     $(@sortableList).sortable('enable')
 
   disableSortable: ->
+    $('.droppable-column').removeClass('droppable-column')
     $(@sortableList).sortable('disable')
 
   startSorting: (event, ui) ->

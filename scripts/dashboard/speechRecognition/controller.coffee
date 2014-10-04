@@ -7,11 +7,6 @@ class Dashboard.SpeechRecognition.Controller
   commands: {
     'open menu': => @showSidenav()
     'close menu': => @removeSidenav()
-    'open :widget widget': (widget) => @clickOn("[data-id=#{widget.toLowerCase()}-widget]")
-    'search :widget for *search': (widget, search) =>
-      @searchWidgetFor(widget.toLowerCase(), search.toLowerCase())
-    'close :widget widget': (widget) => @closeWidget(widget.toLowerCase())
-    'move :widget widget :direction': (widget, direction) => @dragWidget(widget.toLowerCase(), direction.toLowerCase())
     'do something cool': => @showSurprize()
   }
 
@@ -27,15 +22,6 @@ class Dashboard.SpeechRecognition.Controller
       annyang.debug()
       annyang.start()
 
-  searchWidgetFor: (widget, searchInput) ->
-    $("[name=#{widget}-search]").val(searchInput)
-    @clickOn("[data-id=#{widget}-button]")
-
-  openWidget: (widget) ->
-    @clickOn("[data-id=#{widget}-widget]")
-
-  closeWidget: (widget) ->
-    @clickOn("[data-name=#{widget}].widget-close")
 
   clickOn: (element) ->
     $(element).click()
