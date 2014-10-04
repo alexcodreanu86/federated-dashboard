@@ -124,19 +124,26 @@ p, h3 {
 [data-id=twitter-output], [data-id=blog-output] {
   display: table; }
 
-.user-img, .blog-image-container {
+.user-img, .blog-image-container, .notification-symbol {
   float: left;
   width: 5em; }
 
-.tweet, .blog-post {
+.tweet, .blog-post, .notification {
   width: 100%;
   clear: both;
   border-bottom: 1px solid #CECECE;
   padding: 0.5em 0;
   min-height: 6em; }
 
-.tweet-body, .blog-information {
+.tweet-body, .blog-information, .notification-content {
   margin-left: 3.5em; }
+
+.notification-symbol i {
+  font-size: 3em; }
+  .notification-symbol i.fa-bell {
+    color: #1fbba6; }
+  .notification-symbol i.fa-exclamation-circle {
+    color: red; }
 
 .tweeter-user-img, .blog-image {
   height: 4em; }

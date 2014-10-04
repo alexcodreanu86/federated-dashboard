@@ -22,9 +22,3 @@ class Dashboard.Widgets.Wrapper
   widgetLogo: ->
     settings = {dataId: "#{@name}-widget", class: 'icon'}
     @widget.Display.generateLogo(settings)
-
-  hideWidgetForm: ->
-    @widget.Controller.exitEditMode()
-
-  showWidgetForm: ->
-    @widget.Controller.enterEditMode()

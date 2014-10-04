@@ -1,15 +1,16 @@
 namespace('Dashboard.Sidenav')
 
 class Dashboard.Sidenav.Controller
-  @bindSetupWidgets: ->
-    $('[data-id=widget-buttons] li i').click( ->
-      Dashboard.Sidenav.Controller.processClickedButton(this)
-    )
+  constructor: (@widgetManager) ->
+  bindSetupWidgets: () ->
+    $('[data-id=widget-buttons] li i').click (event) =>
+      @processClickedButton event
 
-  @processClickedButton: (button) ->
-    buttonDataId = button.getAttribute('data-id')
+  processClickedButton: (event) ->
+    button = $(event.target)
+    buttonDataId = button.attr('data-id')
     widgetName = @getWidgetName(buttonDataId)
-    Dashboard.Widgets.Manager.setupWidget(widgetName)
+    @widgetManager.setupWidget(widgetName)
 
-  @getWidgetName: (dataId) ->
+  getWidgetName: (dataId) ->
     dataId.split('-')[0]

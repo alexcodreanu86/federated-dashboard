@@ -33,17 +33,6 @@ describe "Dashboard.Widgets.Wrapper", ->
     picturesLogo = wrapper.widgetLogo()
     expect(picturesLogo).toBeMatchedBy('[data-id=pictures-widget]')
 
-  it "hideWidgetForm is hiding the widgets form", ->
-    setWrapperInContainer()
-    wrapper.hideWidgetForm()
-    expect($('[data-id=pictures-form]').attr('style')).toEqual('display: none;')
-
-  it "showWidgetForm displays the widget form", ->
-    setWrapperInContainer()
-    wrapper.hideWidgetForm()
-    wrapper.showWidgetForm()
-    expect($('[data-id=pictures-form]').attr('style')).not.toEqual('display: none;')
-
   it "assigns slotSize on initialization", ->
     expect(wrapper.slotSize).toBe(1)
 

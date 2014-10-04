@@ -1,11 +1,17 @@
 wrappedWidget = new Dashboard.Widgets.Wrapper({widget: Pictures, name: "pictures", numberOfSlots: 3, apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"})
+manager = new Dashboard.Widgets.Manager
 
-Dashboard.Widgets.Manager.generateWrappers()
-buttons = Dashboard.Widgets.Manager.getSidenavButtons()
+manager.generateWrappers()
+buttons = manager.getSidenavButtons()
 
-setupSidenav = ->
-  setupDashboardFixtures()
-  Dashboard.Display.initialize(buttons: buttons)
+initializedDisplay = ->
+  display = newDisplay(buttons)
+  display.initialize()
+  display
+
+
+newDisplay = (buttons, animationSpeed) ->
+  new Dashboard.Display(buttons: buttons, animationSpeed: animationSpeed)
 
 setSidenavContainer = ->
   setFixtures "<div data-id='widget-buttons'></div>"
@@ -31,32 +37,36 @@ getColumnHeight = (col) ->
 
 describe 'Dashboard.Display', ->
   it "setupSidenav displays the sideNav", ->
-    setupSidenav()
+    setupDashboardFixtures()
+    initializedDisplay()
     expect($(buttonsContainer)).toContainElement('[data-id=pictures-widget]')
     expect($(buttonsContainer)).toContainElement('[data-id=weather-widget]')
     expect($(buttonsContainer)).toContainElement('[data-id=twitter-widget]')
 
   it "hideSidenav removes the sidenav of the screen", ->
-    setupSidenav()
-    Dashboard.Display.hideSidenav()
+    setupDashboardFixtures()
+    display = initializedDisplay()
+    display.hideSidenav()
     expect($(buttonsContainer).attr('style')).toEqual('display: none;')
 
   describe "isSidenavDisplayed", ->
     it "isSidenavDisplayed returns false if sidenav is not displayed", ->
-      setupSidenav()
-      expect(Dashboard.Display.isSidenavDisplayed()).toBe(false)
+      setupDashboardFixtures()
+      display = initializedDisplay()
+      expect(display.isSidenavDisplayed()).toBe(false)
 
     it "isSidenavDisplayed returns true if sidenav is displayed", ->
-      setupSidenav()
-      Dashboard.Display.showSidenav()
-      expect(Dashboard.Display.isSidenavDisplayed()).toBe(true)
+      setupDashboardFixtures()
+      display = initializedDisplay()
+      display.showSidenav()
+      expect(display.isSidenavDisplayed()).toBe(true)
 
   describe "initialize", ->
     it "is setting the height to equal container height", ->
       setupDashboardFixtures()
       windowHeight = 400
       window.innerHeight = windowHeight
-      Dashboard.Display.initialize(buttons: buttons)
+      initializedDisplay()
       expect(getColumnHeight('col1')).toEqual(400)
       expect(getColumnHeight('col1')).toEqual(400)
       expect(getColumnHeight('col2')).toEqual(400)
@@ -64,22 +74,22 @@ describe 'Dashboard.Display', ->
     it "is updating the column height when window is resized", ->
       setupDashboardFixtures()
       window.innerHeight = 400
-      Dashboard.Display.initialize(buttons: buttons)
+      initializedDisplay()
       window.innerHeight = 380
       $(window).trigger('resize')
       expect(getColumnHeight('col1')).toEqual(380)
 
     it "is hiding the widget-buttons", ->
       setupDashboardFixtures()
-      Dashboard.Display.initialize(buttons: buttons)
+      initializedDisplay()
       expect($('[data-id=widget-buttons]').attr('style')).toEqual('display: none;')
 
     it "is setting up the sidenav", ->
       setupDashboardFixtures()
-      Dashboard.Display.initialize(buttons: buttons)
+      initializedDisplay()
       expect($('[data-id=widget-buttons]')).not.toBeEmpty()
 
     it "assigns the animationSpeed to the value given", ->
       setupDashboardFixtures()
-      Dashboard.Display.initialize({buttons: buttons, animationSpeed: 300})
-      expect(Dashboard.Display.animationSpeed).toBe(300)
+      display = newDisplay(buttons, 300)
+      expect(display.animationSpeed).toBe(300)

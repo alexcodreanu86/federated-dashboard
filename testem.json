@@ -11,6 +11,7 @@
     "bower_components/blog-parser-widget/dist/federated-dashboard-blog-parser-widget.js",
     "bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js",
     "bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.js",
+    "bower_components/notification-widget/dist/federated-dashboard-notification-widget.js",
     "bower_components/jquery/dist/jquery.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
     "lib/jquery-ui.min.js",

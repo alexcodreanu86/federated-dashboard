@@ -1,30 +1,28 @@
 namespace('Dashboard.Widgets')
 
 class Dashboard.Widgets.Sorter
-  @setupSortable: ->
-    $('.widget-list').sortable({
-      connectWith: '.widget-list',
-      handle: '.widget-header',
-      start: (event, ui) ->
-        Dashboard.Widgets.Sorter.startSorting(event, ui, this)
-      receive: (event, ui) ->
-        Dashboard.Widgets.Sorter.receiveSortable(event, ui, this)
+  constructor: (sortableList, handle) ->
+    @sortableList = sortableList || '.widget-list'
+    @handle       = handle       || '.widget-header'
+  setupSortable: ->
+    $(@sortableList).sortable({
+      connectWith: @sortableList,
+      handle: @handle,
+      start: @startSorting
+      receive: @receiveSortable
       stop: @disableDroppableColumns
     })
-    $('.widget-list').sortable('enable')
+    $(@sortableList).sortable('enable')
 
-  @disableSortable: ->
-    $('.widget-list').sortable('disable')
+  disableSortable: ->
+    $(@sortableList).sortable('disable')
 
-  @startSorting: (event, ui, sender) ->
+  startSorting: (event, ui) ->
     draggedItemSize = parseInt(ui.item.attr('data-size'))
-    senderColumn = $(sender).attr('data-id')
+    senderColumn = $(this).attr('data-id')
     Dashboard.Widgets.Display.showAvailableColumns(draggedItemSize, senderColumn)
 
-  @receiveSortable: (event, ui, receiver) ->
-    if !$(receiver).attr('class').match('droppable-column')
+  receiveSortable: (event, ui) ->
+    if !$(this).attr('class').match('droppable-column')
       $(ui.sender).sortable("cancel")
-    @disableDroppableColumns()
-
-  @disableDroppableColumns: ->
     $('.droppable-column').removeClass('droppable-column')

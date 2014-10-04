@@ -1,5 +1,5 @@
 (function() {
-  var FeedParser, Twitter, app, express, fs, path, processRequest, request, server, twit, url, util;
+  var FeedParser, Twitter, app, express, fs, gmailRouter, path, processRequest, request, server, twit, url, util;
 
   express = require('express');
 
@@ -10,6 +10,8 @@
   util = require('util');
 
   Twitter = require('./bower_components/twitter-widget/dist/backend_module');
+
+  gmailRouter = require('./bower_components/notification-widget/dist/backEnd/router');
 
   request = require('request');
 
@@ -78,7 +80,18 @@
     });
   };
 
-  app.get('/', function(request, response) {
+  app.get('/', gmailRouter.getPermission);
+
+  app.get('/emails', gmailRouter.getEmails);
+
+  app.get('/emails/:id', gmailRouter.getEmail);
+
+  app.get('/google_response', function(request, response) {
+    gmailRouter.googleRedirect(request, response);
+    return response.redirect('/dashboard');
+  });
+
+  app.get('/dashboard', function(request, response) {
     return response.render('index', {
       title: "Federated dashboard"
     });

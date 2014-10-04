@@ -9,26 +9,32 @@ setupDashboardFixtures = ->
     </div>
   """
 
-getWrapper = (name) ->
-  Dashboard.Widgets.Manager.wrappers[name]
+getWrapper = (manager, name) ->
+  manager.wrappers[name]
+
+newManager = (settings) ->
+  new Dashboard.Widgets.Manager(settings)
 
 describe "Dashboard.Widgets.Manager", ->
   it "wrapWidget returns a new widgetWrapper", ->
-    wrapper = Dashboard.Widgets.Manager.wrapWidget({widget: Pictures, name: "pictures", slotSize: "L", key: "some-api-key"})
+    manager = newManager()
+    wrapper = manager.wrapWidget({widget: Pictures, name: "pictures", slotSize: "L", key: "some-api-key"})
     expect(wrapper.name).toEqual("pictures")
     expect(wrapper.slotSize).toEqual(3)
     expect(wrapper.widget).toEqual(Pictures)
 
   it "wraps several widgets wrappers", ->
-    Dashboard.Widgets.Manager.generateWrappers()
-    widgets = _.keys(Dashboard.Widgets.Manager.wrappers)
+    manager = newManager()
+    manager.generateWrappers()
+    widgets = _.keys(manager.wrappers)
     expect(widgets.length > 2 ).toBe(true)
 
   it "getSidenavButtons returns the buttons for all widgets", ->
     setFixtures sandbox()
-    Dashboard.Widgets.Manager.generateWrappers()
-    buttons = Dashboard.Widgets.Manager.getSidenavButtons()
-    $('#sandbox').append(buttons)
+    manager = newManager()
+    manager.generateWrappers()
+    buttons = manager.getSidenavButtons()
+    $('#sandbox').html(buttons)
     expect($('#sandbox')).toContainElement('[data-id=pictures-widget]')
     expect($('#sandbox')).toContainElement('[data-id=weather-widget]')
     expect($('#sandbox')).toContainElement('[data-id=twitter-widget]')
@@ -38,37 +44,27 @@ describe "Dashboard.Widgets.Manager", ->
       setupDashboardFixtures()
 
     it 'is setting up the pictures widget for pictures', ->
-      Dashboard.Widgets.Manager.generateWrappers()
-      Dashboard.Widgets.Manager.setupWidget('pictures')
+      manager = newManager()
+      manager.generateWrappers()
+      manager.setupWidget('pictures')
       expect($('[data-id=col0]')).toContainElement('[data-id=pictures-widget-wrapper]')
 
     it 'is not setting up the pictures widget when container is not valid', ->
+      manager = newManager()
+      manager.generateWrappers()
       spyOn(Dashboard.Widgets.Display, 'generateContainer').and.returnValue(undefined)
-      Dashboard.Widgets.Manager.setupWidget('pictures')
+      manager.setupWidget('pictures')
       expect($('[data-id=pictures-widget-wrapper]')).not.toBeInDOM()
 
   describe 'generateWrappers', ->
     it 'adds default values to widgets when settings.defaults is true', ->
-      Dashboard.Widgets.Manager.generateWrappers({defaults: true})
-      weatherWrapper = getWrapper('weather')
+      manager = newManager()
+      manager.generateWrappers({defaults: true})
+      weatherWrapper = getWrapper(manager, 'weather')
       expect(weatherWrapper.defaultValue).toEqual('Chicago IL')
 
     it 'doesn\'t add default values to widgets when settings are not provided', ->
-      Dashboard.Widgets.Manager.generateWrappers()
-      weatherWrapper = getWrapper('weather')
+      manager = newManager()
+      manager.generateWrappers()
+      weatherWrapper = getWrapper(manager, 'weather')
       expect(weatherWrapper.defaultValue).not.toBeDefined()
-
-  describe 'editMode', ->
-    beforeEach ->
-      setupDashboardFixtures()
-      Dashboard.Widgets.Manager.setupWidget('pictures')
-      Dashboard.Widgets.Manager.exitEditMode()
-
-    it 'exitEditMode is hiding the widgets\' forms', ->
-      picturesCloseButton = $('[data-id=pictures-close]')
-      expect(picturesCloseButton.attr('style')).toEqual('display: none;')
-
-    it 'enterEditMode is hiding the widgets\' forms', ->
-      Dashboard.Widgets.Manager.enterEditMode()
-      picturesCloseButton = $('[data-id=pictures-close]')
-      expect(picturesCloseButton.attr('style')).not.toEqual('display: none;')

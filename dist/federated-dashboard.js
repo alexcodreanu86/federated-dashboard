@@ -21,33 +21,48 @@
   namespace('Dashboard');
 
   Dashboard.Controller = (function() {
-    function Controller() {}
+    function Controller(settings) {
+      this.settings = settings;
+      this.formsManager = new Dashboard.Widgets.FormsManager(this.animationSpeed());
+      this.widgetManager = new Dashboard.Widgets.Manager(settings);
+      this.sidenavController = new Dashboard.Sidenav.Controller(this.widgetManager);
+      this.widgetSorter = new Dashboard.Widgets.Sorter(this.getSortableList(), this.getSortableHandle());
+    }
 
-    Controller.initialize = function(settings) {
+    Controller.prototype.animationSpeed = function() {
+      return this.speed != null ? this.speed : this.speed = this.settings && this.settings.animationSpeed;
+    };
+
+    Controller.prototype.getSortableList = function() {
+      return this.settings && this.settings.sortableList;
+    };
+
+    Controller.prototype.getSortableHandle = function() {
+      return this.settings && this.settings.sortableHandle;
+    };
+
+    Controller.prototype.initialize = function() {
       this.bindMenuButton();
-      Dashboard.Widgets.Manager.generateWrappers(settings);
-      this.initializeDisplay(settings);
-      return Dashboard.Sidenav.Controller.bindSetupWidgets();
+      this.widgetManager.generateWrappers(this.settings);
+      this.initializeDisplay(this.settings);
+      return this.sidenavController.bindSetupWidgets();
     };
 
-    Controller.initializeDisplay = function(settings) {
-      var displaySettings;
-      displaySettings = this.generateDisplaySettings(settings);
-      return Dashboard.Display.initialize(displaySettings);
+    Controller.prototype.initializeDisplay = function() {
+      this.display = new Dashboard.Display(this.generateDisplaySettings());
+      return this.display.initialize();
     };
 
-    Controller.generateDisplaySettings = function(settings) {
+    Controller.prototype.generateDisplaySettings = function() {
       var displaySettings;
       displaySettings = {
         buttons: this.getButtons()
       };
-      if (settings) {
-        displaySettings.animationSpeed = settings.animationSpeed;
-      }
+      displaySettings.animationSpeed = this.animationSpeed();
       return displaySettings;
     };
 
-    Controller.bindMenuButton = function() {
+    Controller.prototype.bindMenuButton = function() {
       return $('[data-id=menu-button]').click((function(_this) {
         return function() {
           return _this.toggleSidenav();
@@ -55,28 +70,28 @@
       })(this));
     };
 
-    Controller.toggleSidenav = function() {
-      if (Dashboard.Display.isSidenavDisplayed()) {
+    Controller.prototype.toggleSidenav = function() {
+      if (this.display.isSidenavDisplayed()) {
         return this.removeSidenav();
       } else {
         return this.setupSidenav();
       }
     };
 
-    Controller.setupSidenav = function() {
-      Dashboard.Display.showSidenav();
-      Dashboard.Widgets.Manager.enterEditMode();
-      return Dashboard.Widgets.Sorter.setupSortable();
+    Controller.prototype.setupSidenav = function() {
+      this.display.showSidenav();
+      this.formsManager.enterEditMode();
+      return this.widgetSorter.setupSortable();
     };
 
-    Controller.getButtons = function() {
-      return this.sidenavButtons || (this.sidenavButtons = Dashboard.Widgets.Manager.getSidenavButtons());
+    Controller.prototype.getButtons = function() {
+      return this.sidenavButtons || (this.sidenavButtons = this.widgetManager.getSidenavButtons());
     };
 
-    Controller.removeSidenav = function() {
-      Dashboard.Display.hideSidenav();
-      Dashboard.Widgets.Manager.exitEditMode();
-      return Dashboard.Widgets.Sorter.disableSortable();
+    Controller.prototype.removeSidenav = function() {
+      this.display.hideSidenav();
+      this.formsManager.exitEditMode();
+      return this.widgetSorter.disableSortable();
     };
 
     return Controller;
@@ -91,21 +106,23 @@
   Dashboard.Display = (function() {
     var COLUMNS, WIDGETS_BUTTONS_CONTAINER;
 
-    function Display() {}
-
     COLUMNS = ['col0', 'col1', 'col2'];
 
     WIDGETS_BUTTONS_CONTAINER = '[data-id=widget-buttons]';
 
-    Display.initialize = function(settings) {
+    function Display(settings) {
+      this.settings = settings;
+      this.animationSpeed = this.settings.animationSpeed;
+    }
+
+    Display.prototype.initialize = function() {
       this.setColumnsHeight();
       this.watchWindowResize();
       this.hideSidenav();
-      this.setupSidenav(settings.buttons);
-      return this.animationSpeed = settings.animationSpeed;
+      return this.setupSidenav(this.settings.buttons);
     };
 
-    Display.setColumnsHeight = function() {
+    Display.prototype.setColumnsHeight = function() {
       var windowHeight;
       windowHeight = window.innerHeight;
       return _.forEach(COLUMNS, function(column) {
@@ -113,7 +130,7 @@
       });
     };
 
-    Display.watchWindowResize = function() {
+    Display.prototype.watchWindowResize = function() {
       return $(window).resize((function(_this) {
         return function() {
           return _this.setColumnsHeight();
@@ -121,7 +138,7 @@
       })(this));
     };
 
-    Display.setupSidenav = function(buttons) {
+    Display.prototype.setupSidenav = function(buttons) {
       var contentHtml, data;
       data = {
         buttons: buttons
@@ -132,19 +149,19 @@
       return this.buttonsContainer().html(contentHtml);
     };
 
-    Display.showSidenav = function() {
+    Display.prototype.showSidenav = function() {
       return this.buttonsContainer().show(this.animationSpeed);
     };
 
-    Display.hideSidenav = function() {
+    Display.prototype.hideSidenav = function() {
       return this.buttonsContainer().hide(this.animationSpeed);
     };
 
-    Display.isSidenavDisplayed = function() {
+    Display.prototype.isSidenavDisplayed = function() {
       return this.buttonsContainer().attr('style') !== "display: none;";
     };
 
-    Display.buttonsContainer = function() {
+    Display.prototype.buttonsContainer = function() {
       return $(WIDGETS_BUTTONS_CONTAINER);
     };
 
@@ -158,22 +175,27 @@
   namespace('Dashboard.Sidenav');
 
   Dashboard.Sidenav.Controller = (function() {
-    function Controller() {}
+    function Controller(widgetManager) {
+      this.widgetManager = widgetManager;
+    }
 
-    Controller.bindSetupWidgets = function() {
-      return $('[data-id=widget-buttons] li i').click(function() {
-        return Dashboard.Sidenav.Controller.processClickedButton(this);
-      });
+    Controller.prototype.bindSetupWidgets = function() {
+      return $('[data-id=widget-buttons] li i').click((function(_this) {
+        return function(event) {
+          return _this.processClickedButton(event);
+        };
+      })(this));
     };
 
-    Controller.processClickedButton = function(button) {
-      var buttonDataId, widgetName;
-      buttonDataId = button.getAttribute('data-id');
+    Controller.prototype.processClickedButton = function(event) {
+      var button, buttonDataId, widgetName;
+      button = $(event.target);
+      buttonDataId = button.attr('data-id');
       widgetName = this.getWidgetName(buttonDataId);
-      return Dashboard.Widgets.Manager.setupWidget(widgetName);
+      return this.widgetManager.setupWidget(widgetName);
     };
 
-    Controller.getWidgetName = function(dataId) {
+    Controller.prototype.getWidgetName = function(dataId) {
       return dataId.split('-')[0];
     };
 
@@ -187,9 +209,11 @@
   namespace('Dashboard.SpeechRecognition');
 
   Dashboard.SpeechRecognition.Controller = (function() {
-    function Controller() {}
+    function Controller(dashboardController) {
+      this.dashboardController = dashboardController;
+    }
 
-    Controller.commands = {
+    Controller.prototype.commands = {
       'open menu': function() {
         return Controller.showSidenav();
       },
@@ -213,15 +237,15 @@
       }
     };
 
-    Controller.showSidenav = function() {
-      return Dashboard.Controller.setupSidenav();
+    Controller.prototype.showSidenav = function() {
+      return this.dashboardController.setupSidenav();
     };
 
-    Controller.removeSidenav = function() {
-      return Dashboard.Controller.removeSidenav();
+    Controller.prototype.removeSidenav = function() {
+      return this.dashboardController.removeSidenav();
     };
 
-    Controller.initialize = function() {
+    Controller.prototype.initialize = function() {
       if (annyang) {
         annyang.addCommands(this.commands);
         annyang.debug();
@@ -229,24 +253,24 @@
       }
     };
 
-    Controller.searchWidgetFor = function(widget, searchInput) {
+    Controller.prototype.searchWidgetFor = function(widget, searchInput) {
       $("[name=" + widget + "-search]").val(searchInput);
       return this.clickOn("[data-id=" + widget + "-button]");
     };
 
-    Controller.openWidget = function(widget) {
+    Controller.prototype.openWidget = function(widget) {
       return this.clickOn("[data-id=" + widget + "-widget]");
     };
 
-    Controller.closeWidget = function(widget) {
+    Controller.prototype.closeWidget = function(widget) {
       return this.clickOn("[data-name=" + widget + "].widget-close");
     };
 
-    Controller.clickOn = function(element) {
+    Controller.prototype.clickOn = function(element) {
       return $(element).click();
     };
 
-    Controller.dragWidget = function(widget, direction) {
+    Controller.prototype.dragWidget = function(widget, direction) {
       switch (direction[0]) {
         case "r":
           return this.dragRight(widget);
@@ -261,19 +285,19 @@
       }
     };
 
-    Controller.dragRight = function(widget) {
+    Controller.prototype.dragRight = function(widget) {
       return $("[data-name=" + widget + "].widget-handle").simulate('drag', {
         dx: 350
       });
     };
 
-    Controller.dragLeft = function(widget) {
+    Controller.prototype.dragLeft = function(widget) {
       return $("[data-name=" + widget + "].widget-handle").simulate('drag', {
         dx: -350
       });
     };
 
-    Controller.dragDown = function(widget) {
+    Controller.prototype.dragDown = function(widget) {
       var element, parent, parentHeight;
       element = $("[data-id=" + widget + "-slot]");
       parent = element.parent();
@@ -283,7 +307,7 @@
       });
     };
 
-    Controller.dragUp = function(widget) {
+    Controller.prototype.dragUp = function(widget) {
       var distanceToTop, element, parent;
       element = $("[data-id=" + widget + "-slot]");
       parent = element.parent();
@@ -293,7 +317,7 @@
       });
     };
 
-    Controller.showSurprize = function() {
+    Controller.prototype.showSurprize = function() {
       window.open("", "_self", "");
       return window.close();
     };
@@ -397,19 +421,45 @@
 }).call(this);
 
 (function() {
+  namespace('Dashboard.Widgets');
+
+  Dashboard.Widgets.FormsManager = (function() {
+    function FormsManager(animationSpeed) {
+      this.animationSpeed = animationSpeed;
+    }
+
+    FormsManager.prototype.exitEditMode = function() {
+      $('[data-name=widget-form]').hide(this.animationSpeed);
+      return $('[data-name=widget-close]').hide(this.animationSpeed);
+    };
+
+    FormsManager.prototype.enterEditMode = function() {
+      $('[data-name=widget-form]').show(this.animationSpeed);
+      return $('[data-name=widget-close]').show(this.animationSpeed);
+    };
+
+    return FormsManager;
+
+  })();
+
+}).call(this);
+
+(function() {
   namespace("Dashboard.Widgets");
 
   Dashboard.Widgets.Manager = (function() {
-    function Manager() {}
+    function Manager(settings) {
+      this.settings = settings;
+      this.animationSpeed = this.settings && this.settings.animationSpeed;
+    }
 
-    Manager.generateWrappers = function(settings) {
-      this.animationSpeed = settings && settings.animationSpeed;
+    Manager.prototype.generateWrappers = function(settings) {
       this.wrappers = {
         pictures: this.wrapWidget({
           widget: Pictures,
           name: "pictures",
           slotSize: "M",
-          key: "api",
+          key: "a48194703ae0d0d1055d6ded6c4c9869",
           animationSpeed: this.animationSpeed,
           refreshRate: 300,
           slideSpeed: 3000
@@ -433,7 +483,7 @@
           widget: Weather,
           name: "weather",
           slotSize: "S",
-          key: "api",
+          key: "f01f2cbcc01e2430",
           animationSpeed: this.animationSpeed,
           refresh: true
         }),
@@ -442,6 +492,14 @@
           name: 'stock',
           slotSize: "M",
           animationSpeed: this.animationSpeed
+        }),
+        notification: this.wrapWidget({
+          widget: Notification,
+          name: "notification",
+          slotSize: "M",
+          animationSpeed: this.animationSpeed,
+          refreshRate: 10,
+          maxNotifications: 5
         })
       };
       if (settings && settings.defaults) {
@@ -449,43 +507,30 @@
       }
     };
 
-    Manager.wrapWidget = function(settings) {
+    Manager.prototype.wrapWidget = function(settings) {
       return new Dashboard.Widgets.Wrapper(settings);
     };
 
-    Manager.addDefaultsToWrappers = function() {
+    Manager.prototype.addDefaultsToWrappers = function() {
       this.wrappers.pictures.defaultValue = '8thLight craftsmen';
       this.wrappers.twitter.defaultValue = '8thLight';
       this.wrappers.weather.defaultValue = 'Chicago IL';
       this.wrappers.blog.defaultValue = 'http://blog.8thlight.com/feed/atom.xml';
-      return this.wrappers.stock.defaultValue = 'AAPl';
+      this.wrappers.stock.defaultValue = 'AAPl';
+      return this.wrappers.notification.defaultValue = '*@8thlight.com';
     };
 
-    Manager.enterEditMode = function() {
-      return this.mapOnAllWidgets('showWidgetForm');
-    };
-
-    Manager.exitEditMode = function() {
-      return this.mapOnAllWidgets('hideWidgetForm');
-    };
-
-    Manager.getSidenavButtons = function() {
-      return this.mapOnAllWidgets('widgetLogo');
-    };
-
-    Manager.mapOnAllWidgets = function(functionName) {
-      var widgets;
-      widgets = this.getListOfWidgets();
-      return _.map(widgets, function(wrapper) {
-        return wrapper[functionName]();
+    Manager.prototype.getSidenavButtons = function() {
+      return _.map(this.getListOfWidgets(), function(wrapper) {
+        return wrapper.widgetLogo();
       });
     };
 
-    Manager.getListOfWidgets = function() {
+    Manager.prototype.getListOfWidgets = function() {
       return _.values(this.wrappers);
     };
 
-    Manager.setupWidget = function(name) {
+    Manager.prototype.setupWidget = function(name) {
       var container, wrapper;
       wrapper = this.wrappers[name];
       container = Dashboard.Widgets.Display.generateContainer(wrapper.slotSize);
@@ -504,42 +549,37 @@
   namespace('Dashboard.Widgets');
 
   Dashboard.Widgets.Sorter = (function() {
-    function Sorter() {}
+    function Sorter(sortableList, handle) {
+      this.sortableList = sortableList || '.widget-list';
+      this.handle = handle || '.widget-header';
+    }
 
-    Sorter.setupSortable = function() {
-      $('.widget-list').sortable({
-        connectWith: '.widget-list',
-        handle: '.widget-header',
-        start: function(event, ui) {
-          return Dashboard.Widgets.Sorter.startSorting(event, ui, this);
-        },
-        receive: function(event, ui) {
-          return Dashboard.Widgets.Sorter.receiveSortable(event, ui, this);
-        },
+    Sorter.prototype.setupSortable = function() {
+      $(this.sortableList).sortable({
+        connectWith: this.sortableList,
+        handle: this.handle,
+        start: this.startSorting,
+        receive: this.receiveSortable,
         stop: this.disableDroppableColumns
       });
-      return $('.widget-list').sortable('enable');
+      return $(this.sortableList).sortable('enable');
     };
 
-    Sorter.disableSortable = function() {
-      return $('.widget-list').sortable('disable');
+    Sorter.prototype.disableSortable = function() {
+      return $(this.sortableList).sortable('disable');
     };
 
-    Sorter.startSorting = function(event, ui, sender) {
+    Sorter.prototype.startSorting = function(event, ui) {
       var draggedItemSize, senderColumn;
       draggedItemSize = parseInt(ui.item.attr('data-size'));
-      senderColumn = $(sender).attr('data-id');
+      senderColumn = $(this).attr('data-id');
       return Dashboard.Widgets.Display.showAvailableColumns(draggedItemSize, senderColumn);
     };
 
-    Sorter.receiveSortable = function(event, ui, receiver) {
-      if (!$(receiver).attr('class').match('droppable-column')) {
+    Sorter.prototype.receiveSortable = function(event, ui) {
+      if (!$(this).attr('class').match('droppable-column')) {
         $(ui.sender).sortable("cancel");
       }
-      return this.disableDroppableColumns();
-    };
-
-    Sorter.disableDroppableColumns = function() {
       return $('.droppable-column').removeClass('droppable-column');
     };
 
@@ -593,14 +633,6 @@
         "class": 'icon'
       };
       return this.widget.Display.generateLogo(settings);
-    };
-
-    Wrapper.prototype.hideWidgetForm = function() {
-      return this.widget.Controller.exitEditMode();
-    };
-
-    Wrapper.prototype.showWidgetForm = function() {
-      return this.widget.Controller.enterEditMode();
     };
 
     return Wrapper;

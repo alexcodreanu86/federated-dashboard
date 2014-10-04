@@ -1,40 +1,55 @@
 namespace('Dashboard')
 
 class Dashboard.Controller
-  @initialize: (settings) ->
+  constructor: (settings) ->
+    @settings          = settings
+    @formsManager      = new Dashboard.Widgets.FormsManager(@animationSpeed())
+    @widgetManager     = new Dashboard.Widgets.Manager(settings)
+    @sidenavController = new Dashboard.Sidenav.Controller(@widgetManager)
+    @widgetSorter      = new Dashboard.Widgets.Sorter(@getSortableList(), @getSortableHandle())
+
+  animationSpeed: ->
+    @speed ?= @settings && @settings.animationSpeed
+
+  getSortableList: ->
+    @settings && @settings.sortableList
+
+  getSortableHandle: ->
+    @settings && @settings.sortableHandle
+
+  initialize: () ->
     @bindMenuButton()
-    Dashboard.Widgets.Manager.generateWrappers(settings)
-    @initializeDisplay(settings)
-    Dashboard.Sidenav.Controller.bindSetupWidgets()
+    @widgetManager.generateWrappers(@settings)
+    @initializeDisplay(@settings)
+    @sidenavController.bindSetupWidgets()
 
-  @initializeDisplay: (settings) ->
-    displaySettings = @generateDisplaySettings(settings)
-    Dashboard.Display.initialize(displaySettings)
+  initializeDisplay: ->
+    @display = new Dashboard.Display(@generateDisplaySettings())
+    @display.initialize()
 
-  @generateDisplaySettings: (settings) ->
+  generateDisplaySettings: ->
     displaySettings = {buttons: @getButtons()}
-    if settings
-      displaySettings.animationSpeed = settings.animationSpeed
+    displaySettings.animationSpeed = @animationSpeed()
     displaySettings
 
-  @bindMenuButton: ->
+  bindMenuButton: ->
     $('[data-id=menu-button]').click(=> @toggleSidenav())
 
-  @toggleSidenav: ->
-    if Dashboard.Display.isSidenavDisplayed()
+  toggleSidenav: ->
+    if @display.isSidenavDisplayed()
       @removeSidenav()
     else
       @setupSidenav()
 
-  @setupSidenav: ->
-    Dashboard.Display.showSidenav()
-    Dashboard.Widgets.Manager.enterEditMode()
-    Dashboard.Widgets.Sorter.setupSortable()
+  setupSidenav: ->
+    @display.showSidenav()
+    @formsManager.enterEditMode()
+    @widgetSorter.setupSortable()
 
-  @getButtons: ->
-    @sidenavButtons ||= Dashboard.Widgets.Manager.getSidenavButtons()
+  getButtons: ->
+    @sidenavButtons ||= @widgetManager.getSidenavButtons()
 
-  @removeSidenav: ->
-    Dashboard.Display.hideSidenav()
-    Dashboard.Widgets.Manager.exitEditMode()
-    Dashboard.Widgets.Sorter.disableSortable()
+  removeSidenav: ->
+    @display.hideSidenav()
+    @formsManager.exitEditMode()
+    @widgetSorter.disableSortable()

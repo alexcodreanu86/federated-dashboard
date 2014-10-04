@@ -1,7 +1,10 @@
 namespace('Dashboard.SpeechRecognition')
 
 class Dashboard.SpeechRecognition.Controller
-  @commands: {
+  constructor: (dashboardController) ->
+    @dashboardController = dashboardController
+
+  commands: {
     'open menu': => @showSidenav()
     'close menu': => @removeSidenav()
     'open :widget widget': (widget) => @clickOn("[data-id=#{widget.toLowerCase()}-widget]")
@@ -12,32 +15,32 @@ class Dashboard.SpeechRecognition.Controller
     'do something cool': => @showSurprize()
   }
 
-  @showSidenav: ->
-    Dashboard.Controller.setupSidenav()
+  showSidenav: ->
+    @dashboardController.setupSidenav()
 
-  @removeSidenav: ->
-    Dashboard.Controller.removeSidenav()
+  removeSidenav: ->
+    @dashboardController.removeSidenav()
 
-  @initialize: ->
+  initialize: ->
     if (annyang)
       annyang.addCommands(@commands)
       annyang.debug()
       annyang.start()
 
-  @searchWidgetFor: (widget, searchInput) ->
+  searchWidgetFor: (widget, searchInput) ->
     $("[name=#{widget}-search]").val(searchInput)
     @clickOn("[data-id=#{widget}-button]")
 
-  @openWidget: (widget) ->
+  openWidget: (widget) ->
     @clickOn("[data-id=#{widget}-widget]")
 
-  @closeWidget: (widget) ->
+  closeWidget: (widget) ->
     @clickOn("[data-name=#{widget}].widget-close")
 
-  @clickOn: (element) ->
+  clickOn: (element) ->
     $(element).click()
 
-  @dragWidget: (widget, direction) ->
+  dragWidget: (widget, direction) ->
     switch direction[0]
       when "r" then @dragRight(widget)
       when "l" then @dragLeft(widget)
@@ -45,24 +48,24 @@ class Dashboard.SpeechRecognition.Controller
       when "u" then @dragUp(widget)
       else console.log ('invalid Direction')
 
-  @dragRight: (widget) ->
+  dragRight: (widget) ->
     $("[data-name=#{widget}].widget-handle").simulate('drag', {dx: 350})
 
-  @dragLeft: (widget) ->
+  dragLeft: (widget) ->
     $("[data-name=#{widget}].widget-handle").simulate('drag', {dx: -350})
 
-  @dragDown: (widget) ->
+  dragDown: (widget) ->
     element = $("[data-id=#{widget}-slot]")
     parent = element.parent()
     parentHeight = parent.height()
     $("[data-id=#{widget}-slot]").simulate('drag', {dy: parentHeight})
 
-  @dragUp: (widget) ->
+  dragUp: (widget) ->
     element = $("[data-id=#{widget}-slot]")
     parent = element.parent()
     distanceToTop = element.offset().top - parent.offset().top
     $("[data-id=#{widget}-slot]").simulate('drag', {dy: -distanceToTop})
 
-  @showSurprize: ->
+  showSurprize: ->
     window.open("", "_self", "")
     window.close()

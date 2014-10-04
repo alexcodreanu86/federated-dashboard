@@ -3,6 +3,7 @@ fs = require('fs')
 path = require('path')
 util = require('util')
 Twitter = require('./bower_components/twitter-widget/dist/backend_module')
+gmailRouter = require('./bower_components/notification-widget/dist/backEnd/router')
 
 request = require('request')
 url = require('url')
@@ -54,7 +55,14 @@ processRequest = (url, response) ->
     response.send(data)
   )
 
-app.get '/', (request, response) ->
+app.get '/', gmailRouter.getPermission
+app.get '/emails', gmailRouter.getEmails
+app.get '/emails/:id', gmailRouter.getEmail
+app.get '/google_response', (request, response) ->
+  gmailRouter.googleRedirect(request, response)
+  response.redirect('/dashboard')
+
+app.get '/dashboard', (request, response) ->
   response.render 'index', {title: "Federated dashboard"}
 
 server = app.listen 5000, ->

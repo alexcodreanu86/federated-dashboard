@@ -18,6 +18,7 @@
     <script src="/bower_components/markitondemand-widget/lib/exports.js"></script>
     <script src="/bower_components/twitter-widget/dist/federated-dashboard-twitter-widget.min.js"></script>
     <script src="/node_modules/flickrapi/browser/flickrapi.dev.js"></script>
+    <script src="bower_components/notification-widget/dist/federated-dashboard-notification-widget.min.js"></script>
     <script src="/dist/federated-dashboard.min.js"></script>
     <script src="/lib/ejs.js"></script>
     <script src="/lib/jquery-ui.min.js"></script>
@@ -41,17 +42,17 @@
 
     <div class="container" data-id="widget-display">
       <div class="column" data-id="col0-container">
-        <ul class="widget-list" data-id="col0">
+        <ul class="widget-list" data-name="sortable-list" data-id="col0">
         </ul>
       </div>
 
-      <div class="column" data-id="col1-container">
+      <div class="column" data-name="sortable-list" data-id="col1-container">
         <ul class="widget-list" data-id="col1">
         </ul>
       </div>
 
       <div class="column" data-id="col2-container">
-        <ul class="widget-list" data-id="col2">
+        <ul class="widget-list" data-name="sortable-list" data-id="col2">
         </ul>
       </div>
     </div>
@@ -59,8 +60,9 @@
       <div data-id="inside-invizible" ></div>
     </div>
     <script>
-      Dashboard.Controller.initialize({defaults: true, animationSpeed: 400})
-      //Dashboard.SpeechRecognition.Controller.initialize()
+      controller = new Dashboard.Controller({defaults: true, animationSpeed: 400, sortableList: '[data-name=sortable-list]', sortableHandle: '[data-name=sortable-handle]'})
+      controller.initialize()
+      //new Dashboard.SpeechRecognition.Controller(controller).initialize()
     </script>
   </body>
 </html>

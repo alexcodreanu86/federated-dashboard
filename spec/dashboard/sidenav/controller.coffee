@@ -15,11 +15,13 @@ setupDashboardFixtures = ->
 describe "Dasbboard.Sidenav.Controller", ->
   it 'bindSetupWidgets is setting up the widget of the button clicked', ->
     setupDashboardFixtures()
-    Dashboard.Controller.initialize()
-    Dashboard.Controller.setupSidenav()
+    mainController = new Dashboard.Controller()
+    mainController.initialize()
+    mainController.setupSidenav()
     clickOn('[data-id=pictures-widget]')
     expect($('[data-id=col0]')).not.toBeEmpty()
 
   it 'getWidgetName returns pictures for the pictures button', ->
-    name = Dashboard.Sidenav.Controller.getWidgetName('pictures-widget')
+    controller = new Dashboard.Sidenav.Controller
+    name = controller.getWidgetName('pictures-widget')
     expect(name).toEqual('pictures')
